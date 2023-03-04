@@ -1,0 +1,6 @@
+This favicon was generated using the following font:
+
+- Font Title: Besley
+- Font Author: Copyright 2020 The Besley Project Authors (https://github.com/indestructible-type)
+- Font Source: http://fonts.gstatic.com/s/besley/v12/PlIhFlO1MaNwaNGWUC92IOH_mtG4fTbGSdRoFPOl8-E.ttf
+- Font License: SIL Open Font License, 1.1 (http://scripts.sil.org/OFL))
