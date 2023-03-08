@@ -25,7 +25,7 @@ B.S., Major in Media
 
 ## ✏️ Publications  
 
-An AI Media Art Therapy Using Deep Learning  (Waiting for Accept)
+An AI Media Art Therapy Using Deep Learning  (Waiting for Accept) <br>
 **Junyoung Koh**, Dain Park, Junghun Ha, Kanghee Lee  
-IEEE ACCESS [[code](https://github.com/FW2022)] 
+IEEE ACCESS [[code](https://github.com/FW2022)] [[Project Site](https://space4-u-client.vercel.app/space)]
 
