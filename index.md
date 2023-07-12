@@ -7,12 +7,12 @@ use_math: true
 
 ![]({{site.url}}/assets/images/cv-photo.png){: .align-right width="220" height="220"}
 
-Hello, I am a MS student in Artificial Intelligence at Yonsei University,  
+Hello, I am a MS student in Artificial Intelligence at Yonsei University, advised by Prof. Min Song in [DeepText LAB](https://deeptext.yonsei.ac.kr/home).  
 I am interested in
 
-- Image Captioning
-- Text Generation
-- Commonsence Reasoning
+- Image/Text Generation
+- Mulimodal Learning with LoRA
+- Diffusion, etc.
 
 ## 🎓 Education
 
