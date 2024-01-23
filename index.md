@@ -31,7 +31,10 @@ Proposal of 3D Camera-Based Digital Coordinate Recognition Technology <br>
 **Junyoung Koh**, Kanghee Lee  
 Proceedings of the Korean Society of Computer Information Conference [[PDF](https://koreascience.kr/article/CFKO202232249429413.pdf)]
 
-## Work Experience
-**OnomaAI, Seoul, Republic of Korea** *Aug 2023 - Present*
+## 🏢 Work Experience
+**Onoma AI** *Aug 2023 - Present* <br>
 AI Team Leader & AI Researcher
-Advisor : Prof. Min Song
+
+## 🏆 Honors & Awards
+- CES Innovation Award (2024) <br>
+  AI category
