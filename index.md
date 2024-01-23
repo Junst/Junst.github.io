@@ -30,3 +30,8 @@ IEEE ACCESS [[code](https://github.com/FW2022)] [[Project Site](https://space4-u
 Proposal of 3D Camera-Based Digital Coordinate Recognition Technology <br>
 **Junyoung Koh**, Kanghee Lee  
 Proceedings of the Korean Society of Computer Information Conference [[PDF](https://koreascience.kr/article/CFKO202232249429413.pdf)]
+
+## Work Experience
+**OnomaAI, Seoul, Republic of Korea** *Aug 2023 - Present*
+AI Team Leader & AI Researcher
+Advisor : Prof. Min Song
