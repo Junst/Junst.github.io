@@ -31,3 +31,11 @@ IEEE ACCESS [[code](https://github.com/FW2022)] [[Project Site](https://space4-u
 Proposal of 3D Camera-Based Digital Coordinate Recognition Technology <br>
 **Junyoung Koh**, Kanghee Lee  
 Proceedings of the Korean Society of Computer Information Conference [[PDF](https://koreascience.kr/article/CFKO202232249429413.pdf)]
+
+## 🏢 Work Experience
+**Onoma AI** *Aug 2023 - Present* <br>
+AI Team Leader & AI Researcher
+
+## 🏆 Honors & Awards
+- CES Innovation Award (2024) <br>
+  AI category
