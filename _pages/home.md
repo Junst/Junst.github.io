@@ -24,18 +24,23 @@ B.S., Major in Media
 
 ## ✏️ Publications  
 
-Development of an AI Media Art Therapy Platform incorporating Color, Play, and Music Therapies (Waiting for Aceept) <br>
-**Junyoung Koh**, Dain Park, Junghun Ha, Kanghee Lee  
-IEEE ACCESS [[code](https://github.com/FW2022)] [[Project Site](https://space4-u-client.vercel.app/space)]
+CAT : Contrastive Adapter Training for Personalized Image Generation (Waiting for Accept) <br>
+{Jaewan Park, **Junyoung Koh**, Sanghyun Park, Junha Lee}, Min Song <br>
+CVPR 2024 Workshop Generative Models for Computer Vision
 
 Proposal of 3D Camera-Based Digital Coordinate Recognition Technology <br>
 **Junyoung Koh**, Kanghee Lee  
 Proceedings of the Korean Society of Computer Information Conference [[PDF](https://koreascience.kr/article/CFKO202232249429413.pdf)]
 
 ## 🏢 Work Experience
-**Onoma AI** *Aug 2023 - Present* <br>
+**Onoma AI** <br> *Aug 2023 - Present* <br>
 AI Team Leader & AI Researcher
 
 ## 🏆 Honors & Awards
 - CES Innovation Award (2024) <br>
   AI category
+
+## Project
+Development of an AI Media Art Therapy Platform incorporating Color, Play, and Music Therapies <br>
+**Junyoung Koh**, Dain Park, Junghun Ha, Kanghee Lee  
+[[code](https://github.com/FW2022)] [[Project Site](https://space4-u-client.vercel.app/space)]
