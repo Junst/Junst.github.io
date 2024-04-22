@@ -138,7 +138,7 @@ footer:
   links:
     - label: "Google Scholar"
       icon: "fab fa-google fa-fw"
-      # url: "https://scholar.google.com/"
+      url: "https://scholar.google.com/citations?user=-zUwo6kAAAAJ&hl=ko"
     - label: "Semantic Scholar"
       icon: "fas fa-graduation-cap"
       # url: "https://www.semanticscholar.org/author/"
