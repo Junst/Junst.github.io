@@ -23,20 +23,24 @@ B.S., Major in Media
 
 ## ✏️ Publications  
 
-CAT : Contrastive Adapter Training for Personalized Image Generation (Waiting for Accept) <br>
-{Jaewan Park, **Junyoung Koh**, Sanghyun Park, Junha Lee}, Min Song <br>
-CVPR 2024 Workshop Generative Models for Computer Vision
+Improving Text Generation on Images with Synthetic Captions (Waiting for Accept) <br>
+{**Junyoung Koh**, Sanghyun Park, Joy Song} <br>
+IIAI AAI 2024 Workshop
+
+CAT : Contrastive Adapter Training for Personalized Image Generation <br>
+{Jaewan Park,Sanghyun Park, **Junyoung Koh**, Junha Lee}, Min Song <br>
+CVPR 2024 Workshop Generative Models for Computer Vision [[arXiv](https://arxiv.org/abs/2404.07554)] [[PDF](https://arxiv.org/pdf/2404.07554.pdf)]
 
 Proposal of 3D Camera-Based Digital Coordinate Recognition Technology <br>
 **Junyoung Koh**, Kanghee Lee  
-Proceedings of the Korean Society of Computer Information Conference [[PDF](https://koreascience.kr/article/CFKO202232249429413.pdf)]
+Proceedings of the Korean Society of Computer Information Conference 2022 [[PDF](https://koreascience.kr/article/CFKO202232249429413.pdf)]
 
 ## 🏢 Work Experience
 **Onoma AI** <br> *Aug 2023 - Present* <br>
 AI Team Leader & AI Researcher
 
 ## 🏆 Honors & Awards
-- CES Innovation Award (2024) <br>
+CES Innovation Award (2024) <br>
   AI category
 
 ## Project
