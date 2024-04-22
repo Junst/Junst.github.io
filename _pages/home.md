@@ -26,7 +26,7 @@ B.S., Major in Media
 
 Improving Text Generation on Images with Synthetic Captions (Waiting for Accept) <br>
 {**Junyoung Koh**, Sanghyun Park, Joy Song} <br>
-IIAI AAI 2024 Workshop
+IIAI AAI 2024 Workshop 16th International Congress on Advanced Applied Informatics
 
 CAT : Contrastive Adapter Training for Personalized Image Generation <br>
 {Jaewan Park,Sanghyun Park, **Junyoung Koh**, Junha Lee}, Min Song <br>
