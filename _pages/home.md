@@ -26,7 +26,7 @@ B.S., Major in Media
 
 Improving Text Generation on Images with Synthetic Captions <br>
 {**Junyoung Koh**, Sanghyun Park, Joy Song} <br>
-IIAI AAI 2024 7th International Conference on Interaction Design and Digital Creation / Computing
+IIAI AAI 2024 7th International Conference on Interaction Design and Digital Creation / Computing [[arXiv](https://arxiv.org/abs/2406.00505)] [[PDF](https://arxiv.org/abs/2406.00505.pdf)]
 
 CAT : Contrastive Adapter Training for Personalized Image Generation <br>
 {Jaewan Park,Sanghyun Park, **Junyoung Koh**, Junha Lee}, Min Song <br>
