@@ -7,7 +7,7 @@ use_math: true
 
 ![]({{site.url}}/assets/images/cv-photo.png){: .align-right width="220" height="220"}
 
-Hello, I am a MS student in Artificial Intelligence at Yonsei University, advised by Prof. Min Song in [DeepText LAB](https://deeptext.yonsei.ac.kr/home). I am interested in
+Hello, I am a Ph.D student in Artificial Intelligence at Yonsei University, advised by Prof. Min Song in [DeepText LAB](https://deeptext.yonsei.ac.kr/home). I am interested in
 
 - Image/Text Generation
 - Mulimodal Learning with LoRA
@@ -16,19 +16,23 @@ Hello, I am a MS student in Artificial Intelligence at Yonsei University, advise
 ## 🎓 Education
 
 **Yonsei University, Seoul, Republic of Korea** *Mar 2023 - Present*  
-M.S. Student, Department of Artificial Intelligence  
+Ph.D. Student, Department of Artificial Intelligence  
 
 **Soongsil University, Seoul, Republic of Korea** *Mar 2017 - Feb 2023*  
 B.S., Major in Media
 
 ## ✏️ Publications  
 
+Illustrious : an Open Advanced Illustraion Model
+{Sang Hyun Park, **Jun Young Koh**}, Junha Lee, Joy Song, Dongha Kim, Hoyeon Moon, Hyunju Lee, Min SOng
+Technical Report
+
 Improving Text Generation on Images with Synthetic Captions <br>
-{**Junyoung Koh**, Sanghyun Park, Joy Song} <br>
+{**Jun Young Koh**, Sang Hyun Park, Joy Song} <br>
 IIAI AAI 2024 7th International Conference on Interaction Design and Digital Creation / Computing [[arXiv](https://arxiv.org/abs/2406.00505)] [[PDF](https://arxiv.org/abs/2406.00505.pdf)]
 
 CAT : Contrastive Adapter Training for Personalized Image Generation <br>
-{Jaewan Park,Sanghyun Park, **Junyoung Koh**, Junha Lee}, Min Song <br>
+{Jaewan Park,Sang Hyun Park, **Jun Young Koh**, Junha Lee}, Min Song <br>
 CVPR 2024 Workshop Generative Models for Computer Vision [[arXiv](https://arxiv.org/abs/2404.07554)] [[PDF](https://arxiv.org/pdf/2404.07554.pdf)]
 
 Proposal of 3D Camera-Based Digital Coordinate Recognition Technology <br>
