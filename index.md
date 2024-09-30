@@ -23,7 +23,7 @@ B.S., Major in Media
 
 ## ✏️ Publications  
 
-Illustrious : an Open Advanced Illustraion Model
+Illustrious : an Open Advanced Illustration Model
 {Sang Hyun Park, **Jun Young Koh**}, Junha Lee, Joy Song, Dongha Kim, Hoyeon Moon, Hyunju Lee, Min Song
 Technical Report
 
