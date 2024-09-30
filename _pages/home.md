@@ -26,7 +26,7 @@ B.S., Major in Media
 
 Illustrious : an Open Advanced Illustration Model <br>
 {Sang Hyun Park, **Jun Young Koh**}, Junha Lee, Joy Song, Dongha Kim, Hoyeon Moon, Hyunju Lee, Min Song <br>
-Technical Report
+Technical Report [[arXiv]()] [[PDF]()] [[HuggingFace](https://huggingface.co/OnomaAIResearch/Illustrious-xl-early-release-v0)] [[CivitAI](https://civitai.com/models/795765/illustrious-xl)]
 
 Improving Text Generation on Images with Synthetic Captions <br>
 {**Jun Young Koh**, Sang Hyun Park, Joy Song} <br>
