@@ -25,7 +25,7 @@ B.S., Major in Media
 ## ✏️ Publications  
 
 Illustrious : an Open Advanced Illustraion Model
-{Sang Hyun Park, **Jun Young Koh**}, Junha Lee, Joy Song, Dongha Kim, Hoyeon Moon, Hyunju Lee, Min SOng
+{Sang Hyun Park, **Jun Young Koh**}, Junha Lee, Joy Song, Dongha Kim, Hoyeon Moon, Hyunju Lee, Min Song
 Technical Report
 
 Improving Text Generation on Images with Synthetic Captions <br>
