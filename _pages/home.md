@@ -57,7 +57,7 @@ IEEE Access (SCI) Reviewer *Aug 2023 - Present*
 World Friends Korea Paraguay IT Volunteer *Aug 2018 - Sep 2018*
 
 ## 🏢 Work Experience
-**Onoma AI** <br> *Aug 2023 - Present* <br>
+**Onoma AI** *Aug 2023 - Present* <br>
 AI Team Leader & AI Researcher
 
 ## 🏆 Honors & Awards
