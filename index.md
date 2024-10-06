@@ -13,6 +13,15 @@ Hello, I am a Ph.D student in Artificial Intelligence at Yonsei University, advi
 - Mulimodal Learning with LoRA
 - Diffusion, etc.
 
+## 🔥 News
+<ul style="list-style-type: square;">
+  <li><strong>Oct 2024</strong> : Our model has been downloaded over 12,000 times and has ranked 11th among trending models worldwide! </li>
+  <li><strong>Sep 2024</strong> : Illustrious technical report is submitted in arXiv and HuggingFace! </li>
+  <li><strong>Aug 2024</strong> : 1st Anniversary at my first company, Onoma AI 🎉 </li>
+  <li><strong>May 2024</strong> : One paper is accepted to IIAI-AAI 2024!</li>
+  <li><strong>Jan 2024</strong> : One paper is accepted to CVPR!</li>
+</ul>
+
 ## 🎓 Education
 
 **Yonsei University, Seoul, Republic of Korea** *Mar 2023 - Present*  
@@ -39,13 +48,20 @@ Proposal of 3D Camera-Based Digital Coordinate Recognition Technology <br>
 **Junyoung Koh**, Kanghee Lee  
 Proceedings of the Korean Society of Computer Information Conference 2022 [[PDF](https://koreascience.kr/article/CFKO202232249429413.pdf)]
 
+## 📚 Academic Services
+
+**Journal Reviewer**<br> 
+IEEE Access (SCI) Reviewer *Aug 2023 - Present*
+
+**IT Volunteer Service**<br> 
+World Friends Korea Paraguay IT Volunteer *Aug 2018 - Sep 2018*
+
 ## 🏢 Work Experience
 **Onoma AI** <br> *Aug 2023 - Present* <br>
 AI Team Leader & AI Researcher
 
 ## 🏆 Honors & Awards
-CES Innovation Award (2024) <br>
-  AI category
+CES 2024 Innovation Award - AI category *2024* <br>
 
 ## Project
 Development of an AI Media Art Therapy Platform incorporating Color, Play, and Music Therapies <br>
