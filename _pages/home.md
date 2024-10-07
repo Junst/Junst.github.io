@@ -15,7 +15,7 @@ Hello, I am a Ph.D student in Artificial Intelligence at Yonsei University, advi
 
 ## 🔥 News
 <ul style="list-style-type: square;">
-  <li><strong>Oct 2024</strong> : Our model has been downloaded over 12,000 times and has ranked 11th among trending models worldwide! </li>
+  <li><strong>Oct 2024</strong> : Our model has been downloaded over 14,000 times and has ranked 10th among trending models worldwide! </li>
   <li><strong>Sep 2024</strong> : Illustrious technical report is submitted in arXiv and HuggingFace! </li>
   <li><strong>Aug 2024</strong> : 1st Anniversary at my first company, Onoma AI 🎉 </li>
   <li><strong>May 2024</strong> : One paper is accepted to IIAI-AAI 2024!</li>
