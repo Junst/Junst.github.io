@@ -15,6 +15,7 @@ Hello, I am a Ph.D student in Artificial Intelligence at Yonsei University, advi
 
 ## 🔥 News
 <ul style="list-style-type: square;">
+  <li><strong>Feb 2025</strong> : One paper is waiting for Accept! </li>
   <li><strong>Oct 2024</strong> : Our model has been downloaded over 33,000 times and has ranked 7th among trending models worldwide! </li>
   <li><strong>Sep 2024</strong> : Illustrious technical report is submitted in arXiv and HuggingFace! </li>
   <li><strong>Aug 2024</strong> : 1st Anniversary at my first company, Onoma AI 🎉 </li>
@@ -31,6 +32,10 @@ Ph.D. Student, Department of Artificial Intelligence
 B.S., Major in Media
 
 ## ✏️ Publications  
+
+Adaptive Dropout Strategies for Multimodal Learning Stability <br>
+{**Jun Young Koh**, Hoyeon Moon, Junha Lee, Dongha Kim, Seungmin Lee, Sanghyun Park} <br>
+Wating for Accept
 
 Illustrious : an Open Advanced Illustration Model <br>
 {Sang Hyun Park, **Jun Young Koh**}, Junha Lee, Joy Song, Dongha Kim, Hoyeon Moon, Hyunju Lee, Min Song <br>
@@ -57,7 +62,7 @@ IEEE Access (SCI) Reviewer *Aug 2023 - Present*
 World Friends Korea Paraguay IT Volunteer *Aug 2018 - Sep 2018*
 
 ## 🏢 Work Experience
-**Onoma AI** *Aug 2023 - Present* <br>
+**Onoma AI** *Aug 2023 - Feb 2025* <br>
 AI Team Leader & AI Researcher
 
 ## 🏆 Honors & Awards
