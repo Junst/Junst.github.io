@@ -7,11 +7,13 @@ use_math: true
 
 ![]({{site.url}}/assets/images/cv-photo.png){: .align-right width="220" height="220"}
 
-Hello, I am a Ph.D student in Artificial Intelligence at Yonsei University, advised by Prof. Min Song in [DeepText LAB](https://deeptext.yonsei.ac.kr/home). I am interested in
+Hello, I am a Ph.D student in Artificial Intelligence at Yonsei University, advised by Prof. Min Song in [DeepText LAB](https://deeptext.yonsei.ac.kr/home).
 
-- Image/Text Generation
-- Mulimodal Learning with LoRA
-- Diffusion, etc.
+My research centers on understanding the structural and symbolic dimensions of music, with a particular interest in how machines can analyze, interpret, and visualize musical patterns. I am especially drawn to exploring the latent representations of music and how they can be used to uncover its underlying compositional logic. Recently, I have been focused on the intersection of symbolic music processing and deep learning, using attention-based models to reveal how machines “perceive” music.
+
+I am currently completing my Ph.D. coursework and plan to transition into full-time research or industry work beginning in the second half of 2025. My work is conducted remotely, and I actively lead the MAAP (Music AI Assemble People) initiative, a community of students and professionals exploring the frontiers of music AI. Through this, I mentor a team of five members from diverse backgrounds, fostering collaboration and innovation in the field.
+
+As part of my doctoral research, I have applied for a research scholarship funded by the National Research Foundation of Korea, proposing a study on Multi-Pitch Estimation Models Based on Synthetic Polyphonic Vocal Data. This project reflects my broader goal of developing systems that can dissect and understand complex vocal structures, laying the foundation for more expressive and musically intelligent AI.
 
 ## 🔥 News
 <ul style="list-style-type: square;">
@@ -24,6 +26,9 @@ Hello, I am a Ph.D student in Artificial Intelligence at Yonsei University, advi
 </ul>
 
 ## 🎓 Education
+
+**University of Southern California** *July 2025 - Agu 2025*
+Summer Session, Artificial Intelligence
 
 **Yonsei University, Seoul, Republic of Korea** *Mar 2023 - Present*  
 Ph.D. Student, Department of Artificial Intelligence  
@@ -54,6 +59,9 @@ Proposal of 3D Camera-Based Digital Coordinate Recognition Technology <br>
 Proceedings of the Korean Society of Computer Information Conference 2022 [[PDF](https://koreascience.kr/article/CFKO202232249429413.pdf)]
 
 ## 📚 Academic Services
+
+**Leader**<br>
+Modulabs MAAP(Music AI Assemble People) Leader *May 2025 - Present*
 
 **Journal Reviewer**<br> 
 IEEE Access (SCI) Reviewer *Aug 2023 - Present*
