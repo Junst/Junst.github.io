@@ -17,7 +17,8 @@ As part of my doctoral research, I have applied for a research scholarship funde
 
 ## 🔥 News
 <ul style="list-style-type: square;">
-  <li><strong>Feb 2025</strong> : One paper is waiting for Accept! </li>
+  <li><strong>Jul 2025</strong> : I will be working at KRAFTON AI in August! </li>
+  <li><strong>May 2025</strong> : I'm going to USC summer session in July! </li>
   <li><strong>Oct 2024</strong> : Our model has been downloaded over 33,000 times and has ranked 7th among trending models worldwide! </li>
   <li><strong>Sep 2024</strong> : Illustrious technical report is submitted in arXiv and HuggingFace! </li>
   <li><strong>Aug 2024</strong> : 1st Anniversary at my first company, Onoma AI 🎉 </li>
@@ -27,7 +28,7 @@ As part of my doctoral research, I have applied for a research scholarship funde
 
 ## 🎓 Education
 
-**University of Southern California** *July 2025 - Agu 2025*
+**University of Southern California** *July 2025 - Aug 2025* <br>
 Summer Session, Artificial Intelligence
 
 **Yonsei University, Seoul, Republic of Korea** *Mar 2023 - Present*  
@@ -70,6 +71,10 @@ IEEE Access (SCI) Reviewer *Aug 2023 - Present*
 World Friends Korea Paraguay IT Volunteer *Aug 2018 - Sep 2018*
 
 ## 🏢 Work Experience
+
+**Krafton** *Aug 2025 -* <br>
+AI Researcher Internship
+
 **Onoma AI** *Aug 2023 - Feb 2025* <br>
 AI Team Leader & AI Researcher
 
