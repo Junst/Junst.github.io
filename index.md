@@ -40,7 +40,7 @@ B.S., Major in Media
 ## ✏️ Publications  
 
 Jamendo-QA: A Large-Scale Music Question Answering Dataset <br>
-Yongwon Choi, Sooyong Kim, Gyuhyeong Choi, **Jun Young Koh**
+Yongwon Choi, Sooyong Kim, Gyuhyeong Choi, **Jun Young Koh** <br>
 Under Review
 
 AIBA: Attention-based Instrument Band Alignment for Text-to-Audio Diffusion <br>
