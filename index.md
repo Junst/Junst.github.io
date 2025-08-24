@@ -60,7 +60,7 @@ Improving Text Generation on Images with Synthetic Captions <br>
 IIAI AAI 2024 7th International Conference on Interaction Design and Digital Creation / Computing [[arXiv](https://arxiv.org/abs/2406.00505)] [[PDF](https://arxiv.org/abs/2406.00505.pdf)]
 
 CAT : Contrastive Adapter Training for Personalized Image Generation <br>
-{Jaewan Park,Sang Hyun Park, **Jun Young Koh**, Junha Lee}, Min Song <br>
+{Jaewan Park, Sang Hyun Park, **Jun Young Koh**, Junha Lee}, Min Song <br>
 CVPR 2024 Workshop Generative Models for Computer Vision [[arXiv](https://arxiv.org/abs/2404.07554)] [[PDF](https://arxiv.org/pdf/2404.07554.pdf)]
 
 Proposal of 3D Camera-Based Digital Coordinate Recognition Technology <br>
