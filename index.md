@@ -39,9 +39,17 @@ B.S., Major in Media
 
 ## ✏️ Publications  
 
-Adaptive Dropout Strategies for Multimodal Learning Stability <br>
-{**Jun Young Koh**, Hoyeon Moon, Junha Lee, Dongha Kim, Seungmin Lee, Sanghyun Park} <br>
-Wating for Accept
+Jamendo-QA: A Large-Scale Music Question Answering Dataset <br>
+Yongwon Choi, Sooyong Kim, Gyuhyeong Choi, **Jun Young Koh**
+Under Review
+
+AIBA: Attention-based Instrument Band Alignment for Text-to-Audio Diffusion <br>
+**Jun Young Koh**, Sooyong Kim, Gyuhyeong Choi, Yongwon Choi <br>
+Under Review
+
+Let Triggers Control : Frequency-aware Dropout for Effective Token Control <br>
+**Jun Young Koh**, Hoyeon Moon, Dongha Kim, Seungmin Lee, Sanghyun Park, Min Song <br>
+Under Review
 
 Illustrious : an Open Advanced Illustration Model <br>
 {Sang Hyun Park, **Jun Young Koh**}, Junha Lee, Joy Song, Dongha Kim, Hoyeon Moon, Hyunju Lee, Min Song <br>
@@ -60,6 +68,9 @@ Proposal of 3D Camera-Based Digital Coordinate Recognition Technology <br>
 Proceedings of the Korean Society of Computer Information Conference 2022 [[PDF](https://koreascience.kr/article/CFKO202232249429413.pdf)]
 
 ## 📚 Academic Services
+
+**Reviewer** <br>
+ISMIR Reviewer *Aug 2025 - Present*
 
 **Leader**<br>
 Modulabs MAAP(Music AI Assemble People) Leader *May 2025 - Present*
