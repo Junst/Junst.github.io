@@ -40,7 +40,7 @@ B.S., Major in Media
 ## ✏️ Publications  
 
 Jamendo-QA: A Large-Scale Music Question Answering Dataset <br>
-Yongwon Choi, Sooyong Kim, Gyuhyeong Choi, **Jun Young Koh** <br>
+**Jun Young Koh**, Sooyong Kim, Yongwon Choi, Gyuhyeong Choi <br>
 Under Review
 
 AIBA: Attention-based Instrument Band Alignment for Text-to-Audio Diffusion <br>
@@ -52,25 +52,27 @@ Let Triggers Control : Frequency-aware Dropout for Effective Token Control <br>
 Under Review
 
 Illustrious : an Open Advanced Illustration Model <br>
-{Sang Hyun Park, **Jun Young Koh**}, Junha Lee, Joy Song, Dongha Kim, Hoyeon Moon, Hyunju Lee, Min Song <br>
+Sang Hyun Park*, **Jun Young Koh***, Junha Lee, Joy Song, Dongha Kim, Hoyeon Moon, Hyunju Lee, Min Song <br>
 Technical Report [[arXiv](https://arxiv.org/abs/2409.19946)] [[PDF](https://arxiv.org/pdf/2409.19946)] [[HuggingFace](https://huggingface.co/OnomaAIResearch/Illustrious-xl-early-release-v0)] [[CivitAI](https://civitai.com/models/795765/illustrious-xl)]
 
 Improving Text Generation on Images with Synthetic Captions <br>
-{**Jun Young Koh**, Sang Hyun Park, Joy Song} <br>
+**Jun Young Koh***, Sang Hyun Park*, Joy Song* <br>
 IIAI AAI 2024 7th International Conference on Interaction Design and Digital Creation / Computing [[arXiv](https://arxiv.org/abs/2406.00505)] [[PDF](https://arxiv.org/abs/2406.00505.pdf)]
 
 CAT : Contrastive Adapter Training for Personalized Image Generation <br>
-{Jaewan Park, Sang Hyun Park, **Jun Young Koh**, Junha Lee}, Min Song <br>
+Jaewan Park*, Sang Hyun Park*, **Jun Young Koh***, Junha Lee*, Min Song <br>
 CVPR 2024 Workshop Generative Models for Computer Vision [[arXiv](https://arxiv.org/abs/2404.07554)] [[PDF](https://arxiv.org/pdf/2404.07554.pdf)]
 
 Proposal of 3D Camera-Based Digital Coordinate Recognition Technology <br>
 **Junyoung Koh**, Kanghee Lee  
 Proceedings of the Korean Society of Computer Information Conference 2022 [[PDF](https://koreascience.kr/article/CFKO202232249429413.pdf)]
 
+###### * *Equal Contribution*
+
 ## 📚 Academic Services
 
-**Reviewer** <br>
-ISMIR Reviewer *Aug 2025 - Present*
+**Conference Reviewer** <br>
+ISMIR / AAAI / NeurIPS Reviewer *Aug 2025 - Present*
 
 **Leader**<br>
 Modulabs MAAP(Music AI Assemble People) Leader *May 2025 - Present*
@@ -83,13 +85,14 @@ World Friends Korea Paraguay IT Volunteer *Aug 2018 - Sep 2018*
 
 ## 🏢 Work Experience
 
-**Krafton** *Aug 2025 -* <br>
+**Krafton** *Aug 2025 - Current* <br>
 AI Researcher Internship
 
 **Onoma AI** *Aug 2023 - Feb 2025* <br>
 AI Team Leader & AI Researcher
 
 ## 🏆 Honors & Awards
+CES 2025 Innovation Award - AI category *2025* <br>
 CES 2024 Innovation Award - AI category *2024* <br>
 
 ## Project
