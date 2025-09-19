@@ -52,15 +52,15 @@ Let Triggers Control : Frequency-aware Dropout for Effective Token Control <br>
 Under Review
 
 Illustrious : an Open Advanced Illustration Model <br>
-Sang Hyun Park*, **Jun Young Koh***, Junha Lee, Joy Song, Dongha Kim, Hoyeon Moon, Hyunju Lee, Min Song <br>
+Sang Hyun Park\*, **Jun Young Koh**\*, Junha Lee, Joy Song, Dongha Kim, Hoyeon Moon, Hyunju Lee, Min Song <br>
 Technical Report [[arXiv](https://arxiv.org/abs/2409.19946)] [[PDF](https://arxiv.org/pdf/2409.19946)] [[HuggingFace](https://huggingface.co/OnomaAIResearch/Illustrious-xl-early-release-v0)] [[CivitAI](https://civitai.com/models/795765/illustrious-xl)]
 
 Improving Text Generation on Images with Synthetic Captions <br>
-**Jun Young Koh***, Sang Hyun Park*, Joy Song* <br>
+**Jun Young Koh**\*, Sang Hyun Park\*, Joy Song\* <br>
 IIAI AAI 2024 7th International Conference on Interaction Design and Digital Creation / Computing [[arXiv](https://arxiv.org/abs/2406.00505)] [[PDF](https://arxiv.org/abs/2406.00505.pdf)]
 
 CAT : Contrastive Adapter Training for Personalized Image Generation <br>
-Jaewan Park*, Sang Hyun Park*, **Jun Young Koh***, Junha Lee*, Min Song <br>
+Jaewan Park\*, Sang Hyun Park\*, **Jun Young Koh**\*, Junha Lee\*, Min Song <br>
 CVPR 2024 Workshop Generative Models for Computer Vision [[arXiv](https://arxiv.org/abs/2404.07554)] [[PDF](https://arxiv.org/pdf/2404.07554.pdf)]
 
 Proposal of 3D Camera-Based Digital Coordinate Recognition Technology <br>
