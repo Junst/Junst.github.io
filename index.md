@@ -41,7 +41,7 @@ B.S., Major in Media
 
 Jamendo-QA: A Large-Scale Music Question Answering Dataset <br>
 **Jun Young Koh**, Sooyong Kim, Yongwon Choi, Gyuhyeong Choi <br>
-Under Review
+[[arXiv](https://arxiv.org/abs/2509.15662)] [[PDF](https://arxiv.org/pdf/2509.15662)] [[HuggingFace](https://huggingface.co/datasets/m-a-a-p/Jamendo-QA)]
 
 AIBA: Attention-based Instrument Band Alignment for Text-to-Audio Diffusion <br>
 **Jun Young Koh**, Sooyong Kim, Gyuhyeong Choi, Yongwon Choi <br>
