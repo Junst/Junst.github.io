@@ -41,11 +41,11 @@ B.S., Major in Media
 
 Jamendo-QA: A Large-Scale Music Question Answering Dataset <br>
 **Jun Young Koh**, Sooyong Kim, Yongwon Choi, Gyuhyeong Choi <br>
-[[arXiv](https://arxiv.org/abs/2509.15662)] [[PDF](https://arxiv.org/pdf/2509.15662)] [[HuggingFace](https://huggingface.co/datasets/m-a-a-p/Jamendo-QA)]
+Submitt in ICASSP 2026 [[arXiv](https://arxiv.org/abs/2509.15662)] [[PDF](https://arxiv.org/pdf/2509.15662)] [[HuggingFace](https://huggingface.co/datasets/m-a-a-p/Jamendo-QA)]
 
 AIBA: Attention-based Instrument Band Alignment for Text-to-Audio Diffusion <br>
 **Jun Young Koh**, Sooyong Kim, Gyuhyeong Choi, Yongwon Choi <br>
-Under Review
+NeurIPS 2025 Workshop on AI for Music: Where Creativity Meets Computation
 
 Let Triggers Control : Frequency-aware Dropout for Effective Token Control <br>
 **Jun Young Koh**, Hoyeon Moon, Dongha Kim, Seungmin Lee, Sanghyun Park, Min Song <br>
