@@ -1,29 +1,29 @@
-<!-- Theme Toggle FAB (single instance) -->
 <button id="theme-toggle" class="theme-fab" aria-label="Toggle theme" title="Toggle theme">🌓</button>
 <script>
 (function () {
   var KEY = 'theme';
   var root = document.documentElement;
 
-  function setIcon(btn){
-    btn.textContent = root.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
+  function render(btn){
+    btn.textContent = (root.getAttribute('data-theme') === 'dark') ? '☀️' : '🌙';
+    document.documentElement.style.colorScheme = root.getAttribute('data-theme');
   }
 
   var btn = document.getElementById('theme-toggle');
-  if (!btn) {
+  if (!btn) { // 혹시 템플릿 문제로 없으면 생성
     btn = document.createElement('button');
     btn.id = 'theme-toggle';
     btn.className = 'theme-fab';
     btn.textContent = '🌓';
     document.body.appendChild(btn);
   }
-  setIcon(btn);
+  render(btn);
 
   btn.addEventListener('click', function(){
-    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    var next = (root.getAttribute('data-theme') === 'dark') ? 'light' : 'dark';
     root.setAttribute('data-theme', next);
     localStorage.setItem(KEY, next);
-    setIcon(btn);
+    render(btn);
   });
 })();
 </script>
