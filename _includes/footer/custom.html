@@ -1,22 +1,20 @@
-<!-- theme toggle (single instance only) -->
-<button class="theme-toggle" aria-label="Toggle theme" title="Toggle theme">🌓</button>
+<button id="theme-toggle" class="theme-fab" aria-label="Toggle theme">🌓</button>
 <script>
-  (function () {
-    var key = 'theme';
-    var root = document.documentElement;
+(function () {
+  var KEY = 'theme', root = document.documentElement;
+  var saved = localStorage.getItem(KEY);
+  var initial = saved || 'dark';
+  root.setAttribute('data-theme', initial);
 
-    // 사용자 선택값이 없으면 기본값: dark
-    var saved = localStorage.getItem(key);
-    var initial = saved || 'dark';
-    root.setAttribute('data-theme', initial);
+  var btn = document.getElementById('theme-toggle');
+  function setIcon(){ btn.textContent = root.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙'; }
+  setIcon();
 
-    var btn = document.querySelector('.theme-toggle');
-    if (btn) {
-      btn.addEventListener('click', function () {
-        var now = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-        root.setAttribute('data-theme', now);
-        localStorage.setItem(key, now);
-      });
-    }
-  })();
+  btn.addEventListener('click', function(){
+    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    localStorage.setItem(KEY, next);
+    setIcon();
+  });
+})();
 </script>
