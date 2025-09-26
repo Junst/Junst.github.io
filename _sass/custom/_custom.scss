@@ -87,3 +87,105 @@ a:hover { opacity: .9; }
   cursor: pointer; z-index: 999;
 }
 .theme-toggle:hover { transform: translateY(-1px); }
+
+/* ===== unify palette: 모든 영역 #000로 통일 ===== */
+:root,
+:root[data-theme="dark"] {
+  --bg: #000;        /* 본문/사이드/헤더/푸터 공통 배경 */
+  --bg-soft: #000;   /* 헤더·사이드 등도 완전히 동일 색 */
+  --text: #e5e5e5;
+  --muted: #bdbdbd;
+  --line: #1c1c1c;   /* 은은한 외곽선 */
+  --accent: #8ab4ff;
+}
+
+/* ===== 헤더/내비: 이중 라인 제거, 외곽선 1줄만 ===== */
+.masthead {
+  background: var(--bg-soft) !important;
+  border-bottom: 1px solid var(--line) !important; /* 외선 1줄 */
+  box-shadow: none !important;
+  background-image: none !important;
+}
+.greedy-nav {
+  background: transparent !important;
+  border-bottom: 0 !important;           /* ← 두 번째 선 제거 */
+  box-shadow: none !important;
+  background-image: none !important;
+}
+
+/* 데스크탑에선 상단 토글 버튼(햄버거/검색) 안 보이게 */
+@media (min-width: 64em) {
+  .greedy-nav__toggle,
+  .search__toggle { display: none !important; }
+}
+
+/* 혹시 전역 button 스타일이 적용되어 길게 보이는 문제 리셋 */
+.masthead .greedy-nav button,
+.masthead .search__toggle {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  width: auto !important;
+  height: auto !important;
+  padding: 0 !important;
+}
+
+/* ===== 사이드바(프로필): 외선 1줄만 남기고 내부 라인 제거 ===== */
+.sidebar {
+  background: var(--bg-soft) !important;
+  border: 1px solid var(--line) !important;  /* 외선 1줄만 */
+}
+.author__avatar,
+.author__content,
+.author__urls-wrapper {
+  background: transparent !important;
+  border: 0 !important;                      /* 내부 선 제거 */
+  box-shadow: none !important;
+}
+
+/* 사이드바 링크 리스트 내부 구분선 제거(테마 기본선 무력화) */
+.author__urls,
+.author__urls li,
+.author__urls a {
+  border: 0 !important;
+}
+
+/* ===== 본문/푸터도 완전 동일 배경으로 ===== */
+html, body,
+.page, .page__inner-wrap, .page__content,
+.initial-content, .archive,
+.page__footer, .site-footer {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+.page__footer, .site-footer {
+  border-top: 1px solid var(--line) !important;  /* 외선 1줄만 */
+  box-shadow: none !important;
+  background-image: none !important;
+}
+
+/* ===== 링크/코드/버튼 기본 ===== */
+a { color: var(--accent); }
+code, pre {
+  background: #0f0f0f !important;
+  color: #f0f0f0 !important;
+  border-color: var(--line) !important;
+}
+
+/* 전역 button에 과한 스타일이 들어갔다면 무력화(헤더 보정용) */
+:root[data-theme="dark"] button {
+  background: transparent !important;
+  border: 0 !important;
+  color: inherit !important;
+  box-shadow: none !important;
+}
+/* 우리 토글 FAB만 다시 스타일 적용 */
+#theme-toggle, .theme-fab {
+  position: fixed; right: 18px; bottom: 18px;
+  width: 48px; height: 48px; display: grid; place-items: center;
+  border-radius: 999px; background: #161616; color: #f0f0f0;
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 6px 20px rgba(0,0,0,.35);
+  cursor: pointer; z-index: 1000; backdrop-filter: blur(6px);
+}
+#theme-toggle:hover { transform: translateY(-1px); }
