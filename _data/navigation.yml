@@ -6,8 +6,9 @@ main:
   - title: "Datasets"
     url: /datasets/
   - title: "Blog"
-    url: /blog/
-  - title: "CV"
-    url: /assets/cv.pdf
+    url: https://blog.naver.com/solbon1212
+    external: true
+  - title: "Gallery"
+    url: /gallery/
   - title: "Contact"
     url: /contact/
