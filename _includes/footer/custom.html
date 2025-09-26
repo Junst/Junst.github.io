@@ -1,20 +1,29 @@
-<button id="theme-toggle" class="theme-fab" aria-label="Toggle theme">🌓</button>
+<!-- Theme Toggle FAB (single instance) -->
+<button id="theme-toggle" class="theme-fab" aria-label="Toggle theme" title="Toggle theme">🌓</button>
 <script>
 (function () {
-  var KEY = 'theme', root = document.documentElement;
-  var saved = localStorage.getItem(KEY);
-  var initial = saved || 'dark';
-  root.setAttribute('data-theme', initial);
+  var KEY = 'theme';
+  var root = document.documentElement;
+
+  function setIcon(btn){
+    btn.textContent = root.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
+  }
 
   var btn = document.getElementById('theme-toggle');
-  function setIcon(){ btn.textContent = root.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙'; }
-  setIcon();
+  if (!btn) {
+    btn = document.createElement('button');
+    btn.id = 'theme-toggle';
+    btn.className = 'theme-fab';
+    btn.textContent = '🌓';
+    document.body.appendChild(btn);
+  }
+  setIcon(btn);
 
   btn.addEventListener('click', function(){
     var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
     root.setAttribute('data-theme', next);
     localStorage.setItem(KEY, next);
-    setIcon();
+    setIcon(btn);
   });
 })();
 </script>
