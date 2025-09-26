@@ -5,33 +5,31 @@
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon.ico/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon.ico/favicon-16x16.png">
 <link rel="manifest" href="/site.webmanifest">
-<!-- end custom head snippets -->
-
-
-<button id="theme-toggle">🌙</button>
+<!-- Theme Toggle FAB -->
+<button id="theme-toggle" class="theme-fab" aria-label="Toggle theme">🌙</button>
 
 <script>
-  const toggle = document.getElementById("theme-toggle");
-  const currentTheme = localStorage.getItem("theme");
-  if (currentTheme) {
-    document.body.dataset.theme = currentTheme;
-    toggle.textContent = currentTheme === "dark" ? "☀️" : "🌙";
-  }
+(function () {
+  const LS_KEY = 'theme';
+  const root = document.documentElement;
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-  toggle.addEventListener("click", () => {
-    let theme = document.body.dataset.theme === "dark" ? "light" : "dark";
-    document.body.dataset.theme = theme;
-    localStorage.setItem("theme", theme);
-    toggle.textContent = theme === "dark" ? "☀️" : "🌙";
+  // 초기 테마: 저장값 > 시스템 선호
+  const saved = localStorage.getItem(LS_KEY);
+  const initial = saved || (prefersDark ? 'dark' : 'light');
+  root.setAttribute('data-theme', initial);
+
+  const btn = document.getElementById('theme-toggle');
+  const syncIcon = () => { btn.textContent = root.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙'; };
+  syncIcon();
+
+  btn.addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    localStorage.setItem(LS_KEY, next);
+    syncIcon();
   });
+})();
 </script>
+<!-- end custom head snippets -->
 
-<style>
-  body[data-theme="dark"] {
-    background-color: #121212;
-    color: #e0e0e0;
-  }
-  body[data-theme="dark"] a {
-    color: #80b3ff;
-  }
-</style>
