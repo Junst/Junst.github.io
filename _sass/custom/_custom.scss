@@ -1,8 +1,8 @@
-/* ===== Modes (html[data-theme]) ===== */
+/* 변수 */
 html[data-theme="light"] { --bg:#fff; --text:#111; --accent:#1a73e8; --card:#fff; }
 html[data-theme="dark"]  { --bg:#000; --text:#e5e5e5; --accent:#8ab4ff; --card:#0f0f0f; }
 
-/* ===== Apply globally (unify background & text) ===== */
+/* 전역 적용 */
 html,body,
 .masthead,.greedy-nav,
 .sidebar,.author__avatar,.author__content,.author__urls-wrapper,
@@ -14,29 +14,29 @@ html,body,
   box-shadow:none!important;
 }
 
-/* ===== Remove ALL borders/lines ===== */
+/* 라인 제거 */
 .masthead,.greedy-nav,.page__footer,.site-footer,
 .sidebar,.author__avatar,.author__content,.author__urls-wrapper,
-.author__urls,.author__urls *,.nav__list,.nav__list *,hr{ border:0!important; }
+.author__urls,.author__urls *,.nav__list,.nav__list *,hr { border:0!important; }
 hr{ height:0!important; }
 
-/* ===== Links & code ===== */
+/* 링크/코드 */
 a{ color:var(--accent); }
 code,pre{ background:var(--card)!important; color:var(--text)!important; }
 
-/* ===== Header tiny buttons reset (prevent long wide buttons) ===== */
+/* 헤더 버튼 리셋 */
 .masthead .greedy-nav button,.masthead .search__toggle{ all:unset; }
 
-/* ===== Theme toggle FAB (light: 🌙 + black / dark: ☀️ + white) ===== */
+/* 토글 FAB */
 #theme-toggle,.theme-fab{
   position:fixed; right:18px; bottom:18px;
-  width:48px; height:48px; display:grid; place-items:center;
-  border-radius:999px; border:0; cursor:pointer; z-index:1000;
+  width:48px;height:48px; display:grid; place-items:center;
+  border-radius:999px; border:0; cursor:pointer; z-index:9999;
   box-shadow:0 6px 18px rgba(0,0,0,.35);
   transition:background-color .15s,color .15s,transform .15s;
 }
 html[data-theme="light"] #theme-toggle,
-html[data-theme="light"] .theme-fab{ background:#000; color:#fff; }
+html[data-theme="light"] .theme-fab{ background:#000; color:#fff; } /* 🌙 + 검정배경 */
 html[data-theme="dark"]  #theme-toggle,
-html[data-theme="dark"]  .theme-fab{ background:#fff; color:#000; }
+html[data-theme="dark"]  .theme-fab{ background:#fff; color:#000; } /* ☀️ + 흰배경 */
 #theme-toggle:hover,.theme-fab:hover{ transform:translateY(-1px); }
