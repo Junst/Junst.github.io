@@ -6,14 +6,37 @@ body {
 
 /* 다크 모드 */
 @media (prefers-color-scheme: dark) {
-  body {
-    background-color: #121212;
-    color: #e0e0e0;
-  }
-  a {
-    color: #80b3ff;
-  }
-  .site-header, .page__footer {
+  body { background-color: #121212; color: #e0e0e0; }
+  a { color: #80b3ff; }
+
+  .site-header, .page__footer, .sidebar, .greedy-nav {
     background: #1a1a1a;
+  }
+
+  .page, .page__inner-wrap, .page__content, .archive {
+    background: transparent;
+  }
+
+  .nav__list .nav__items a,
+  .masthead__menu-item a,
+  .author__urls a {
+    color: #d0d0d0;
+  }
+
+  .btn, .button, button {
+    background: #2a2a2a;
+    border-color: #3a3a3a;
+    color: #eaeaea;
+  }
+
+  pre, code, kbd, samp {
+    background: #1e1e1e;
+    color: #e6e6e6;
+  }
+
+  .notice {
+    background: #1b1b1b;
+    border-color: #333;
+    color: #dcdcdc;
   }
 }
