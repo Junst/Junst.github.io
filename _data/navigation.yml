@@ -1,10 +1,15 @@
 # main links
 main:
-  - title: "Home"
-    url: /home/
-  - title: "Category"
-    url: /categories/
-  - title: "Tag"
-    url: /tags/
-  # - title: "Sitemap"
-  #   url: /sitemap/
+  # - title: "Home"
+  - title: "Projects"
+    url: /projects/
+  - title: "Publications"
+    url: /publications/
+  - title: "Datasets"
+    url: /datasets/
+  - title: "Blog"
+    url: /blog/
+  - title: "CV"
+    url: /assets/cv.pdf
+  - title: "Contact"
+    url: /contact/
