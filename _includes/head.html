@@ -13,6 +13,30 @@
   document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
 </script>
 
+<!-- Theme Toggle FAB -->
+<button id="theme-toggle" aria-label="Toggle theme">🌙</button>
+
+<script>
+  (function () {
+    const LS_KEY = "theme";
+    const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const saved = localStorage.getItem(LS_KEY);
+    const initial = saved || (prefersDark ? "dark" : "light");
+    document.documentElement.dataset.theme = initial;
+
+    const btn = document.getElementById("theme-toggle");
+    const syncIcon = () => btn.textContent = (document.documentElement.dataset.theme === "dark") ? "☀️" : "🌙";
+    syncIcon();
+
+    btn.addEventListener("click", () => {
+      const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      document.documentElement.dataset.theme = next;
+      localStorage.setItem(LS_KEY, next);
+      syncIcon();
+    });
+  })();
+</script>
+
 <!-- For all browsers -->
 <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
