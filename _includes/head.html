@@ -6,52 +6,22 @@
   <link href="{% if site.atom_feed.path %}{{ site.atom_feed.path }}{% else %}{{ '/feed.xml' | relative_url }}{% endif %}" type="application/atom+xml" rel="alternate" title="{{ site.title }} Feed">
 {% endunless %}
 
-<!-- https://t.co/dKP3o1e -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <script>
   document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
 </script>
 
-<!-- Theme Toggle FAB -->
-<button id="theme-toggle" aria-label="Toggle theme">🌙</button>
+<!-- Site CSS (캐시 우회용 쿼리스트링) -->
+<link rel="stylesheet" href="{{ '/assets/css/main.css?v=' | append: site.github.build_revision | relative_url }}">
 
-<script>
-  (function () {
-    const LS_KEY = "theme";
-    const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const saved = localStorage.getItem(LS_KEY);
-    const initial = saved || (prefersDark ? "dark" : "light");
-    document.documentElement.dataset.theme = initial;
-
-    const btn = document.getElementById("theme-toggle");
-    const syncIcon = () => btn.textContent = (document.documentElement.dataset.theme === "dark") ? "☀️" : "🌙";
-    syncIcon();
-
-    btn.addEventListener("click", () => {
-      const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
-      document.documentElement.dataset.theme = next;
-      localStorage.setItem(LS_KEY, next);
-      syncIcon();
-    });
-  })();
-</script>
-
-<!-- For all browsers -->
-<link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
 
 <!--[if IE]>
   <style>
-    /* old IE unsupported flexbox fixes */
-    .greedy-nav .site-title {
-      padding-right: 3em;
-    }
+    .greedy-nav .site-title { padding-right: 3em; }
     .greedy-nav button {
-      position: absolute;
-      top: 0;
-      right: 0;
-      height: 100%;
+      position: absolute; top: 0; right: 0; height: 100%;
     }
   </style>
 <![endif]-->
