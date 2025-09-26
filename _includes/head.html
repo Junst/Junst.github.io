@@ -9,13 +9,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <script>
-  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+  (function(){
+    var key = 'theme';
+    // 저장값이 없으면 기본 'dark'로 시작
+    var initial = localStorage.getItem(key) || 'dark';
+    document.documentElement.setAttribute('data-theme', initial);
+  })();
 </script>
 
-<!-- Site CSS (캐시 우회용 쿼리스트링) -->
+<!-- Site CSS (캐시 우회) -->
 <link rel="stylesheet" href="{{ '/assets/css/main.css?v=' | append: site.github.build_revision | relative_url }}">
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
 
 <!--[if IE]>
   <style>
