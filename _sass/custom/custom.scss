@@ -40,3 +40,126 @@ body {
     color: #dcdcdc;
   }
 }
+
+/* ===== Floating Action Button (theme toggle) ===== */
+#theme-toggle {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  width: 48px;
+  height: 48px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(25,25,25,0.85);
+  color: #f0f0f0;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  cursor: pointer;
+  z-index: 1000;
+  backdrop-filter: blur(6px);
+}
+#theme-toggle:hover { transform: translateY(-1px); }
+
+/* ===== 기본 라이트 ===== */
+:root {
+  color-scheme: light dark; /* 브라우저 UI 대비 */
+}
+
+/* ===== 시스템 다크 선호시 자동 (초기 진입용) ===== */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg: #121212;
+    --tx: #e0e0e0;
+    --muted: #bdbdbd;
+    --card: #181818;
+    --line: #2a2a2a;
+    --accent: #8ab4ff;
+  }
+  :root:not([data-theme]) body {
+    background: var(--bg); color: var(--tx);
+  }
+}
+
+/* ===== 수동 다크 모드 (토글 시 적용) ===== */
+:root[data-theme="dark"] {
+  --bg: #121212;
+  --tx: #e0e0e0;
+  --muted: #bdbdbd;
+  --card: #181818;
+  --line: #2a2a2a;
+  --accent: #8ab4ff;
+}
+
+:root[data-theme="dark"] body            { background: var(--bg); color: var(--tx); }
+:root[data-theme="dark"] a               { color: var(--accent); }
+:root[data-theme="dark"] hr              { border-color: var(--line); }
+:root[data-theme="dark"] code, 
+:root[data-theme="dark"] pre             { background: #1e1e1e; color: #f0f0f0; }
+
+/* ===== 헤더(맨 위 네모 띠 제거 & 텍스트 가독성) ===== */
+:root[data-theme="dark"] .masthead,
+:root[data-theme="dark"] .greedy-nav {
+  background: transparent !important; /* 상단 전체 네모 배경 제거 */
+  border-bottom: 1px solid var(--line);
+}
+:root[data-theme="dark"] .masthead .site-title a,
+:root[data-theme="dark"] .masthead .site-title {
+  color: var(--tx) !important;        /* "Junyoung Koh" 색상 */
+}
+:root[data-theme="dark"] .masthead .site-subtitle,
+:root[data-theme="dark"] .greedy-nav a,
+:root[data-theme="dark"] .nav__list .nav__items a {
+  color: var(--muted) !important;
+}
+
+/* ===== 본문 카드/박스류 과한 흰배경 제거 ===== */
+:root[data-theme="dark"] .page,
+:root[data-theme="dark"] .page__inner-wrap,
+:root[data-theme="dark"] .page__content,
+:root[data-theme="dark"] .archive {
+  background: transparent !important;
+}
+
+/* ===== 버튼/노티스/테이블 ===== */
+:root[data-theme="dark"] .btn, 
+:root[data-theme="dark"] .button, 
+:root[data-theme="dark"] button {
+  background: #2a2a2a; border-color: #3a3a3a; color: #eaeaea;
+}
+:root[data-theme="dark"] .notice {
+  background: #1b1b1b; border-color: #333; color: #dcdcdc;
+}
+:root[data-theme="dark"] table {
+  border-color: var(--line);
+}
+:root[data-theme="dark"] table th, 
+:root[data-theme="dark"] table td {
+  background: #151515;
+  border-color: var(--line);
+  color: var(--tx);
+}
+
+/* ===== 푸터(맨 아래 powered by 등 흰색 문제 해결) ===== */
+:root[data-theme="dark"] .page__footer,
+:root[data-theme="dark"] .site-footer {
+  background: transparent !important;  /* 필요하면 #0f0f0f 같은 톤으로 */
+  color: var(--muted) !important;
+  border-top: 1px solid var(--line);
+}
+:root[data-theme="dark"] .page__footer a,
+:root[data-theme="dark"] .site-footer a {
+  color: var(--accent) !important;
+}
+:root[data-theme="dark"] .page__footer-follow li,
+:root[data-theme="dark"] .page__footer-copyright,
+:root[data-theme="dark"] .powered-by {
+  color: var(--muted) !important;
+}
+
+/* ===== 사이드바/저자 카드 대비 ===== */
+:root[data-theme="dark"] .sidebar,
+:root[data-theme="dark"] .author__avatar,
+:root[data-theme="dark"] .author__content,
+:root[data-theme="dark"] .author__urls-wrapper {
+  background: transparent !important;
+  color: var(--tx);
+}
