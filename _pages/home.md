@@ -1,10 +1,10 @@
 ---
-title: "Posts by Category"
-permalink: /categories/
-layout: categories
+layout: single
 author_profile: true
 classes: wide
+use_math: true
 ---
+
 ![]({{site.url}}/assets/images/cv-photo.png){: .align-right width="220" height="220"}
 
 Hello, I am a Ph.D student in Artificial Intelligence at Yonsei University, advised by Prof. Min Song in [DeepText LAB](https://deeptext.yonsei.ac.kr/home).
@@ -17,14 +17,23 @@ As part of my doctoral research, I have applied for a research scholarship funde
 
 ## 🔥 News
 <ul style="list-style-type: square;">
+  <li><strong>Sep 2025</strong> : Our AIBA paper is accepted to NeurIPS 2025 Workshop (AI for Music) 🎶 </li>
+  <li><strong>Sep 2025</strong> : Awarded Brian Impact Foundation (Kakao, USD 1.5K Per paper)  </li>
+  <li><strong>Aug 2025</strong> : Selected for NRF Ph.D. Research Fellowship (RS-2025-25422688, USD 20K) </li>
   <li><strong>Jul 2025</strong> : I will be working at KRAFTON AI in August! </li>
   <li><strong>May 2025</strong> : I'm going to USC summer session in July! </li>
-  <li><strong>Oct 2024</strong> : Our model has been downloaded over 33,000 times and has ranked 7th among trending models worldwide! </li>
-  <li><strong>Sep 2024</strong> : Illustrious technical report is submitted in arXiv and HuggingFace! </li>
-  <li><strong>Aug 2024</strong> : 1st Anniversary at my first company, Onoma AI 🎉 </li>
-  <li><strong>May 2024</strong> : One paper is accepted to IIAI-AAI 2024!</li>
-  <li><strong>Jan 2024</strong> : One paper is accepted to CVPR!</li>
 </ul>
+
+<details>
+  <summary><strong> 2024 News </strong></summary>
+  <ul style="list-style-type: square;">
+    <li><strong>Oct 2024</strong> : Our model has been downloaded over 33,000 times and has ranked 7th among trending models worldwide! </li>
+    <li><strong>Sep 2024</strong> : Illustrious technical report is submitted in arXiv and HuggingFace! </li>
+    <li><strong>Aug 2024</strong> : 1st Anniversary at my first company, Onoma AI 🎉 </li>
+    <li><strong>May 2024</strong> : One paper is accepted to IIAI-AAI 2024!</li>
+    <li><strong>Jan 2024</strong> : One paper is accepted to CVPR!</li>
+  </ul>
+</details>
 
 ## 🎓 Education
 
@@ -45,7 +54,7 @@ Submitt in ICASSP 2026 [[arXiv](https://arxiv.org/abs/2509.15662)] [[PDF](https:
 
 AIBA: Attention-based Instrument Band Alignment for Text-to-Audio Diffusion <br>
 **Jun Young Koh**, Sooyong Kim, Gyuhyeong Choi, Yongwon Choi <br>
-NeurIPS 2025 Workshop on AI for Music: Where Creativity Meets Computation
+NeurIPS 2025 Workshop on [[AI for Music: Where Creativity Meets Computation](https://aiformusicworkshop.github.io/)] [[arXiv](https://arxiv.org/abs/2509.20891)] [[PDF](https://arxiv.org/pdf/2509.20891)]
 
 Let Triggers Control : Frequency-aware Dropout for Effective Token Control <br>
 **Jun Young Koh**, Hoyeon Moon, Dongha Kim, Seungmin Lee, Sanghyun Park, Min Song <br>
@@ -61,7 +70,7 @@ IIAI AAI 2024 7th International Conference on Interaction Design and Digital Cre
 
 CAT : Contrastive Adapter Training for Personalized Image Generation <br>
 Jaewan Park\*, Sang Hyun Park\*, **Jun Young Koh**\*, Junha Lee\*, Min Song <br>
-CVPR 2024 Workshop Generative Models for Computer Vision [[arXiv](https://arxiv.org/abs/2404.07554)] [[PDF](https://arxiv.org/pdf/2404.07554.pdf)]
+CVPR 2024 Workshop [[Generative Models for Computer Vision](https://generative-vision.github.io/workshop-CVPR-24/)] [[arXiv](https://arxiv.org/abs/2404.07554)] [[PDF](https://arxiv.org/pdf/2404.07554.pdf)]
 
 Proposal of 3D Camera-Based Digital Coordinate Recognition Technology <br>
 **Junyoung Koh**, Kanghee Lee  
@@ -94,6 +103,15 @@ AI Team Leader & AI Researcher
 ## 🏆 Honors & Awards
 CES 2025 Innovation Award - AI category *2025* <br>
 CES 2024 Innovation Award - AI category *2024* <br>
+
+## 💰 Funding
+**National Research Foundation of Korea (Ministry of Science and ICT)**  
+Ph.D. Research Fellowship (Project: *Multi-Pitch Estimation Model Based on Synthetic Polyphonic Vocal Data*)  
+Grant No. RS-2025-25422688 · USD 20K (KRW 25M) for 1 year *(Sep 2025 – Aug 2026)*
+
+**Brian Impact Foundation (Kakao)**  
+Publication support program, providing research funding of USD 1.5K (KRW 2M) per accepted paper *(2025 – Present)*
+
 
 ## Project
 Development of an AI Media Art Therapy Platform incorporating Color, Play, and Music Therapies <br>
