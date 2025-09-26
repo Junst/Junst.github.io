@@ -1,112 +1,89 @@
-/* 기본은 라이트 모드 */
-body {
-  background-color: #ffffff;
-  color: #222222;
+/* ========== 테마 공통 토큰 ========== */
+:root {
+  --bg: #0a0a0a;
+  --bg-soft: #121212;
+  --text: #eaeaea;
+  --text-dim: #b8b8b8;
+  --card: #151515;
+  --border: #2a2a2a;
+  --accent: #8ab4f8;
 }
 
-/* 다크 모드 */
-@media (prefers-color-scheme: dark) {
-  body { background-color: #121212; color: #e0e0e0; }
-  a { color: #80b3ff; }
-
-  .site-header, .page__footer, .sidebar, .greedy-nav {
-    background: #1a1a1a;
-  }
-
-  .page, .page__inner-wrap, .page__content, .archive {
-    background: transparent;
-  }
-
-  .nav__list .nav__items a,
-  .masthead__menu-item a,
-  .author__urls a {
-    color: #d0d0d0;
-  }
-
-  .btn, .button, button {
-    background: #2a2a2a;
-    border-color: #3a3a3a;
-    color: #eaeaea;
-  }
-
-  pre, code, kbd, samp {
-    background: #1e1e1e;
-    color: #e6e6e6;
-  }
-
-  .notice {
-    background: #1b1b1b;
-    border-color: #333;
-    color: #dcdcdc;
-  }
+:root[data-theme="light"] {
+  --bg: #ffffff;
+  --bg-soft: #fafafa;
+  --text: #111;
+  --text-dim: #333;
+  --card: #fff;
+  --border: #e5e5e5;
+  --accent: #1a73e8;
 }
 
-/* ===== Floating Action Button (theme toggle) ===== */
-/* 토글 버튼 스타일 */
-#theme-toggle, .theme-fab {
-  position: fixed; right: 22px; bottom: 22px;
-  width: 48px; height: 48px; border-radius: 9999px;
-  border: 1px solid rgba(255,255,255,0.15);
-  background: rgba(25,25,25,0.85); color: #f0f0f0;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-  cursor: pointer; z-index: 1000; backdrop-filter: blur(6px);
-}
-#theme-toggle:hover { transform: translateY(-1px); }
-
-:root { color-scheme: light dark; }
-
-/* 시스템이 다크일 때 초기 진입용 (localStorage 없을 때) */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    --bg:#000; --tx:#e5e5e5; --muted:#bdbdbd; --line:#222; --accent:#8ab4ff;
-  }
-  :root:not([data-theme]) body { background:var(--bg); color:var(--tx); }
+/* ========== 글로벌 ========== */
+html, body {
+  background-color: var(--bg) !important;
+  color: var(--text) !important;
+  transition: background-color .2s ease, color .2s ease;
 }
 
-/* 토글로 강제하는 다크 */
-:root[data-theme="dark"] {
-  --bg:#000; --tx:#e5e5e5; --muted:#bdbdbd; --line:#222; --accent:#8ab4ff;
+a { color: var(--accent); }
+a:hover { opacity: .9; }
+
+/* 본문 컨테이너/카드 */
+.page, .page__inner-wrap, .archive, .entries, .grid__item,
+.page__content, .page__hero, .page__meta, .sidebar,
+.author__avatar, .author__content, .author__urls-wrapper {
+  background: transparent !important;
+  color: var(--text) !important;
 }
 
-/* 배경 완전 통일: 타이틀/메뉴/프로필/본문/푸터 전부 동일 */
-:root[data-theme="dark"] body,
-:root[data-theme="dark"] .masthead,
-:root[data-theme="dark"] .greedy-nav,
-:root[data-theme="dark"] .sidebar,
-:root[data-theme="dark"] .author__avatar,
-:root[data-theme="dark"] .author__content,
-:root[data-theme="dark"] .author__urls-wrapper,
-:root[data-theme="dark"] .page,
-:root[data-theme="dark"] .page__inner-wrap,
-:root[data-theme="dark"] .page__content,
-:root[data-theme="dark"] .initial-content,
-:root[data-theme="dark"] .archive,
-:root[data-theme="dark"] .page__footer,
-:root[data-theme="dark"] .site-footer {
-  background: var(--bg) !important;
-  color: var(--tx);
+/* 박스형 영역(카드/박스/코드블록 등) */
+.page__content .notice,
+.page__content .highlighter-rouge,
+.highlight, pre, code, kbd, samp {
+  background: var(--card) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
 }
 
-/* 상단/하단 라인만 남기고 그림자/그라디언트 제거 */
-:root[data-theme="dark"] .masthead,
-:root[data-theme="dark"] .greedy-nav { background-image:none!important; box-shadow:none!important; border-bottom:1px solid var(--line); }
-:root[data-theme="dark"] .page__footer,
-:root[data-theme="dark"] .site-footer { background-image:none!important; box-shadow:none!important; border-top:1px solid var(--line); }
+/* ========== 헤더/내비/프로필 ========== */
+.masthead, .greedy-nav, .greedy-nav .visible-links,
+.greedy-nav .hidden-links {
+  background: var(--bg-soft) !important;
+  border-bottom: 1px solid var(--border);
+}
 
-/* 링크/텍스트 대비 */
-:root[data-theme="dark"] a { color: var(--accent); }
-:root[data-theme="dark"] .masthead .site-title,
-:root[data-theme="dark"] .masthead .site-title a { color: var(--tx)!important; }
-:root[data-theme="dark"] .greedy-nav a,
-:root[data-theme="dark"] .nav__list .nav__items a { color: var(--muted)!important; }
+.site-title, .site-title a, .masthead__menu-item a {
+  color: var(--text) !important;
+}
 
-/* 코드/노티스/테이블/버튼 */
-:root[data-theme="dark"] code,
-:root[data-theme="dark"] pre { background:#0f0f0f; color:#f0f0f0; }
-:root[data-theme="dark"] .notice { background:#0d0d0d; border-color:#1f1f1f; color:#ddd; }
-:root[data-theme="dark"] table { border-color: var(--line); }
-:root[data-theme="dark"] table th,
-:root[data-theme="dark"] table td { background:#0a0a0a; border-color:var(--line); color:var(--tx); }
-:root[data-theme="dark"] .btn,
-:root[data-theme="dark"] .button,
-:root[data-theme="dark"] button { background:#141414; border-color:#1f1f1f; color:#eaeaea; }
+.masthead__menu-item a:hover { opacity: .8; }
+
+/* 프로필 사이드바(프로필 카드/링크) */
+.sidebar, .author__urls-wrapper, .author__content {
+  background: var(--bg-soft) !important;
+  border: 1px solid var(--border);
+}
+
+/* 푸터 */
+.page__footer {
+  background: var(--bg-soft) !important;
+  color: var(--text-dim) !important;
+  border-top: 1px solid var(--border);
+}
+
+/* ========== 토글 버튼(우하단 Floating) ========== */
+.theme-toggle {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  width: 48px; height: 48px;
+  display: grid; place-items: center;
+  border-radius: 999px;
+  background: var(--bg-soft);
+  color: var(--text);
+  border: 1px solid var(--border);
+  box-shadow: 0 6px 20px rgba(0,0,0,.35);
+  cursor: pointer; z-index: 999;
+}
+.theme-toggle:hover { transform: translateY(-1px); }
