@@ -1,3 +1,36 @@
 <!-- start custom footer snippets -->
+<!-- Theme Toggle FAB -->
+<button id="theme-toggle" class="theme-fab" aria-label="Toggle theme">🌙</button>
 
+<script>
+(function () {
+  const LS_KEY = 'theme';
+  const root = document.documentElement;
+
+  // 버튼이 없으면 동적으로 생성 (안전장치)
+  let btn = document.getElementById('theme-toggle');
+  if (!btn) {
+    btn = document.createElement('button');
+    btn.id = 'theme-toggle';
+    btn.className = 'theme-fab';
+    btn.textContent = '🌙';
+    document.body.appendChild(btn);
+  }
+
+  // 초기 테마 결정: 저장값 > 시스템 선호
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const saved = localStorage.getItem(LS_KEY);
+  const initial = saved || (prefersDark ? 'dark' : 'light');
+  root.setAttribute('data-theme', initial);
+  btn.textContent = (initial === 'dark') ? '☀️' : '🌙';
+
+  // 토글 동작
+  btn.addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    localStorage.setItem(LS_KEY, next);
+    btn.textContent = (next === 'dark') ? '☀️' : '🌙';
+  });
+})();
+</script>
 <!-- end custom footer snippets -->
