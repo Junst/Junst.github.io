@@ -12,18 +12,14 @@
   (function () {
     var KEY = 'theme';
     var saved = localStorage.getItem(KEY);
-    var initial = saved || 'dark'; // 기본 다크
+    var initial = saved || 'dark';           // 기본은 dark
     var root = document.documentElement;
     root.setAttribute('data-theme', initial);
+    // 시스템 위젯 대비
+    document.documentElement.style.colorScheme = initial;
   })();
 </script>
-<style>
-  /* 브라우저 기본 위젯 색도 모드에 맞추기 */
-  html[data-theme="dark"] { color-scheme: dark; }
-  html[data-theme="light"] { color-scheme: light; }
-</style>
 
-<!-- Site CSS (캐시 우회) -->
 <link rel="stylesheet" href="{{ '/assets/css/main.css?v=' | append: site.github.build_revision | relative_url }}">
 
 {% if site.head_scripts %}
