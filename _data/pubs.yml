@@ -1,0 +1,34 @@
+- title: "Jamendo-QA: A Large-Scale Music Question Answering Dataset"
+  authors: "Jun Young Koh, Sooyong Kim, Yongwon Choi, Gyuhyeong Choi"
+  venue: "Submitted to ICASSP 2026"
+  links: "[arXiv](https://arxiv.org/abs/2509.15662) · [PDF](https://arxiv.org/pdf/2509.15662) · [HuggingFace](https://huggingface.co/datasets/m-a-a-p/Jamendo-QA)"
+
+- title: "AIBA: Attention-based Instrument Band Alignment for Text-to-Audio Diffusion"
+  authors: "Jun Young Koh, Sooyong Kim, Gyuhyeong Choi, Yongwon Choi"
+  venue: "NeurIPS 2025 Workshop on AI for Music"
+  links: "[Workshop](https://aiformusicworkshop.github.io/) · [arXiv](https://arxiv.org/abs/2509.20891) · [PDF](https://arxiv.org/pdf/2509.20891)"
+
+- title: "Let Triggers Control: Frequency-aware Dropout for Effective Token Control"
+  authors: "Jun Young Koh, Hoyeon Moon, Dongha Kim, Seungmin Lee, Sanghyun Park, Min Song"
+  venue: "Under Review"
+  links: ""
+
+- title: "Illustrious: an Open Advanced Illustration Model"
+  authors: "Sang Hyun Park*, Jun Young Koh*, Junha Lee, Joy Song, Dongha Kim, Hoyeon Moon, Hyunju Lee, Min Song"
+  venue: "Technical Report"
+  links: "[arXiv](https://arxiv.org/abs/2409.19946) · [PDF](https://arxiv.org/pdf/2409.19946) · [HuggingFace](https://huggingface.co/OnomaAIResearch/Illustrious-xl-early-release-v0) · [CivitAI](https://civitai.com/models/795765/illustrious-xl)"
+
+- title: "Improving Text Generation on Images with Synthetic Captions"
+  authors: "Jun Young Koh*, Sang Hyun Park*, Joy Song*"
+  venue: "IIAI AAI 2024, 7th International Conference on Interaction Design and Digital Creation / Computing"
+  links: "[arXiv](https://arxiv.org/abs/2406.00505) · [PDF](https://arxiv.org/abs/2406.00505.pdf)"
+
+- title: "CAT: Contrastive Adapter Training for Personalized Image Generation"
+  authors: "Jaewan Park*, Sang Hyun Park*, Jun Young Koh*, Junha Lee*, Min Song"
+  venue: "CVPR 2024 Workshop on Generative Models for Computer Vision"
+  links: "[Workshop](https://generative-vision.github.io/workshop-CVPR-24/) · [arXiv](https://arxiv.org/abs/2404.07554) · [PDF](https://arxiv.org/pdf/2404.07554.pdf)"
+
+- title: "Proposal of 3D Camera-Based Digital Coordinate Recognition Technology"
+  authors: "Junyoung Koh, Kanghee Lee"
+  venue: "Proceedings of the Korean Society of Computer Information Conference 2022"
+  links: "[PDF](https://koreascience.kr/article/CFKO202232249429413.pdf)"
