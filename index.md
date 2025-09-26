@@ -54,7 +54,7 @@ Submitt in ICASSP 2026 [[arXiv](https://arxiv.org/abs/2509.15662)] [[PDF](https:
 
 AIBA: Attention-based Instrument Band Alignment for Text-to-Audio Diffusion <br>
 **Jun Young Koh**, Sooyong Kim, Gyuhyeong Choi, Yongwon Choi <br>
-NeurIPS 2025 Workshop on [[AI for Music: Where Creativity Meets Computation](https://aiformusicworkshop.github.io/)] [[arXiv](https://arxiv.org/abs/2509.20891)] [[PDF](https://arxiv.org/pdf/2509.20891)]
+NeurIPS 2025 Workshop on [AI for Music: Where Creativity Meets Computation](https://aiformusicworkshop.github.io/) [[arXiv](https://arxiv.org/abs/2509.20891)] [[PDF](https://arxiv.org/pdf/2509.20891)]
 
 Let Triggers Control : Frequency-aware Dropout for Effective Token Control <br>
 **Jun Young Koh**, Hoyeon Moon, Dongha Kim, Seungmin Lee, Sanghyun Park, Min Song <br>
@@ -70,7 +70,7 @@ IIAI AAI 2024 7th International Conference on Interaction Design and Digital Cre
 
 CAT : Contrastive Adapter Training for Personalized Image Generation <br>
 Jaewan Park\*, Sang Hyun Park\*, **Jun Young Koh**\*, Junha Lee\*, Min Song <br>
-CVPR 2024 Workshop [[Generative Models for Computer Vision](https://generative-vision.github.io/workshop-CVPR-24/)] [[arXiv](https://arxiv.org/abs/2404.07554)] [[PDF](https://arxiv.org/pdf/2404.07554.pdf)]
+CVPR 2024 Workshop [Generative Models for Computer Vision](https://generative-vision.github.io/workshop-CVPR-24/) [[arXiv](https://arxiv.org/abs/2404.07554)] [[PDF](https://arxiv.org/pdf/2404.07554.pdf)]
 
 Proposal of 3D Camera-Based Digital Coordinate Recognition Technology <br>
 **Junyoung Koh**, Kanghee Lee  
