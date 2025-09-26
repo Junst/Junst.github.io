@@ -6,3 +6,32 @@
 <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon.ico/favicon-16x16.png">
 <link rel="manifest" href="/site.webmanifest">
 <!-- end custom head snippets -->
+
+
+<button id="theme-toggle">🌙</button>
+
+<script>
+  const toggle = document.getElementById("theme-toggle");
+  const currentTheme = localStorage.getItem("theme");
+  if (currentTheme) {
+    document.body.dataset.theme = currentTheme;
+    toggle.textContent = currentTheme === "dark" ? "☀️" : "🌙";
+  }
+
+  toggle.addEventListener("click", () => {
+    let theme = document.body.dataset.theme === "dark" ? "light" : "dark";
+    document.body.dataset.theme = theme;
+    localStorage.setItem("theme", theme);
+    toggle.textContent = theme === "dark" ? "☀️" : "🌙";
+  });
+</script>
+
+<style>
+  body[data-theme="dark"] {
+    background-color: #121212;
+    color: #e0e0e0;
+  }
+  body[data-theme="dark"] a {
+    color: #80b3ff;
+  }
+</style>
