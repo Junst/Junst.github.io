@@ -1,19 +1,25 @@
 <meta charset="utf-8">
 {% include seo.html %}
 
-<!-- 초기 theme 적용 (CSS 로드 전) -->
+<!-- 초기 theme: 저장값 없으면 'light' -->
 <script>
 (function () {
-  var KEY = 'theme';
-  var saved = localStorage.getItem(KEY);
-  var initial = saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-  document.documentElement.setAttribute('data-theme', initial);
-  document.documentElement.style.colorScheme = initial; // 스크롤바/폼 위젯까지 일관
+  var KEY='theme';
+  var saved=localStorage.getItem(KEY);
+  var initial=saved || 'light';
+  var root=document.documentElement;
+  root.setAttribute('data-theme', initial);
+  // 초기 변수도 즉시 주입(다른 CSS가 있어도 눈으로 바로 확인 가능)
+  var vars = (initial==='light')
+    ? {'--bg':'#ffffff','--text':'#111111','--accent':'#1a73e8','--card':'#ffffff'}
+    : {'--bg':'#000000','--text':'#e5e5e5','--accent':'#8ab4ff','--card':'#0f0f0f'};
+  for (var k in vars) root.style.setProperty(k, vars[k]);
+  root.style.colorScheme = initial; // 스크롤바/폼 위젯 색상 일치
 })();
 </script>
 
-<!-- 사이트 CSS (캐시 버스터) -->
+<!-- 캐시 버스터 포함해서 메인 CSS -->
 <link rel="stylesheet" href="{{ '/assets/css/main.css?v=' | append: site.github.build_revision | relative_url }}">
 
-<!-- Font Awesome: 프로필 링크 아이콘 복구 -->
+<!-- Font Awesome (좌측 아이콘 복구) -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css">
