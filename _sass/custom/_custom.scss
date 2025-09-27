@@ -1,8 +1,8 @@
-/* === Modes (html[data-theme]) === */
+/* === 변수 (모드별) === */
 html[data-theme="light"] { --bg:#fff; --text:#111; --accent:#1a73e8; --card:#fff; }
 html[data-theme="dark"]  { --bg:#000; --text:#e5e5e5; --accent:#8ab4ff; --card:#0f0f0f; }
 
-/* === Apply everywhere === */
+/* === 전역 적용: 배경/텍스트 일원화 === */
 html,body,
 .masthead,.greedy-nav,
 .sidebar,.author__avatar,.author__content,.author__urls-wrapper,
@@ -12,27 +12,30 @@ html,body,
   color:var(--text)!important;
   background-image:none!important;
   box-shadow:none!important;
-  border:0!important;
+  border:0!important; /* 상하단/사이드 라인 제거 */
 }
 
-/* header의 작은 버튼들이 길게 보이는 문제 방지 */
+/* 헤더 작은 버튼 길게 나오는 현상 방지(헤더 내부만 리셋) */
 .masthead .greedy-nav button,
 .masthead .search__toggle { all: unset; }
 
-/* 링크/코드 */
+/* 링크/코드 가독성 */
 a{ color:var(--accent); }
 code,pre{ background:var(--card)!important; color:var(--text)!important; }
 
-/* === Theme FAB === */
+/* --- 프로필 링크 아이콘 보이도록 기본 색 보장 --- */
+.author__urls a { color: var(--text) !important; }
+.author__urls .fab, .author__urls .fas, .author__urls .far { font-size: 0.95rem; }
+
+/* === 토글 FAB === */
 .theme-fab{
   position:fixed; right:18px; bottom:18px;
   width:48px; height:48px; display:grid; place-items:center;
-  border-radius:999px; border:0; cursor:pointer; z-index:1000;
+  border-radius:999px; border:0; cursor:pointer; z-index:9999;
   box-shadow:0 6px 18px rgba(0,0,0,.35);
   transition:background-color .15s,color .15s,transform .15s;
 }
 .theme-fab:hover{ transform:translateY(-1px); }
-
-/* 라이트: 달+검정 / 다크: 해+하양 */
+/* 라이트=달+검정 / 다크=해+하양 */
 html[data-theme="light"] .theme-fab{ background:#000; color:#fff; }
 html[data-theme="dark"]  .theme-fab{ background:#fff; color:#000; }
