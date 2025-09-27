@@ -1,29 +1,10 @@
-<meta charset="utf-8">
-
-{% include seo.html %}
-
-{% unless site.atom_feed.hide %}
-  <link href="{% if site.atom_feed.path %}{{ site.atom_feed.path }}{% else %}{{ '/feed.xml' | relative_url }}{% endif %}" type="application/atom+xml" rel="alternate" title="{{ site.title }} Feed">
-{% endunless %}
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <script>
   (function () {
-    var KEY = 'theme';
-    var saved = localStorage.getItem(KEY);
-    var initial = saved || 'dark';           // 기본은 dark
-    var root = document.documentElement;
-    root.setAttribute('data-theme', initial);
-    // 시스템 위젯 대비
-    document.documentElement.style.colorScheme = initial;
+    const k='theme';
+    const saved=localStorage.getItem(k);
+    const init=saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', init);
   })();
 </script>
 
-<link rel="stylesheet" href="{{ '/assets/css/main.css?v=' | append: site.github.build_revision | relative_url }}">
-
-{% if site.head_scripts %}
-  {% for script in site.head_scripts %}
-    <script src="{{ script | relative_url }}"></script>
-  {% endfor %}
-{% endif %}
+<link rel="stylesheet" href="{{ '/assets/css/main.css?v=7' | relative_url }}">
