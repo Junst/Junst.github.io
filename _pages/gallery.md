@@ -3,6 +3,7 @@ layout: single
 title: Gallery
 permalink: /gallery/
 classes: wide
+author_profile: true
 ---
 
 <style>
