@@ -139,6 +139,8 @@ author:
       url: "https://www.semanticscholar.org/author/Jun-Young-Koh/2295987662"
 
 # Site Footer
+footer_scripts:
+  - /assets/js/theme-toggle.js
 footer:
   links:
     - label: "Google Scholar"
