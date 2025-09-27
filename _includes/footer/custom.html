@@ -1,26 +1,22 @@
-<!-- (_includes/footer/custom.html) -->
 <button id="theme-toggle" class="theme-fab" aria-label="Toggle theme" type="button">🌙</button>
 <script>
-  (function(){
-    const KEY='theme';
-    const html=document.documentElement;
-    const btn=document.getElementById('theme-toggle');
-    if(!btn) return;
+(function(){
+  var KEY='theme';
+  var root=document.documentElement;
+  var btn=document.getElementById('theme-toggle');
+  if(!btn) return;
 
-    function sync(){
-      const mode = html.getAttribute('data-theme') || 'light';
-      btn.textContent = (mode === 'dark') ? '☀️' : '🌙';
-      btn.classList.toggle('is-dark', mode==='dark');
-      btn.classList.toggle('is-light', mode==='light');
-    }
-
-    btn.addEventListener('click', function(){
-      const next = (html.getAttribute('data-theme') === 'dark') ? 'light' : 'dark';
-      html.setAttribute('data-theme', next);
-      localStorage.setItem(KEY, next);
-      sync();
-    });
-
+  function sync(){
+    var mode = root.getAttribute('data-theme') || 'light';
+    btn.textContent = (mode==='dark') ? '☀️' : '🌙';
+    document.documentElement.style.colorScheme = mode;
+  }
+  btn.addEventListener('click', function(){
+    var next = (root.getAttribute('data-theme')==='dark') ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    localStorage.setItem(KEY, next);
     sync();
-  })();
+  });
+  sync();
+})();
 </script>
