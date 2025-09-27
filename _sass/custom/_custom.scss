@@ -1,4 +1,4 @@
-/* === 변수 (모드별) === */
+/* === 변수 (라이트/다크 모드) — JS가 inline으로도 덮어씁니다 === */
 html[data-theme="light"] { --bg:#fff; --text:#111; --accent:#1a73e8; --card:#fff; }
 html[data-theme="dark"]  { --bg:#000; --text:#e5e5e5; --accent:#8ab4ff; --card:#0f0f0f; }
 
@@ -8,29 +8,29 @@ html,body,
 .sidebar,.author__avatar,.author__content,.author__urls-wrapper,
 .page,.page__inner-wrap,.page__content,.archive,.initial-content,
 .page__footer,.site-footer{
-  background:var(--bg)!important;
-  color:var(--text)!important;
-  background-image:none!important;
-  box-shadow:none!important;
-  border:0!important; /* 상하단/사이드 라인 제거 */
+  background:var(--bg) !important;
+  color:var(--text) !important;
+  background-image:none !important;
+  box-shadow:none !important;
+  border:0 !important;
 }
 
-/* 헤더 작은 버튼 길게 나오는 현상 방지(헤더 내부만 리셋) */
+/* 헤더의 작은 버튼 리셋(가로로 길게 나오는 현상 방지) */
 .masthead .greedy-nav button,
 .masthead .search__toggle { all: unset; }
 
-/* 링크/코드 가독성 */
+/* 링크/코드 */
 a{ color:var(--accent); }
-code,pre{ background:var(--card)!important; color:var(--text)!important; }
+code,pre{ background:var(--card) !important; color:var(--text) !important; }
 
-/* --- 프로필 링크 아이콘 보이도록 기본 색 보장 --- */
+/* 좌측 프로필 링크 아이콘이 배경에서 안 보이지 않게 색 보장 */
 .author__urls a { color: var(--text) !important; }
-.author__urls .fab, .author__urls .fas, .author__urls .far { font-size: 0.95rem; }
+.author__urls .fab, .author__urls .fas, .author__urls .far { font-size: .95rem; }
 
 /* === 토글 FAB === */
 .theme-fab{
   position:fixed; right:18px; bottom:18px;
-  width:48px; height:48px; display:grid; place-items:center;
+  width:48px;height:48px; display:grid; place-items:center;
   border-radius:999px; border:0; cursor:pointer; z-index:9999;
   box-shadow:0 6px 18px rgba(0,0,0,.35);
   transition:background-color .15s,color .15s,transform .15s;
