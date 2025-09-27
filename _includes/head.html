@@ -1,10 +1,19 @@
+<meta charset="utf-8">
+{% include seo.html %}
+
+<!-- 초기 theme 적용 (CSS 로드 전) -->
 <script>
-  (function () {
-    const k='theme';
-    const saved=localStorage.getItem(k);
-    const init=saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    document.documentElement.setAttribute('data-theme', init);
-  })();
+(function () {
+  var KEY = 'theme';
+  var saved = localStorage.getItem(KEY);
+  var initial = saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', initial);
+  document.documentElement.style.colorScheme = initial; // 스크롤바/폼 위젯까지 일관
+})();
 </script>
 
-<link rel="stylesheet" href="{{ '/assets/css/main.css?v=7' | relative_url }}">
+<!-- 사이트 CSS (캐시 버스터) -->
+<link rel="stylesheet" href="{{ '/assets/css/main.css?v=' | append: site.github.build_revision | relative_url }}">
+
+<!-- Font Awesome: 프로필 링크 아이콘 복구 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css">
