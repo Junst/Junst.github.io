@@ -1,33 +1,26 @@
-<button id="theme-toggle" class="theme-fab" aria-label="Toggle theme" title="Toggle theme">🌓</button>
+<!-- (_includes/footer/custom.html) -->
+<button id="theme-toggle" class="theme-fab" aria-label="Toggle theme" type="button">🌙</button>
 <script>
-(function () {
-  var KEY = 'theme';
-  var root = document.documentElement;
+  (function(){
+    const KEY='theme';
+    const html=document.documentElement;
+    const btn=document.getElementById('theme-toggle');
+    if(!btn) return;
 
-  function setIcon(btn){
-    btn.textContent = root.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
-    document.documentElement.style.colorScheme = root.getAttribute('data-theme');
-  }
+    function sync(){
+      const mode = html.getAttribute('data-theme') || 'light';
+      btn.textContent = (mode === 'dark') ? '☀️' : '🌙';
+      btn.classList.toggle('is-dark', mode==='dark');
+      btn.classList.toggle('is-light', mode==='light');
+    }
 
-  // 버튼 보장
-  var btn = document.getElementById('theme-toggle') || (function(){
-    var b = document.createElement('button');
-    b.id = 'theme-toggle'; b.className = 'theme-fab'; b.textContent = '🌓';
-    document.body.appendChild(b); return b;
+    btn.addEventListener('click', function(){
+      const next = (html.getAttribute('data-theme') === 'dark') ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem(KEY, next);
+      sync();
+    });
+
+    sync();
   })();
-  setIcon(btn);
-
-  btn.addEventListener('click', function(){
-    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    localStorage.setItem(KEY, next);
-    setIcon(btn);
-
-    /* ⚠️ 실패시 대비: CSS 변수도 강제로 덮어써 줌 (다른 CSS가 덮어써도 보이게) */
-    var vars = next === 'light'
-      ? {'--bg':'#fff','--text':'#111','--accent':'#1a73e8','--card':'#fff'}
-      : {'--bg':'#000','--text':'#e5e5e5','--accent':'#8ab4ff','--card':'#0f0f0f'};
-    for (var k in vars) root.style.setProperty(k, vars[k]);
-  });
-})();
 </script>
