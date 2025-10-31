@@ -48,6 +48,12 @@ B.S., Major in Media
 
 ## ✏️ Publications  
 
+Relative Positional Embeddings for Track Level Representations in Masked Contrastive Learning <br>
+Under Review 
+
+Automatic Inter-document Multi-hop Scientific QA Generation <br>
+Under Review
+
 Jamendo-QA: A Large-Scale Music Question Answering Dataset <br>
 **Jun Young Koh**, Sooyong Kim, Yongwon Choi, Gyuhyeong Choi <br>
 Submitt in ICASSP 2026 [[arXiv](https://arxiv.org/abs/2509.15662)] [[PDF](https://arxiv.org/pdf/2509.15662)] [[HuggingFace](https://huggingface.co/datasets/m-a-a-p/Jamendo-QA)]
@@ -77,11 +83,12 @@ Proposal of 3D Camera-Based Digital Coordinate Recognition Technology <br>
 Proceedings of the Korean Society of Computer Information Conference 2022 [[PDF](https://koreascience.kr/article/CFKO202232249429413.pdf)]
 
 ###### * *Equal Contribution*
+###### ^ *Corresponding Author*
 
 ## 📚 Academic Services
 
 **Conference Reviewer** <br>
-ISMIR / AAAI / NeurIPS Reviewer *Aug 2025 - Present*
+ISMIR / AAAI / NeurIPS / ICASSP Reviewer *Aug 2025 - Present*
 
 **Leader**<br>
 Modulabs MAAP(Music AI Assemble People) Leader *May 2025 - Present*
