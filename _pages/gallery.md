@@ -12,7 +12,7 @@ author_profile: true
   .gallery-item img{width:100%;height:220px;object-fit:cover;border-radius:10px;transition:transform 0.3s ease,box-shadow 0.3s ease}
   .gallery-item figcaption{margin-top:.5rem;font-size:.95rem;opacity:.9}
   .gallery-item.expanded{z-index:100}
-  .gallery-item.expanded img{transform:scale(1.8);box-shadow:0 10px 40px rgba(0,0,0,0.4);border-radius:8px}
+  .gallery-item.expanded img{transform:scale(3);box-shadow:0 10px 40px rgba(0,0,0,0.4);border-radius:8px}
   @media (min-width:1200px){.gallery-item img{height:260px}}
 </style>
 

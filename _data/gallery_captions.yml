@@ -1,10 +1,10 @@
 # CV and Bio photos (displayed first)
-bio-photo.jpg: "2022 Profile"
-cv-photo.png: "2023 CV"
+"bio-photo.jpg": "2022 Profile"
+"cv-photo.png": "2023 CV"
 
 # Gallery photos (date order)
-20240109.jpg: "2024.01.09 Las Vegas CES AI Innovation Award"
-20240617.jpg: "2024.06.17 Seattle CVPR 2024 Workshop"
-20250808.jpg: "2025.08.08 USC Visiting Student"
-20251023.jpg: "2025.10.23 KRAFTON Intern"
-20251209.jpg: "2025.12.09 San Diego NeurIPS 2025 Workshop AI for Music"
+"20240109.jpg": "2024.01.09 Las Vegas CES AI Innovation Award"
+"20240617.jpg": "2024.06.17 Seattle CVPR 2024 Workshop"
+"20250808.jpg": "2025.08.08 USC Visiting Student"
+"20251023.jpg": "2025.10.23 KRAFTON Intern"
+"20251209.jpg": "2025.12.09 San Diego NeurIPS 2025 Workshop AI for Music"
