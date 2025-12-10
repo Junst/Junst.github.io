@@ -8,10 +8,37 @@ author_profile: true
 
 <style>
   .gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
-  .gallery-item img{width:100%;height:220px;object-fit:cover;border-radius:10px}
+  .gallery-item{position:relative;cursor:pointer}
+  .gallery-item img{width:100%;height:220px;object-fit:cover;border-radius:10px;transition:transform 0.3s ease,box-shadow 0.3s ease}
   .gallery-item figcaption{margin-top:.5rem;font-size:.95rem;opacity:.9}
+  .gallery-item.expanded{z-index:100}
+  .gallery-item.expanded img{transform:scale(1.8);box-shadow:0 10px 40px rgba(0,0,0,0.4);border-radius:8px}
   @media (min-width:1200px){.gallery-item img{height:260px}}
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.gallery-item').forEach(function(item) {
+    item.addEventListener('click', function(e) {
+      if (this.classList.contains('expanded')) {
+        this.classList.remove('expanded');
+      } else {
+        document.querySelectorAll('.gallery-item.expanded').forEach(function(el) {
+          el.classList.remove('expanded');
+        });
+        this.classList.add('expanded');
+      }
+    });
+  });
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.gallery-item')) {
+      document.querySelectorAll('.gallery-item.expanded').forEach(function(el) {
+        el.classList.remove('expanded');
+      });
+    }
+  });
+});
+</script>
 
 {% assign imgs = site.static_files | where_exp: "f", "f.path contains '/assets/images/'" %}
 {% assign priority_files = "bio-photo.jpg,cv-photo.png" | split: "," %}
