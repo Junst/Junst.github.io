@@ -1,3 +1,10 @@
-cv-photo.png: "CV!!"
-# another-image.jpg: "Team dinner after the workshop"
-# demo-setup.png: "Prototype demo for AIBA"
+# CV and Bio photos (displayed first)
+bio-photo.jpg: "Profile"
+cv-photo.png: "CV"
+
+# Gallery photos (date order)
+20240109.jpg: "Las Vegas CES AI Innovation Award"
+20240617.jpg: "Seattle CVPR 2024 Workshop"
+20250808.jpg: "USC Visiting Student"
+20251023.jpg: "KRAFTON Intern"
+20251209.jpg: "San Diego NeurIPS 2025 Workshop AI for Music"
