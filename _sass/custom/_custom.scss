@@ -31,22 +31,16 @@ code,pre{ background:var(--card) !important; color:var(--text) !important; }
 .author__avatar img{
   width:120px !important;
   height:120px !important;
+  aspect-ratio:1/1;
   max-width:none !important;
   object-fit:cover;
   object-position:50% 20%;
-  border-radius:50%;
+  border-radius:50% !important;
+  padding:0 !important;
+  border:0 !important;
   display:block;
   transform:scale(1.06);
   transform-origin:center;
-}
-
-/* 메인/홈 프로필 사진 원형 처리 */
-img.profile-bio{
-  width:220px;
-  height:220px;
-  object-fit:cover;
-  object-position:50% 20%;
-  border-radius:50%;
 }
 
 /* === 토글 FAB === */
