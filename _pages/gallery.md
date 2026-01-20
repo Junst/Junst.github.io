@@ -11,6 +11,7 @@ author_profile: true
   .gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;overflow:visible}
   .gallery-item{position:relative;cursor:pointer}
   .gallery-item img{width:100%;height:220px;object-fit:cover;border-radius:10px;transition:transform 0.3s ease,box-shadow 0.3s ease}
+  .gallery-item img.bio-crop{object-position:50% 20%}
   .gallery-item figcaption{margin-top:.5rem;font-size:.95rem;opacity:.9}
   .gallery-item.expanded{z-index:1000;position:relative}
   .gallery-item.expanded img{transform:scale(3);box-shadow:0 20px 60px rgba(0,0,0,0.5);border-radius:8px;position:relative}
@@ -44,12 +45,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <div class="gallery-grid">
   <figure class="gallery-item">
-    <img src="/assets/images/bio-photo.jpg" alt="2022 Profile">
+    <img src="/assets/images/2022_bio.jpg" alt="2022 Profile">
     <figcaption>2022 Profile</figcaption>
   </figure>
   <figure class="gallery-item">
-    <img src="/assets/images/cv-photo.png" alt="2023 CV">
+    <img src="/assets/images/2023_cv.png" alt="2023 CV">
     <figcaption>2023 CV</figcaption>
+  </figure>
+  <figure class="gallery-item">
+    <img src="/assets/images/202601_bio.jpg" class="bio-crop" alt="2026 Bio">
+    <figcaption>2026 Bio</figcaption>
   </figure>
   <figure class="gallery-item">
     <img src="/assets/images/20240109.jpg" alt="Las Vegas CES AI Innovation Award">

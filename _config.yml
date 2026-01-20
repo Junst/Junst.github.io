@@ -94,7 +94,7 @@ analytics:
 # Site Author
 author:
   name             : "고준영 (Junyoung Koh)"
-  avatar           : "/assets/images/bio-photo.jpg" # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
+  avatar           : "/assets/images/202601.jpg" # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
   bio              : "Regress of Progress"
   location         : "Seoul"
   email            : 

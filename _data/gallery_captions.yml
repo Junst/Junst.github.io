@@ -1,6 +1,7 @@
 # CV and Bio photos (displayed first)
-"bio-photo.jpg": "2022 Profile"
-"cv-photo.png": "2023 CV"
+"2022_bio.jpg": "2022"
+"2023_cv.png": "2023"
+"202601_bio.jpg": "2026 Bio"
 
 # Gallery photos (date order)
 "20240109.jpg": "2024.01.09 Las Vegas CES AI Innovation Award"
