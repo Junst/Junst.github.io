@@ -43,6 +43,11 @@ code,pre{ background:var(--card) !important; color:var(--text) !important; }
   transform-origin:center;
 }
 
+/* 사이드바 원형 아바타가 좌측에서 잘리지 않도록 오른쪽으로 이동 */
+.author__avatar{
+  padding-left:10px;
+}
+
 /* === 토글 FAB === */
 .theme-fab{
   position:fixed; right:18px; bottom:18px;
