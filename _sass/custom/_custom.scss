@@ -40,6 +40,15 @@ code,pre{ background:var(--card) !important; color:var(--text) !important; }
   transform-origin:center;
 }
 
+/* 메인/홈 프로필 사진 원형 처리 */
+img.profile-bio{
+  width:220px;
+  height:220px;
+  object-fit:cover;
+  object-position:50% 20%;
+  border-radius:50%;
+}
+
 /* === 토글 FAB === */
 .theme-fab{
   position:fixed; right:18px; bottom:18px;
