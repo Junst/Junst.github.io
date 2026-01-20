@@ -27,6 +27,19 @@ code,pre{ background:var(--card) !important; color:var(--text) !important; }
 .author__urls a { color: var(--text) !important; }
 .author__urls .fab, .author__urls .fas, .author__urls .far { font-size: .95rem; }
 
+/* 프로필 사진은 원형 + 살짝 줌인 */
+.author__avatar img{
+  width:120px !important;
+  height:120px !important;
+  max-width:none !important;
+  object-fit:cover;
+  object-position:50% 20%;
+  border-radius:50%;
+  display:block;
+  transform:scale(1.06);
+  transform-origin:center;
+}
+
 /* === 토글 FAB === */
 .theme-fab{
   position:fixed; right:18px; bottom:18px;

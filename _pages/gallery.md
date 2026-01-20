@@ -53,10 +53,6 @@ document.addEventListener('DOMContentLoaded', function() {
     <figcaption>2023 CV</figcaption>
   </figure>
   <figure class="gallery-item">
-    <img src="/assets/images/202601_bio.jpg" class="bio-crop" alt="2026 Bio">
-    <figcaption>2026 Bio</figcaption>
-  </figure>
-  <figure class="gallery-item">
     <img src="/assets/images/20240109.jpg" alt="Las Vegas CES AI Innovation Award">
     <figcaption>2024.01.09 Las Vegas CES AI Innovation Award</figcaption>
   </figure>
@@ -75,5 +71,9 @@ document.addEventListener('DOMContentLoaded', function() {
   <figure class="gallery-item">
     <img src="/assets/images/20251209.jpg" alt="San Diego NeurIPS 2025 Workshop AI for Music">
     <figcaption>2025.12.09 San Diego NeurIPS 2025 Workshop AI for Music</figcaption>
+  </figure>
+  <figure class="gallery-item">
+    <img src="/assets/images/202601_bio.jpg" class="bio-crop" alt="2026 Bio">
+    <figcaption>2026 Bio</figcaption>
   </figure>
 </div>
