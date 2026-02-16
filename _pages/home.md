@@ -20,7 +20,7 @@ I am currently supported by a Ph.D. Research Fellowship from the National Resear
     <li><strong>Feb 2026</strong> : 1 paper is accepted to LREC 2026! </li>
 </ul>
 
-<detail>
+<details>
 <summary><strong> 2025 News <strong></summary>
   <ul style="list-style-type: square;">
     <li><strong>Sep 2025</strong> : Our AIBA paper is accepted to NeurIPS 2025 Workshop (AI for Music) 🎶 </li>
