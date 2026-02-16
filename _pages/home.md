@@ -55,6 +55,8 @@ B.S., Major in Media
 
 ## ✏️ Publications
 
+<div class="publications" markdown="1">
+
 ### Conference & Workshop Papers
 
 Automatic Inter-document Multi-hop Scientific QA Generation <br>
@@ -106,6 +108,8 @@ Sang Hyun Park\*, **Jun Young Koh**\*, Junha Lee, Joy Song, Dongha Kim, Hoyeon M
 Technical Report [[arXiv](https://arxiv.org/abs/2409.19946)] [[PDF](https://arxiv.org/pdf/2409.19946)] [[HuggingFace](https://huggingface.co/OnomaAIResearch/Illustrious-xl-early-release-v0)] [[CivitAI](https://civitai.com/models/795765/illustrious-xl)]
 
 ###### * *Equal Contribution*
+
+</div>
 
 ## 📚 Academic Services
 
