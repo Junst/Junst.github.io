@@ -21,7 +21,7 @@ I am currently supported by a Ph.D. Research Fellowship from the National Resear
 </ul>
 
 <details>
-<summary><strong> 2025 News <strong></summary>
+<summary><strong> 2025 News </strong></summary>
   <ul style="list-style-type: square;">
     <li><strong>Sep 2025</strong> : Our AIBA paper is accepted to NeurIPS 2025 Workshop (AI for Music) 🎶 </li>
     <li><strong>Sep 2025</strong> : Awarded Brian Impact Foundation (Kakao, USD 1.5K Per paper)  </li>
