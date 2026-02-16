@@ -16,7 +16,7 @@ I am currently supported by a Ph.D. Research Fellowship from the National Resear
 ## 🔥 News
 
 <ul style="list-style-type: square;">
-    <li><strong>Feb 2026</strong> : I'm goint to 
+    <li><strong>Feb 2026</strong> : I'm going to University of Michigan as a Visiting Graduate Student 👨‍🎓 </li>
     <li><strong>Feb 2026</strong> : 1 paper is accepted to LREC 2026! </li>
 </ul>
 
