@@ -5,24 +5,31 @@ classes: wide
 use_math: true
 ---
 
-![]({{site.url}}/assets/images/202601.jpg){: .align-right width="260"}
+![]({{site.url}}/assets/images/2023_cv.png){: .align-right width="220" height="220"}
 
 Hello, I am a Ph.D student in Artificial Intelligence at Yonsei University, advised by Prof. Min Song in [DeepText LAB](https://deeptext.yonsei.ac.kr/home).
 
-My research centers on understanding the structural and symbolic dimensions of music, with a particular interest in how machines can analyze, interpret, and visualize musical patterns. I am especially drawn to exploring the latent representations of music and how they can be used to uncover its underlying compositional logic. Recently, I have been focused on the intersection of symbolic music processing and deep learning, using attention-based models to reveal how machines “perceive” music.
+My research focuses on music audio understanding and generation, spanning music source separation, multi-pitch estimation, and text-to-audio synthesis. I am particularly interested in how deep learning models can decompose, analyze, and reconstruct complex musical signals. My recent work includes confidence-guided test-time adaptation for source separation, attention-based alignment for controllable music generation, and building large-scale benchmarks for music question answering.
 
-I am currently completing my Ph.D. coursework and plan to transition into full-time research or industry work beginning in the second half of 2025. My work is conducted remotely, and I actively lead the MAAP (Music AI Assemble People) initiative, a community of students and professionals exploring the frontiers of music AI. Through this, I mentor a team of five members from diverse backgrounds, fostering collaboration and innovation in the field.
-
-As part of my doctoral research, I have applied for a research scholarship funded by the National Research Foundation of Korea, proposing a study on Multi-Pitch Estimation Models Based on Synthetic Polyphonic Vocal Data. This project reflects my broader goal of developing systems that can dissect and understand complex vocal structures, laying the foundation for more expressive and musically intelligent AI.
+I am currently supported by a Ph.D. Research Fellowship from the National Research Foundation of Korea, working on Multi-Pitch Estimation Models Based on Synthetic Polyphonic Vocal Data. I also lead MAAP (Music AI Assemble People), a growing community of about 25 members and professionals exploring the frontiers of music AI. In Fall 2026, I will be joining the University of Michigan as a visiting student.
 
 ## 🔥 News
+
 <ul style="list-style-type: square;">
-  <li><strong>Sep 2025</strong> : Our AIBA paper is accepted to NeurIPS 2025 Workshop (AI for Music) 🎶 </li>
-  <li><strong>Sep 2025</strong> : Awarded Brian Impact Foundation (Kakao, USD 1.5K Per paper)  </li>
-  <li><strong>Aug 2025</strong> : Selected for NRF Ph.D. Research Fellowship (RS-2025-25422688, USD 20K) </li>
-  <li><strong>Jul 2025</strong> : I will be working at KRAFTON AI in August! </li>
-  <li><strong>May 2025</strong> : I'm going to USC summer session in July! </li>
+    <li><strong>Feb 2026</strong> : I'm going to University of Michigan as a Visiting Graduate Student 👨‍🎓 </li>
+    <li><strong>Feb 2026</strong> : 1 paper is accepted to LREC 2026! </li>
 </ul>
+
+<detail>
+<summary><strong> 2025 News <strong></summary>
+  <ul style="list-style-type: square;">
+    <li><strong>Sep 2025</strong> : Our AIBA paper is accepted to NeurIPS 2025 Workshop (AI for Music) 🎶 </li>
+    <li><strong>Sep 2025</strong> : Awarded Brian Impact Foundation (Kakao, USD 1.5K Per paper)  </li>
+    <li><strong>Aug 2025</strong> : Selected for NRF Ph.D. Research Fellowship (RS-2025-25422688, USD 20K) </li>
+    <li><strong>Jul 2025</strong> : I will be working at KRAFTON AI in August! </li>
+    <li><strong>May 2025</strong> : I'm going to USC summer session in July! </li>
+  </ul>
+</details>
 
 <details>
   <summary><strong> 2024 News </strong></summary>
@@ -46,49 +53,64 @@ Ph.D. Student, Department of Artificial Intelligence
 **Soongsil University, Seoul, Republic of Korea** *Mar 2017 - Feb 2023*  
 B.S., Major in Media
 
-## ✏️ Publications  
+## ✏️ Publications
 
-Relative Positional Embeddings for Track Level Representations in Masked Contrastive Learning <br>
-Under Review 
+### Conference & Workshop Papers
 
 Automatic Inter-document Multi-hop Scientific QA Generation <br>
-Under Review
-
-Jamendo-QA: A Large-Scale Music Question Answering Dataset <br>
-**Jun Young Koh**, Sooyong Kim, Yongwon Choi, Gyuhyeong Choi <br>
-Submitt in ICASSP 2026 [[arXiv](https://arxiv.org/abs/2509.15662)] [[PDF](https://arxiv.org/pdf/2509.15662)] [[HuggingFace](https://huggingface.co/datasets/m-a-a-p/Jamendo-QA)]
+Seungmin Lee, Dongha Kim, Yuni Jeon, **Junyoung Koh**, and Min Song <br>
+International Conference on Language Resources and Evaluation 2026
 
 AIBA: Attention-based Instrument Band Alignment for Text-to-Audio Diffusion <br>
-**Jun Young Koh**, Sooyong Kim, Gyuhyeong Choi, Yongwon Choi <br>
+**Junyoung Koh**, Sooyong Kim, Gyuhyeong Choi, and Yongwon Choi <br>
 NeurIPS 2025 Workshop on [AI for Music: Where Creativity Meets Computation](https://aiformusicworkshop.github.io/) [[arXiv](https://arxiv.org/abs/2509.20891)] [[PDF](https://arxiv.org/pdf/2509.20891)]
 
-Let Triggers Control : Frequency-aware Dropout for Effective Token Control <br>
-**Jun Young Koh**, Hoyeon Moon, Dongha Kim, Seungmin Lee, Sanghyun Park, Min Song <br>
-Under Review
-
-Illustrious : an Open Advanced Illustration Model <br>
-Sang Hyun Park\*, **Jun Young Koh**\*, Junha Lee, Joy Song, Dongha Kim, Hoyeon Moon, Hyunju Lee, Min Song <br>
-Technical Report [[arXiv](https://arxiv.org/abs/2409.19946)] [[PDF](https://arxiv.org/pdf/2409.19946)] [[HuggingFace](https://huggingface.co/OnomaAIResearch/Illustrious-xl-early-release-v0)] [[CivitAI](https://civitai.com/models/795765/illustrious-xl)]
-
 Improving Text Generation on Images with Synthetic Captions <br>
-**Jun Young Koh**\*, Sang Hyun Park\*, Joy Song\* <br>
+**Jun Young Koh**\*, Sang Hyun Park\*, and Joy Song\* <br>
 IIAI AAI 2024 7th International Conference on Interaction Design and Digital Creation / Computing [[arXiv](https://arxiv.org/abs/2406.00505)] [[PDF](https://arxiv.org/abs/2406.00505.pdf)]
 
 CAT : Contrastive Adapter Training for Personalized Image Generation <br>
-Jaewan Park\*, Sang Hyun Park\*, **Jun Young Koh**\*, Junha Lee\*, Min Song <br>
+Jaewan Park\*, Sang Hyun Park\*, **Jun Young Koh**\*, Junha Lee\*, and Min Song <br>
 CVPR 2024 Workshop [Generative Models for Computer Vision](https://generative-vision.github.io/workshop-CVPR-24/) [[arXiv](https://arxiv.org/abs/2404.07554)] [[PDF](https://arxiv.org/pdf/2404.07554.pdf)]
 
 Proposal of 3D Camera-Based Digital Coordinate Recognition Technology <br>
-**Junyoung Koh**, Kanghee Lee  
+**Junyoung Koh**, and Kanghee Lee
 Proceedings of the Korean Society of Computer Information Conference 2022 [[PDF](https://koreascience.kr/article/CFKO202232249429413.pdf)]
 
+### Preprints & Under Review
+
+Jamendo-MT-QA: A Benchmark for Multi-Track Comparative Music Question Answering <br>
+Junyoung Koh, Jaeyun Lee, Soo Yong Kim, GYU HYEONG CHOI, Jung In Koh, Jordan Phillips, Yeonjin Lee, and Min Song <br>
+Under Review
+
+KoSCoPe: Hierarchical Safety Curriculum with Reasoning Internalization for Korean Small Language Models <br>
+Soo Yong Kim, **Junyoung Koh**, and Seunghyeok Hong <br>
+Under Review
+
+Learning to Wire: End-to-End Operand Selection for Symbolic Logic Networks <br>
+Soon Ho Choi, Soo Yong Kim, Kyeonghun Kim, and **Junyoung Koh** <br>
+Under Review
+
+Let Triggers Control : Frequency-aware Dropout for Effective Token Control <br>
+**Junyoung Koh**, Hoyeon Moon, Dongha Kim, Seungmin Lee, Sanghyun Park, and Min Song <br>
+Under Review
+
+Jamendo-QA: A Large-Scale Music Question Answering Dataset <br>
+**Junyoung Koh**, Sooyong Kim, Yongwon Choi, and Gyuhyeong Choi <br>
+[[arXiv](https://arxiv.org/abs/2509.15662)] [[PDF](https://arxiv.org/pdf/2509.15662)] [[HuggingFace](https://huggingface.co/datasets/m-a-a-p/Jamendo-QA)]
+
+### Technical Reports
+
+Illustrious : an Open Advanced Illustration Model <br>
+Sang Hyun Park\*, **Jun Young Koh**\*, Junha Lee, Joy Song, Dongha Kim, Hoyeon Moon, Hyunju Lee, and Min Song <br>
+Technical Report [[arXiv](https://arxiv.org/abs/2409.19946)] [[PDF](https://arxiv.org/pdf/2409.19946)] [[HuggingFace](https://huggingface.co/OnomaAIResearch/Illustrious-xl-early-release-v0)] [[CivitAI](https://civitai.com/models/795765/illustrious-xl)]
+
 ###### * *Equal Contribution*
-###### ^ *Corresponding Author*
 
 ## 📚 Academic Services
 
 **Conference Reviewer** <br>
-ISMIR / AAAI / NeurIPS / ICASSP Reviewer *Aug 2025 - Present*
+ISMIR / AAAI / NeurIPS Reviewer *Aug 2025 - Present*
 
 **Leader**<br>
 Modulabs MAAP(Music AI Assemble People) Leader *May 2025 - Present*
