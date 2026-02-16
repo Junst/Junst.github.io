@@ -32,17 +32,6 @@ I am currently supported by a Ph.D. Research Fellowship from the National Resear
 </details>
 
 <details>
-<summary><strong> 2025 News <strong></summary>
-  <ul style="list-style-type: square;">
-    <li><strong>Sep 2025</strong> : Our AIBA paper is accepted to NeurIPS 2025 Workshop (AI for Music) 🎶 </li>
-    <li><strong>Sep 2025</strong> : Awarded Brian Impact Foundation (Kakao, USD 1.5K Per paper)  </li>
-    <li><strong>Aug 2025</strong> : Selected for NRF Ph.D. Research Fellowship (RS-2025-25422688, USD 20K) </li>
-    <li><strong>Jul 2025</strong> : I will be working at KRAFTON AI in August! </li>
-    <li><strong>May 2025</strong> : I'm going to USC summer session in July! </li>
-  </ul>
-</details>
-
-<details>
   <summary><strong> 2024 News </strong></summary>
   <ul style="list-style-type: square;">
     <li><strong>Oct 2024</strong> : Our model has been downloaded over 33,000 times and has ranked 7th among trending models worldwide! </li>
