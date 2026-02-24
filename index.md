@@ -76,14 +76,14 @@ Jaewan Park\*, Sang Hyun Park\*, **Jun Young Koh**\*, Junha Lee\*, and Min Song 
 CVPR 2024 Workshop [Generative Models for Computer Vision](https://generative-vision.github.io/workshop-CVPR-24/) [[arXiv](https://arxiv.org/abs/2404.07554)] [[PDF](https://arxiv.org/pdf/2404.07554.pdf)]
 
 Proposal of 3D Camera-Based Digital Coordinate Recognition Technology <br>
-**Junyoung Koh**, and Kanghee Lee
+**Junyoung Koh**, and Kanghee Lee <br>
 Proceedings of the Korean Society of Computer Information Conference 2022 [[PDF](https://koreascience.kr/article/CFKO202232249429413.pdf)]
 
 ### Preprints & Under Review
 
 Jamendo-MT-QA: A Benchmark for Multi-Track Comparative Music Question Answering <br>
-Junyoung Koh, Jaeyun Lee, Soo Yong Kim, GYU HYEONG CHOI, Jung In Koh, Jordan Phillips, Yeonjin Lee, and Min Song <br>
-Under Review
+**Junyoung Koh**, Jaeyun Lee, Soo Yong Kim, GYU HYEONG CHOI, Jung In Koh, Jordan Phillips, Yeonjin Lee, and Min Song <br>
+Under Review [[Project Page](https://maap-lab.github.io/Jamendo-MT-QA/)] [[HuggingFace](https://huggingface.co/datasets/m-a-a-p/Jamendo-MT-QA)]
 
 KoSCoPe: Hierarchical Safety Curriculum with Reasoning Internalization for Korean Small Language Models <br>
 Soo Yong Kim, **Junyoung Koh**, and Seunghyeok Hong <br>
