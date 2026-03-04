@@ -127,7 +127,7 @@ World Friends Korea Paraguay IT Volunteer *Aug 2018 - Sep 2018*
 
 ## 🏢 Work Experience
 
-**Krafton** *Aug 2025 - Current* <br>
+**Krafton** *Aug 2025 - Current* ![KRAFTON]({{site.url}}/assets/company/KRAFTON.jpg.avif){: .align-right width="80"} <br>
 AI Researcher Internship
 
 **Onoma AI** *Aug 2023 - Feb 2025* <br>
@@ -147,6 +147,8 @@ Publication support program, providing research funding of USD 1.5K (KRW 2M) per
 
 
 ## Project
+
+![Tab Orchestra]({{site.url}}/assets/projects/Tab-Orchestra-Image.png){: .align-right width="320"}
 
 Tab Orchestra — Multi-Tab Music Decomposition Art <br>
 Each browser tab plays one instrument stem. Open 4 tabs to hear the full song. AI-powered stem separation via Demucs. <br>
