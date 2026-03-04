@@ -147,6 +147,15 @@ Publication support program, providing research funding of USD 1.5K (KRW 2M) per
 
 
 ## Project
+
+Tab Orchestra — Multi-Tab Music Decomposition Art <br>
+Each browser tab plays one instrument stem. Open 4 tabs to hear the full song. AI-powered stem separation via Demucs. <br>
+[[Live Demo](https://junst.github.io/tab-orchestra/)] [[Code](https://github.com/Junst/tab-orchestra)]
+
+ChromaRelief — 3D Tile Media Art <br>
+Transform videos into 10-color palette tile relief sculptures rendered in real-time 3D. <br>
+[[Live Demo](https://junst.github.io/chroma-relief/)] [[Code](https://github.com/Junst/chroma-relief)]
+
 Development of an AI Media Art Therapy Platform incorporating Color, Play, and Music Therapies <br>
-**Junyoung Koh**, Dain Park, Junghun Ha, Kanghee Lee  
+**Junyoung Koh**, Dain Park, Junghun Ha, Kanghee Lee
 [[code](https://github.com/FW2022)] [[Project Site](https://space4-u-client.vercel.app/space)]
