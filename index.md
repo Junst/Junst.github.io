@@ -61,7 +61,7 @@ B.S., Major in Media
 
 Automatic Inter-document Multi-hop Scientific QA Generation <br>
 Seungmin Lee, Dongha Kim, Yuni Jeon, **Junyoung Koh**, and Min Song <br>
-International Conference on Language Resources and Evaluation 2026
+LREC 2026 [[arXiv](https://arxiv.org/abs/2603.14257)] [[PDF](https://arxiv.org/pdf/2603.14257)]
 
 AIBA: Attention-based Instrument Band Alignment for Text-to-Audio Diffusion <br>
 **Junyoung Koh**, Sooyong Kim, Gyuhyeong Choi, and Yongwon Choi <br>
