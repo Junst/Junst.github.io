@@ -166,4 +166,4 @@ Development of an AI Media Art Therapy Platform incorporating Color, Play, and M
 **Junyoung Koh**, Dain Park, Junghun Ha, Kanghee Lee
 [[code](https://github.com/FW2022)] [[Project Site](https://space4-u-client.vercel.app/space)]
 
-<script type="text/javascript" id="mmvst_globe" src="//mapmyvisitors.com/globe.js?d=N9GzmJSnHJTiyoLlpHBPQAOqK2DNyYP9kAc3ZW9fvA0"></script>
+<script type="text/javascript" id="mapmyvisitors" src="//mapmyvisitors.com/map.js?d=TlQJ9nIrZfWOtn2WR2-4n3-hrZRgE88w5OaVvhNr4ZY&cl=ffffff&w=a"></script>
