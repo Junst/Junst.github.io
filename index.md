@@ -16,6 +16,7 @@ I am currently supported by a Ph.D. Research Fellowship from the National Resear
 ## 🔥 News
 
 <ul style="list-style-type: square;">
+    <li><strong>Mar 2026</strong> : 1 paper is accepted to CVPR 2026 Workshop (P13N)! </li>
     <li><strong>Feb 2026</strong> : I'm going to University of Michigan as a Visiting Graduate Student 👨‍🎓 </li>
     <li><strong>Feb 2026</strong> : 1 paper is accepted to LREC 2026! </li>
 </ul>
@@ -63,6 +64,10 @@ Automatic Inter-document Multi-hop Scientific QA Generation <br>
 Seungmin Lee, Dongha Kim, Yuni Jeon, **Junyoung Koh**, and Min Song <br>
 LREC 2026 [[arXiv](https://arxiv.org/abs/2603.14257)] [[PDF](https://arxiv.org/pdf/2603.14257)]
 
+Let Triggers Control : Frequency-aware Dropout for Effective Token Control <br>
+**Junyoung Koh**, Hoyeon Moon, Dongha Kim, Seungmin Lee, Sanghyun Park, and Min Song <br>
+CVPR 2026 Workshop [P13N: Personalization in Generative AI](https://p13n-workshop.github.io/#call-for-papers)
+
 AIBA: Attention-based Instrument Band Alignment for Text-to-Audio Diffusion <br>
 **Junyoung Koh**, Sooyong Kim, Gyuhyeong Choi, and Yongwon Choi <br>
 NeurIPS 2025 Workshop on [AI for Music: Where Creativity Meets Computation](https://aiformusicworkshop.github.io/) [[arXiv](https://arxiv.org/abs/2509.20891)] [[PDF](https://arxiv.org/pdf/2509.20891)]
@@ -95,10 +100,6 @@ Under Review
 
 Learning to Wire: End-to-End Operand Selection for Symbolic Logic Networks <br>
 Soon Ho Choi, Soo Yong Kim, Kyeonghun Kim, and **Junyoung Koh** <br>
-Under Review
-
-Let Triggers Control : Frequency-aware Dropout for Effective Token Control <br>
-**Junyoung Koh**, Hoyeon Moon, Dongha Kim, Seungmin Lee, Sanghyun Park, and Min Song <br>
 Under Review
 
 Jamendo-QA: A Large-Scale Music Question Answering Dataset <br>
