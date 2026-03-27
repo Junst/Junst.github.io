@@ -1,58 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MusicCritic — Human Evaluation</title>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4f8; padding: 40px 20px; max-width: 700px; margin: 0 auto; }
-  h1 { text-align: center; margin-bottom: 8px; color: #1a237e; }
-  .subtitle { text-align: center; color: #666; margin-bottom: 30px; }
-  .card { background: white; padding: 24px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); transition: transform 0.2s; }
-  .card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.12); }
-  .card h2 { color: #1976d2; margin-bottom: 8px; }
-  .card p { color: #555; font-size: 14px; line-height: 1.6; margin-bottom: 12px; }
-  .card .meta { color: #999; font-size: 13px; }
-  .card a { display: inline-block; background: #1976d2; color: white; padding: 10px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; }
-  .card a:hover { background: #1565c0; }
-  .instructions { background: #e8f5e9; padding: 16px; border-radius: 8px; margin-bottom: 24px; font-size: 14px; line-height: 1.6; }
-  .instructions h3 { margin-bottom: 6px; color: #2e7d32; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MusicCritic Human Evaluation</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+        h1 { color: #333; border-bottom: 2px solid #4C72B0; padding-bottom: 10px; }
+        h2 { color: #4C72B0; margin-top: 40px; }
+        .info-box { background: #e8f4fd; border-left: 4px solid #4C72B0; padding: 15px; margin: 20px 0; border-radius: 4px; }
+        .eval-card { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin: 15px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: box-shadow 0.2s; }
+        .eval-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .eval-card h3 { margin-top: 0; color: #4C72B0; }
+        .eval-card a { color: #4C72B0; text-decoration: none; font-weight: bold; font-size: 1.1em; }
+        .eval-card a:hover { text-decoration: underline; }
+        .eval-card p { color: #555; margin: 8px 0; }
+        .badge { display: inline-block; background: #4C72B0; color: white; padding: 2px 10px; border-radius: 12px; font-size: 0.85em; margin-right: 8px; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background: #4C72B0; color: white; }
+        .section-divider { border: none; border-top: 3px solid #4C72B0; margin: 40px 0; }
+    </style>
 </head>
 <body>
 
-<h1>MusicCritic — Human Evaluation</h1>
-<p class="subtitle">ACM Multimedia 2026 Submission</p>
+<h1>MusicCritic Human Evaluation</h1>
 
-<div class="instructions">
-  <h3>How to participate</h3>
-  <p>1. Click a study below.<br>
-  2. Use headphones and listen to each audio pair.<br>
-  3. Rate Quality (1-5), Match (1-5), and Preference (A/B/Tie).<br>
-  4. Click "Submit" — a JSON file will download automatically.<br>
-  5. Send the JSON file to the organizer. Thank you!</p>
+<div class="info-box">
+    <strong>Welcome!</strong> This is the human evaluation portal for <em>MusicCritic: Self-Improving Music Generation via Agentic Reasoning</em>.
+    <br><br>
+    We have <strong>3 evaluation sets</strong> covering different aspects of the MusicCritic system. Each set uses blinded A/B comparisons with Quality MOS, Match MOS, and Preference ratings.
+    <br><br>
+    Please use <strong>headphones</strong> and evaluate in a quiet environment. Each evaluation takes 5-35 minutes depending on the set.
 </div>
 
-<div class="card">
-  <h2>Study 1: Feature vs Audio Critic</h2>
-  <p>Direct A/B comparison between candidates selected by the feature-based critic vs the audio-native critic. This is the core experiment — which critic produces better music?</p>
-  <p class="meta">23 pairs · ~25 minutes</p>
-  <a href="feature-vs-audio/">Start Study 1 →</a>
+<h2>Evaluation Sets</h2>
+
+<div class="eval-card">
+    <h3><a href="feature-vs-audio/">1. Feature vs Audio Critic</a></h3>
+    <span class="badge">23 pairs</span> <span class="badge">~25-35 min</span>
+    <p>Compares samples selected by the <strong>feature-based critic</strong> (BPM/key/spectral analysis) vs the <strong>audio-based critic</strong> (MuQ perceptual model). Covers 10 genres across 3 random seeds.</p>
 </div>
 
-<div class="card">
-  <h2>Study 2: MusicGen Backend</h2>
-  <p>Does Best-of-N selection also improve MusicGen-large outputs? Compare baseline vs feature-selected candidates on a different generation model.</p>
-  <p class="meta">6 pairs · ~8 minutes</p>
-  <a href="musicgen-backend/">Start Study 2 →</a>
+<div class="eval-card">
+    <h3><a href="musicgen-backend/">2. MusicGen Backend</a></h3>
+    <span class="badge">6 pairs</span> <span class="badge">~10-15 min</span>
+    <p>Tests MusicCritic with <strong>MusicGen-Large</strong> as the generation backend. Compares baseline (first candidate) vs critic-selected (best candidate) across 6 genres.</p>
 </div>
 
-<div class="card">
-  <h2>Study 3: Multi-Prompt Robustness</h2>
-  <p>Are the improvements robust across different text prompts for the same genre? Compare baseline vs selected across diverse prompts.</p>
-  <p class="meta">4 pairs · ~5 minutes</p>
-  <a href="multi-prompt/">Start Study 3 →</a>
+<div class="eval-card">
+    <h3><a href="multi-prompt/">3. Multi-Prompt Robustness</a></h3>
+    <span class="badge">4 pairs</span> <span class="badge">~5-10 min</span>
+    <p>Tests robustness of the critic across <strong>different text prompts</strong> for the same genre. Compares baseline vs critic-selected outputs for hip-hop, pop, and rock with alternate prompts.</p>
+</div>
+
+<hr class="section-divider">
+
+<h2>Rating Criteria</h2>
+<table>
+    <tr><th>Criterion</th><th>1 (Poor)</th><th>3 (Acceptable)</th><th>5 (Excellent)</th></tr>
+    <tr>
+        <td><strong>Quality MOS</strong><br><em>How good does the music sound overall?</em></td>
+        <td>Unpleasant, noisy, incoherent</td>
+        <td>Decent, listenable but unremarkable</td>
+        <td>Excellent production, enjoyable music</td>
+    </tr>
+    <tr>
+        <td><strong>Match MOS</strong><br><em>How well does the music match the genre description?</em></td>
+        <td>Completely wrong genre/mood</td>
+        <td>Partially matches, some elements off</td>
+        <td>Perfect genre match, all elements present</td>
+    </tr>
+    <tr>
+        <td><strong>Preference</strong><br><em>Which sample do you prefer overall?</em></td>
+        <td colspan="3">A is better / Tie / B is better</td>
+    </tr>
+</table>
+
+<div class="info-box">
+    <strong>Note:</strong> BPM accuracy is evaluated automatically — please judge subjective quality and overall impression only.
+    <br><br>
+    After completing each evaluation, click <strong>Download Results</strong> and email the JSON file to the researchers.
 </div>
 
 </body>
