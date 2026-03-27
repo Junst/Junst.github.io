@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MusicCritic Human Evaluation</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+        h1 { color: #333; border-bottom: 2px solid #4C72B0; padding-bottom: 10px; }
+        h2 { color: #4C72B0; margin-top: 40px; }
+        .info-box { background: #e8f4fd; border-left: 4px solid #4C72B0; padding: 15px; margin: 20px 0; border-radius: 4px; }
+        .eval-card { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin: 15px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .eval-card h3 { margin-top: 0; color: #4C72B0; }
+        .eval-card a { color: #4C72B0; text-decoration: none; font-weight: bold; font-size: 1.1em; }
+        .badge { display: inline-block; background: #4C72B0; color: white; padding: 2px 10px; border-radius: 12px; font-size: 0.85em; margin-right: 8px; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background: #4C72B0; color: white; }
+    </style>
+</head>
+<body>
+<h1>MusicCritic Human Evaluation</h1>
+<div class="info-box">
+    <strong>Welcome!</strong> Please use <strong>headphones</strong> in a quiet environment. Each set uses blinded A/B comparisons with Quality MOS, Match MOS, and Preference ratings.
+    After completing, click <strong>Download Results</strong> and send the JSON file to the researchers.
+</div>
+<h2>Evaluation Sets</h2>
+<div class="eval-card">
+    <h3><a href="feature-vs-audio/">1. Feature vs Audio Critic</a></h3>
+    <span class="badge">23 pairs</span> <span class="badge">~25 min</span>
+    <p>Direct A/B comparison between feature-selected vs audio-selected candidates across 10 genres.</p>
+</div>
+<div class="eval-card">
+    <h3><a href="musicgen-backend/">2. MusicGen Backend</a></h3>
+    <span class="badge">6 pairs</span> <span class="badge">~10 min</span>
+    <p>Baseline vs critic-selected on MusicGen-Large backend.</p>
+</div>
+<div class="eval-card">
+    <h3><a href="multi-prompt/">3. Multi-Prompt Robustness</a></h3>
+    <span class="badge">4 pairs</span> <span class="badge">~5 min</span>
+    <p>Baseline vs selected across different text prompts for the same genre.</p>
+</div>
+<h2>Rating Criteria</h2>
+<table>
+    <tr><th>Criterion</th><th>1 (Poor)</th><th>3 (Acceptable)</th><th>5 (Excellent)</th></tr>
+    <tr><td><strong>Quality MOS</strong></td><td>Unpleasant, noisy</td><td>Decent, listenable</td><td>Excellent, enjoyable</td></tr>
+    <tr><td><strong>Match MOS</strong></td><td>Wrong genre/mood</td><td>Partially matches</td><td>Perfect match</td></tr>
+</table>
+<div class="info-box">
+    <strong>Note:</strong> BPM accuracy is evaluated automatically — please judge subjective quality and overall impression only.
+</div>
+</body>
+</html>
