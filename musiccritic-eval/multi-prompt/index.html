@@ -64,13 +64,13 @@
 </div>
 
 <script>
-const PAIRS = [{"pair_id": "hip_hop_p1", "genre": "hip_hop", "prompt_idx": 1, "A_type": "baseline", "B_type": "selected", "A_cand_idx": 0, "B_cand_idx": 3, "A_score": 6.0, "B_score": 8.0, "all_scores": [6.0, 6.0, 6.0, 8.0, 6.0, 6.0, 6.0, 6.0, 6.0]}, {"pair_id": "pop_p0", "genre": "pop", "prompt_idx": 0, "A_type": "baseline", "B_type": "selected", "A_cand_idx": 0, "B_cand_idx": 1, "A_score": 6.0, "B_score": 8.0, "all_scores": [6.0, 8.0, 8.0, 6.0, 5.0, 5.0, 6.0, 6.0, 6.0]}, {"pair_id": "pop_p1", "genre": "pop", "prompt_idx": 1, "A_type": "selected", "B_type": "baseline", "A_cand_idx": 3, "B_cand_idx": 0, "A_score": 8.0, "B_score": 5.0, "all_scores": [5.0, 5.0, 6.0, 8.0, 8.0, 8.0, 6.0, 6.0, 6.0]}, {"pair_id": "rock_p1", "genre": "rock", "prompt_idx": 1, "A_type": "baseline", "B_type": "selected", "A_cand_idx": 0, "B_cand_idx": 1, "A_score": 5.0, "B_score": 8.0, "all_scores": [5.0, 8.0, 8.0, 6.0, 8.0, 8.0, 8.0, 8.0, 8.0]}];
+const PAIRS = [{"pair_id": "hip_hop_p1", "genre": "hip_hop", "prompt_idx": 1, "A_type": "baseline", "B_type": "selected", "A_cand_idx": 0, "B_cand_idx": 3, "A_score": 6.0, "B_score": 8.0, "all_scores": [6.0, 6.0, 6.0, 8.0, 6.0, 6.0, 6.0, 6.0, 6.0], "description": "Laid-back hip hop beat with deep 808 bass and crisp hi-hats. Target: 90 BPM, C minor."}, {"pair_id": "pop_p0", "genre": "pop", "prompt_idx": 0, "A_type": "baseline", "B_type": "selected", "A_cand_idx": 0, "B_cand_idx": 1, "A_score": 6.0, "B_score": 8.0, "all_scores": [6.0, 8.0, 8.0, 6.0, 5.0, 5.0, 6.0, 6.0, 6.0], "description": "Catchy pop song with bright synths and energetic beat. Target: 120 BPM, C major."}, {"pair_id": "pop_p1", "genre": "pop", "prompt_idx": 1, "A_type": "selected", "B_type": "baseline", "A_cand_idx": 3, "B_cand_idx": 0, "A_score": 8.0, "B_score": 5.0, "all_scores": [5.0, 5.0, 6.0, 8.0, 8.0, 8.0, 6.0, 6.0, 6.0], "description": "Catchy pop song with bright synths and energetic beat. Target: 120 BPM, C major."}, {"pair_id": "rock_p1", "genre": "rock", "prompt_idx": 1, "A_type": "baseline", "B_type": "selected", "A_cand_idx": 0, "B_cand_idx": 1, "A_score": 5.0, "B_score": 8.0, "all_scores": [5.0, 8.0, 8.0, 6.0, 8.0, 8.0, 8.0, 8.0, 8.0], "description": "Driving rock anthem with electric guitar riffs and pounding drums. Target: 140 BPM, E minor."}];
 
 function createPairHTML(pair, idx) {
   return `
     <div class="pair" id="pair-${idx}">
       <div class="pair-header">Pair ${idx+1} / ${PAIRS.length} — ${pair.genre.replace('_',' ')}</div>
-      <div class="pair-desc">Seed: ${pair.seed}</div>
+      <div class="task-desc"><strong>Description:</strong> ${pair.description || pair.genre.replace("_"," ")}</div>
       <div class="audio-row">
         <div class="audio-col">
           <h4>Audio A</h4>
