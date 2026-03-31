@@ -66,7 +66,7 @@ LREC 2026 [[arXiv](https://arxiv.org/abs/2603.14257)] [[PDF](https://arxiv.org/p
 
 Let Triggers Control : Frequency-aware Dropout for Effective Token Control <br>
 **Junyoung Koh**, Hoyeon Moon, Dongha Kim, Seungmin Lee, Sanghyun Park, and Min Song <br>
-CVPR 2026 Workshop [P13N: Personalization in Generative AI](https://p13n-workshop.github.io/#call-for-papers)
+CVPR 2026 Workshop [P13N: Personalization in Generative AI](https://p13n-workshop.github.io/#call-for-papers) [[arXiv](https://arxiv.org/abs/2603.27199)] [[PDF](https://arxiv.org/pdf/2603.27199)]
 
 AIBA: Attention-based Instrument Band Alignment for Text-to-Audio Diffusion <br>
 **Junyoung Koh**, Sooyong Kim, Gyuhyeong Choi, and Yongwon Choi <br>
