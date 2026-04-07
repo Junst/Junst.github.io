@@ -16,6 +16,7 @@ I am currently supported by a Ph.D. Research Fellowship from the National Resear
 ## 🔥 News
 
 <ul style="list-style-type: square;">
+    <li><strong>Apr 2026</strong> : Jamendo-MT-QA is accepted to ACL 2026 Findings! </li>
     <li><strong>Mar 2026</strong> : 1 paper is accepted to CVPR 2026 Workshop (P13N)! </li>
     <li><strong>Feb 2026</strong> : I'm going to University of Michigan as a Visiting Graduate Student 👨‍🎓 </li>
     <li><strong>Feb 2026</strong> : 1 paper is accepted to LREC 2026! </li>
@@ -60,6 +61,10 @@ B.S., Major in Media
 
 ### Conference & Workshop Papers
 
+Jamendo-MT-QA: A Benchmark for Multi-Track Comparative Music Question Answering <br>
+**Junyoung Koh**, Jaeyun Lee, Soo Yong Kim, GYU HYEONG CHOI, Jung In Koh, Jordan Phillips, Yeonjin Lee, and Min Song <br>
+ACL 2026 Findings [[Project Page](https://maap-lab.github.io/Jamendo-MT-QA/)] [[HuggingFace](https://huggingface.co/datasets/m-a-a-p/Jamendo-MT-QA)]
+
 Automatic Inter-document Multi-hop Scientific QA Generation <br>
 Seungmin Lee, Dongha Kim, Yuni Jeon, **Junyoung Koh**, and Min Song <br>
 LREC 2026 [[arXiv](https://arxiv.org/abs/2603.14257)] [[PDF](https://arxiv.org/pdf/2603.14257)]
@@ -89,10 +94,6 @@ Proceedings of the Korean Society of Computer Information Conference 2022 [[PDF]
 MCJudgeBench: A Benchmark for Constraint-Level Judge Evaluation in Multi-Constraint Instruction Following <br>
 Jaeyun Lee, **Junyoung Koh**, Zeynel Tok, Hunar Batra, and Ronald Clark <br>
 Under Review
-
-Jamendo-MT-QA: A Benchmark for Multi-Track Comparative Music Question Answering <br>
-**Junyoung Koh**, Jaeyun Lee, Soo Yong Kim, GYU HYEONG CHOI, Jung In Koh, Jordan Phillips, Yeonjin Lee, and Min Song <br>
-Under Review [[Project Page](https://maap-lab.github.io/Jamendo-MT-QA/)] [[HuggingFace](https://huggingface.co/datasets/m-a-a-p/Jamendo-MT-QA)]
 
 KoSCoPe: Hierarchical Safety Curriculum with Reasoning Internalization for Korean Small Language Models <br>
 Soo Yong Kim, **Junyoung Koh**, and Seunghyeok Hong <br>
