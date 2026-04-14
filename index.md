@@ -63,7 +63,7 @@ B.S., Major in Media
 
 Jamendo-MT-QA: A Benchmark for Multi-Track Comparative Music Question Answering <br>
 **Junyoung Koh**, Jaeyun Lee, Soo Yong Kim, GYU HYEONG CHOI, Jung In Koh, Jordan Phillips, Yeonjin Lee, and Min Song <br>
-ACL 2026 Findings [[Project Page](https://maap-lab.github.io/Jamendo-MT-QA/)] [[HuggingFace](https://huggingface.co/datasets/m-a-a-p/Jamendo-MT-QA)]
+ACL 2026 Findings [[arXiv](https://arxiv.org/abs/2604.09721)] [[PDF](https://arxiv.org/pdf/2604.09721)] [[Project Page](https://maap-lab.github.io/Jamendo-MT-QA/)] [[HuggingFace](https://huggingface.co/datasets/m-a-a-p/Jamendo-MT-QA)]
 
 Automatic Inter-document Multi-hop Scientific QA Generation <br>
 Seungmin Lee, Dongha Kim, Yuni Jeon, **Junyoung Koh**, and Min Song <br>
