@@ -99,10 +99,6 @@ KoSCoPe: Hierarchical Safety Curriculum with Reasoning Internalization for Korea
 Soo Yong Kim, **Junyoung Koh**, and Seunghyeok Hong <br>
 Under Review
 
-Learning to Wire: End-to-End Operand Selection for Symbolic Logic Networks <br>
-Soon Ho Choi, Soo Yong Kim, Kyeonghun Kim, and **Junyoung Koh** <br>
-Under Review
-
 Jamendo-QA: A Large-Scale Music Question Answering Dataset <br>
 **Junyoung Koh**, Sooyong Kim, Yongwon Choi, and Gyuhyeong Choi <br>
 [[arXiv](https://arxiv.org/abs/2509.15662)] [[PDF](https://arxiv.org/pdf/2509.15662)] [[HuggingFace](https://huggingface.co/datasets/m-a-a-p/Jamendo-QA)]
