@@ -16,6 +16,7 @@ I am currently supported by a Ph.D. Research Fellowship from the National Resear
 ## 🔥 News
 
 <ul style="list-style-type: square;">
+    <li><strong>Apr 2026</strong> : MCJudgeBench is accepted to ACL 2026 Workshop (GEM)! </li>
     <li><strong>Apr 2026</strong> : Jamendo-MT-QA is accepted to ACL 2026 Findings! </li>
     <li><strong>Mar 2026</strong> : 1 paper is accepted to CVPR 2026 Workshop (P13N)! </li>
     <li><strong>Feb 2026</strong> : I'm going to University of Michigan as a Visiting Graduate Student 👨‍🎓 </li>
@@ -69,6 +70,10 @@ Automatic Inter-document Multi-hop Scientific QA Generation <br>
 Seungmin Lee, Dongha Kim, Yuni Jeon, **Junyoung Koh**, and Min Song <br>
 LREC 2026 [[arXiv](https://arxiv.org/abs/2603.14257)] [[PDF](https://arxiv.org/pdf/2603.14257)]
 
+MCJudgeBench: A Benchmark for Constraint-Level Judge Evaluation in Multi-Constraint Instruction Following <br>
+Jaeyun Lee, **Junyoung Koh**, Zeynel Tok, Hunar Batra, and Ronald Clark <br>
+ACL 2026 Workshop on Generation, Evaluation, and Metrics (GEM)
+
 Let Triggers Control : Frequency-aware Dropout for Effective Token Control <br>
 **Junyoung Koh**, Hoyeon Moon, Dongha Kim, Seungmin Lee, Sanghyun Park, and Min Song <br>
 CVPR 2026 Workshop [P13N: Personalization in Generative AI](https://p13n-workshop.github.io/#call-for-papers) [[arXiv](https://arxiv.org/abs/2603.27199)] [[PDF](https://arxiv.org/pdf/2603.27199)]
@@ -90,10 +95,6 @@ Proposal of 3D Camera-Based Digital Coordinate Recognition Technology <br>
 Proceedings of the Korean Society of Computer Information Conference 2022 [[PDF](https://koreascience.kr/article/CFKO202232249429413.pdf)]
 
 ### Preprints & Under Review
-
-MCJudgeBench: A Benchmark for Constraint-Level Judge Evaluation in Multi-Constraint Instruction Following <br>
-Jaeyun Lee, **Junyoung Koh**, Zeynel Tok, Hunar Batra, and Ronald Clark <br>
-Under Review
 
 KoSCoPe: Hierarchical Safety Curriculum with Reasoning Internalization for Korean Small Language Models <br>
 Soo Yong Kim, **Junyoung Koh**, and Seunghyeok Hong <br>
