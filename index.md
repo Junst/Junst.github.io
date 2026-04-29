@@ -96,6 +96,14 @@ Proceedings of the Korean Society of Computer Information Conference 2022 [[PDF]
 
 ### Preprints & Under Review
 
+Closing the STFT-CQT Gap: Simple Multi-Scale Features for Vocal Multi-Pitch Estimation <br>
+**Junyoung Koh**, and Hao-Wen Dong <br>
+Under Review
+
+MusicCritic: Test-Time Scaling for Music Generation with Feature-Based and Audio-Native LLM Critics <br>
+**Junyoung Koh**, Jungwoo Kim, Sunghyeon Kim, Youngjin Na, Joonyong Park, Gyuhyeong Choi, and Soo Yong Kim <br>
+Under Review
+
 KoSCoPe: Hierarchical Safety Curriculum with Reasoning Internalization for Korean Small Language Models <br>
 Soo Yong Kim, **Junyoung Koh**, and Seunghyeok Hong <br>
 Under Review
