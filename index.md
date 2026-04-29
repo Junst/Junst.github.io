@@ -7,7 +7,7 @@ use_math: true
 
 ![]({{site.url}}/assets/images/2023_cv.png){: .align-right width="220" height="220"}
 
-Hello, I am a Ph.D student in Artificial Intelligence at Yonsei University, advised by Prof. Min Song in [DeepText LAB](https://deeptext.yonsei.ac.kr/home).
+Hello, I am a Ph.D student in Artificial Intelligence at Yonsei University, advised by Prof.Seon Joo Kim
 
 My research focuses on music audio understanding and generation, spanning music source separation, multi-pitch estimation, and text-to-audio synthesis. I am particularly interested in how deep learning models can decompose, analyze, and reconstruct complex musical signals. My recent work includes confidence-guided test-time adaptation for source separation, attention-based alignment for controllable music generation, and building large-scale benchmarks for music question answering.
 
