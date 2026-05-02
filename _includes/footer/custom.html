@@ -147,17 +147,21 @@
     background: currentColor;
   }
 
-  #di-yt-player {
+  /* On-screen but visually hidden — YouTube blocks audio in 0-size/off-screen iframes */
+  #di-yt-wrap {
     position: fixed;
-    left: -9999px;
-    top: -9999px;
+    right: 0;
+    bottom: 0;
     width: 1px;
     height: 1px;
+    overflow: hidden;
+    opacity: 0.01;
     pointer-events: none;
+    z-index: 0;
   }
 </style>
 
-<div id="di-yt-player"></div>
+<div id="di-yt-wrap"><div id="di-yt-player"></div></div>
 
 <script>
 (function(){
@@ -276,8 +280,8 @@
 
   function createPlayer(){
     player = new YT.Player('di-yt-player', {
-      height: '0',
-      width: '0',
+      height: '180',
+      width: '320',
       videoId: 'mlq32JT4IP4',
       playerVars: {
         autoplay: 1,
