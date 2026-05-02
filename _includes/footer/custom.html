@@ -27,3 +27,306 @@
   });
 })();
 </script>
+
+<!-- Dynamic Island Music Player -->
+<style>
+  #dynamic-island {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    width: 48px;
+    height: 48px;
+    border-radius: 999px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0,0,0,.35);
+    transition: width .45s cubic-bezier(.32,.72,.16,1),
+                height .45s cubic-bezier(.32,.72,.16,1),
+                border-radius .45s cubic-bezier(.32,.72,.16,1);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    background: #000;
+    color: #fff;
+    user-select: none;
+  }
+  [data-theme="light"] #dynamic-island { background: #000 !important; color: #fff !important; }
+  [data-theme="dark"]  #dynamic-island { background: #fff !important; color: #000 !important; }
+
+  #dynamic-island.di-expanded {
+    width: 340px;
+    height: 72px;
+    border-radius: 24px;
+  }
+
+  #dynamic-island #theme-toggle.theme-fab,
+  #dynamic-island > #theme-toggle {
+    position: static !important;
+    right: auto !important; bottom: auto !important;
+    width: 48px !important; height: 48px !important;
+    background: transparent !important;
+    color: inherit !important;
+    box-shadow: none !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    font-size: 20px;
+    transform: none !important;
+  }
+  #dynamic-island #theme-toggle:hover { background: rgba(128,128,128,.2) !important; }
+
+  .di-player {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-right: 10px;
+    opacity: 0;
+    transform: translateX(8px);
+    transition: opacity .25s .15s ease, transform .25s .15s ease;
+    pointer-events: none;
+  }
+  #dynamic-island.di-expanded .di-player {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+
+  .di-title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 12.5px;
+    font-weight: 500;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    line-height: 1.2;
+  }
+
+  .di-controls {
+    display: flex;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+  .di-controls button {
+    width: 30px; height: 30px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .di-controls button:hover { background: rgba(128,128,128,.25); }
+
+  .di-progress {
+    position: absolute;
+    bottom: 6px;
+    left: 56px;
+    right: 12px;
+    height: 2px;
+    background: rgba(128,128,128,.35);
+    border-radius: 2px;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity .25s .15s ease;
+  }
+  #dynamic-island.di-expanded .di-progress { opacity: 1; }
+  .di-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: currentColor;
+  }
+
+  #di-yt-player {
+    position: fixed;
+    left: -9999px;
+    top: -9999px;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+  }
+</style>
+
+<div id="di-yt-player"></div>
+
+<script>
+(function(){
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  var island, themeBtn, playPauseBtn, nextBtn, titleEl, progressBar;
+  var player = null;
+  var ytLoaded = false;
+  var progressTimer = null;
+  var titleTimer = null;
+
+  function init(){
+    var btns = document.querySelectorAll('#theme-toggle');
+    if (!btns.length) return;
+    if (document.getElementById('dynamic-island')) return;
+
+    themeBtn = btns[0];
+    for (var i = 1; i < btns.length; i++) btns[i].style.display = 'none';
+
+    island = document.createElement('div');
+    island.id = 'dynamic-island';
+    island.className = 'di-collapsed';
+    themeBtn.parentNode.insertBefore(island, themeBtn);
+    island.appendChild(themeBtn);
+
+    var playerEl = document.createElement('div');
+    playerEl.className = 'di-player';
+    playerEl.innerHTML =
+      '<div class="di-title"><span id="di-title-text">Tap to play ♫</span></div>' +
+      '<div class="di-controls">' +
+        '<button class="di-play-pause" type="button" aria-label="Play/Pause">▶</button>' +
+        '<button class="di-next" type="button" aria-label="Next">⏭</button>' +
+      '</div>';
+    island.appendChild(playerEl);
+
+    var progress = document.createElement('div');
+    progress.className = 'di-progress';
+    progress.innerHTML = '<div class="di-progress-bar"></div>';
+    island.appendChild(progress);
+
+    titleEl = document.getElementById('di-title-text');
+    playPauseBtn = playerEl.querySelector('.di-play-pause');
+    nextBtn = playerEl.querySelector('.di-next');
+    progressBar = progress.querySelector('.di-progress-bar');
+
+    // Capture-phase: collapsed → click anywhere expands (and blocks theme toggle on this gesture)
+    island.addEventListener('click', function(e){
+      if (island.classList.contains('di-collapsed')) {
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        expand();
+      }
+    }, true);
+
+    // Bubble-phase: when expanded, stop propagation so document outside-click handler doesn't collapse
+    island.addEventListener('click', function(e){
+      if (island.classList.contains('di-expanded')) {
+        e.stopPropagation();
+      }
+    }, false);
+
+    playPauseBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      if (!player) return;
+      try {
+        var s = player.getPlayerState();
+        if (s === 1) player.pauseVideo();
+        else player.playVideo();
+      } catch(err){}
+    });
+
+    nextBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      if (!player || !player.nextVideo) return;
+      try {
+        player.nextVideo();
+        clearTimeout(titleTimer);
+        titleTimer = setTimeout(updateTitle, 700);
+      } catch(err){}
+    });
+
+    document.addEventListener('click', function(e){
+      if (island.classList.contains('di-expanded') && !island.contains(e.target)) {
+        collapse();
+      }
+    });
+  }
+
+  function expand(){
+    island.classList.remove('di-collapsed');
+    island.classList.add('di-expanded');
+    if (!ytLoaded) loadYT();
+  }
+
+  function collapse(){
+    island.classList.remove('di-expanded');
+    island.classList.add('di-collapsed');
+  }
+
+  function loadYT(){
+    ytLoaded = true;
+    if (window.YT && window.YT.Player) { createPlayer(); return; }
+    var prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = function(){
+      if (typeof prev === 'function') { try { prev(); } catch(e){} }
+      createPlayer();
+    };
+    var tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    document.head.appendChild(tag);
+  }
+
+  function createPlayer(){
+    player = new YT.Player('di-yt-player', {
+      height: '0',
+      width: '0',
+      videoId: 'mlq32JT4IP4',
+      playerVars: {
+        autoplay: 1,
+        start: 7,
+        list: 'RDmlq32JT4IP4',
+        listType: 'playlist',
+        controls: 0,
+        modestbranding: 1,
+        playsinline: 1,
+        rel: 0
+      },
+      events: {
+        onReady: function(){
+          try { player.playVideo(); } catch(e){}
+          startProgressLoop();
+          updateTitle();
+        },
+        onStateChange: function(e){
+          if (e.data === 1) {
+            playPauseBtn.textContent = '⏸';
+            updateTitle();
+          } else if (e.data === 2 || e.data === 0) {
+            playPauseBtn.textContent = '▶';
+          }
+        }
+      }
+    });
+  }
+
+  function updateTitle(){
+    if (!player || !player.getVideoData) return;
+    try {
+      var d = player.getVideoData();
+      if (d && d.title) titleEl.textContent = d.title;
+    } catch(e){}
+  }
+
+  function startProgressLoop(){
+    if (progressTimer) return;
+    progressTimer = setInterval(function(){
+      if (!player || !player.getCurrentTime) return;
+      try {
+        var cur = player.getCurrentTime();
+        var dur = player.getDuration();
+        if (dur > 0) {
+          progressBar.style.width = Math.min(100, (cur/dur*100)).toFixed(1) + '%';
+        }
+      } catch(e){}
+    }, 250);
+  }
+})();
+</script>
