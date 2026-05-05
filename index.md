@@ -7,7 +7,7 @@ use_math: true
 
 ![]({{site.url}}/assets/images/2023_cv.png){: .align-right width="220" height="220"}
 
-Hello, I am a Ph.D student in Artificial Intelligence at Yonsei University, advised by Prof. Seon Joo Kim, and currently a Research Intern at KRAFTON.
+Hello, I am a Ph.D student in Artificial Intelligence at Yonsei University, advised by Prof. Seon Joo Kim, and currently a Research Intern at KRAFTON. I am also collaborating with Prof. Hao-Wen Dong at the University of Michigan on multi-pitch estimation research.
 
 My research focuses on music audio understanding and generation, spanning music source separation, multi-pitch estimation, and text-to-audio synthesis. I am particularly interested in how deep learning models can decompose, analyze, and reconstruct complex musical signals. My recent work includes confidence-guided test-time adaptation for source separation, attention-based alignment for controllable music generation, and building large-scale benchmarks for music question answering.
 
@@ -95,6 +95,10 @@ Proposal of 3D Camera-Based Digital Coordinate Recognition Technology <br>
 Proceedings of the Korean Society of Computer Information Conference 2022 [[PDF](https://koreascience.kr/article/CFKO202232249429413.pdf)]
 
 ### Preprints & Under Review
+
+Instrumental Text-to-Music Generation with Auxiliary Conditioning Branches: A Submission to the ICME 2026 ATTM Grand Challenge <br>
+**Junyoung Koh** <br>
+ICME 2026 Audio-Text-to-Music (ATTM) Grand Challenge — Under Review
 
 Closing the STFT-CQT Gap: Simple Multi-Scale Features for Vocal Multi-Pitch Estimation <br>
 **Junyoung Koh**, and Hao-Wen Dong <br>
