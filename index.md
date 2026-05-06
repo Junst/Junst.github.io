@@ -72,7 +72,7 @@ LREC 2026 [[arXiv](https://arxiv.org/abs/2603.14257)] [[PDF](https://arxiv.org/p
 
 MCJudgeBench: A Benchmark for Constraint-Level Judge Evaluation in Multi-Constraint Instruction Following <br>
 Jaeyun Lee, **Junyoung Koh**, Zeynel Tok, Hunar Batra, and Ronald Clark <br>
-ACL 2026 Workshop on Generation, Evaluation, and Metrics (GEM)
+ACL 2026 Workshop on Generation, Evaluation, and Metrics (GEM) [[arXiv](https://arxiv.org/abs/2605.03858)] [[PDF](https://arxiv.org/pdf/2605.03858)]
 
 Let Triggers Control : Frequency-aware Dropout for Effective Token Control <br>
 **Junyoung Koh**, Hoyeon Moon, Dongha Kim, Seungmin Lee, Sanghyun Park, and Min Song <br>
