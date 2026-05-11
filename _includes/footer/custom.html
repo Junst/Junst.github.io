@@ -1,11 +1,12 @@
 <!-- Dynamic Island Music Player (independent from theme toggle) -->
 <style>
-  /* Stack vertically: this music island sits above the theme-toggle FAB
-     (theme button is at right:22px, bottom:22px, 48x48). */
+  /* Stack vertically: this music island sits above the theme-toggle FAB.
+     The real theme-fab spec (right:18, bottom:18) lives in _sass/custom/_custom.scss
+     — match those exact offsets so the two FABs share the same vertical centerline. */
   #dynamic-island {
     position: fixed;
-    right: 22px;
-    bottom: 80px; /* 22 (theme bottom) + 48 (theme height) + 10 (gap) */
+    right: 18px;
+    bottom: 76px; /* 18 (theme bottom) + 48 (theme height) + 10 (gap) */
     width: 48px;
     height: 48px;
     border-radius: 999px;
