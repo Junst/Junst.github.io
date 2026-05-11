@@ -65,7 +65,7 @@ B.S., Major in Media
 
 Instrumental Text-to-Music Generation with Auxiliary Conditioning Branches: A Submission to the ICME 2026 ATTM Grand Challenge <br>
 **Junyoung Koh** <br>
-ICME 2026 Audio-Text-to-Music (ATTM) Grand Challenge
+ICME 2026 [Audio-Text-to-Music (ATTM) Grand Challenge](https://ntu-musicailab.github.io/ICME26-ATTM-Grand-Challenge/)
 
 Jamendo-MT-QA: A Benchmark for Multi-Track Comparative Music Question Answering <br>
 **Junyoung Koh**, Jaeyun Lee, Soo Yong Kim, GYU HYEONG CHOI, Jung In Koh, Jordan Phillips, Yeonjin Lee, and Min Song <br>

@@ -52,6 +52,8 @@
         .author__urls svg { color:#111111 !important; opacity:1 !important; }
         code,pre{ background:#ffffff !important; color:#111111 !important; }
         #theme-toggle{ background:#000 !important; color:#fff !important; }
+        ::selection      { background:#000000 !important; color:#ffffff !important; }
+        ::-moz-selection { background:#000000 !important; color:#ffffff !important; }
         ${shareOff}
       `;
     } else {
@@ -70,6 +72,8 @@
         .author__urls svg { color:#ffffff !important; opacity:1 !important; }
         code,pre{ background:#0f0f0f !important; color:#e5e5e5 !important; }
         #theme-toggle{ background:#fff !important; color:#000 !important; }
+        ::selection      { background:#ffffff !important; color:#000000 !important; }
+        ::-moz-selection { background:#ffffff !important; color:#000000 !important; }
         ${shareOff}
       `;
     }
