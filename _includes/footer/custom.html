@@ -1,10 +1,11 @@
 <!-- Dynamic Island Music Player (independent from theme toggle) -->
 <style>
-  /* Sit just to the left of the theme-toggle FAB (which is at right:22px, 48x48). */
+  /* Stack vertically: this music island sits above the theme-toggle FAB
+     (theme button is at right:22px, bottom:22px, 48x48). */
   #dynamic-island {
     position: fixed;
-    right: 80px;
-    bottom: 22px;
+    right: 22px;
+    bottom: 80px; /* 22 (theme bottom) + 48 (theme height) + 10 (gap) */
     width: 48px;
     height: 48px;
     border-radius: 999px;

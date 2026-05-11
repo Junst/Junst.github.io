@@ -1,18 +1,26 @@
-/* ========= Floating Action Button ========= */
+/* ========= Floating Action Button =========
+   Box dims & shadow match #dynamic-island so the two FABs sit on the same baseline. */
 #theme-toggle, .theme-fab {
   position: fixed;
   right: 22px;
   bottom: 22px;
   width: 48px;
   height: 48px;
-  border-radius: 9999px;
-  border: 1px solid rgba(255,255,255,0.15);
-  background: rgba(25,25,25,0.85);
-  color: #f0f0f0;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 999px;
+  background: #000;
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(0,0,0,.35);
   cursor: pointer;
   z-index: 1000;
-  backdrop-filter: blur(6px);
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  line-height: 1;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
 }
 #theme-toggle:hover { transform: translateY(-1px); }
 
