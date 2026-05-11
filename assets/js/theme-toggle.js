@@ -1,9 +1,12 @@
 // assets/js/theme-toggle.js
+// The theme button itself (and its click handler) lives in _includes/head/custom.html,
+// which just flips the `data-theme` attribute on <html>. This file reacts to that
+// change by painting the heavier per-mode CSS overrides (sidebar, links, code blocks, etc).
 (function () {
   var KEY = 'theme';
   var root = document.documentElement;
 
-  // 동적 스타일 태그
+  // Dynamic style tag we own.
   var dyn = document.getElementById('dynamic-theme');
   if (!dyn) {
     dyn = document.createElement('style');
@@ -11,25 +14,15 @@
     document.head.appendChild(dyn);
   }
 
-  // FAB 없으면 생성
-  var btn = document.getElementById('theme-toggle');
-  if (!btn) {
-    btn = document.createElement('button');
-    btn.id = 'theme-toggle';
-    btn.className = 'theme-fab';
-    document.body.appendChild(btn);
-  }
-
-  // FAB 기본 스타일(별도 SCSS 없이도 동작)
+  // FAB fallback style (only used if no other CSS sized the button).
   var fabCSS = document.getElementById('theme-fab-style');
   if (!fabCSS) {
     fabCSS = document.createElement('style');
     fabCSS.id = 'theme-fab-style';
     fabCSS.textContent = `
       .theme-fab{
-        position:fixed;right:18px;bottom:18px;width:48px;height:48px;
         display:grid;place-items:center;border:0;border-radius:999px;
-        cursor:pointer;z-index:9999;box-shadow:0 6px 18px rgba(0,0,0,.35);
+        cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.35);
         transition:background-color .15s,color .15s,transform .15s;
       }
       .theme-fab:hover{ transform: translateY(-1px); }
@@ -38,7 +31,7 @@
   }
 
   function cssFor(mode){
-    // 공유 영역은 전역 비노출
+    // Always-off elements.
     var shareOff = `
       .page__share, .page__share-title, .share, .share-links { display:none !important; }
     `;
@@ -53,20 +46,12 @@
           background:#ffffff !important; color:#111111 !important;
           background-image:none !important; box-shadow:none !important; border:0 !important;
         }
-        /* 본문 링크는 파란색 */
         a{ color:#1a73e8 !important; }
-
-        /* 사이드바(왼쪽 메뉴바) 링크와 아이콘은 진한 글자색으로 고정 */
         .author__urls a,
         .author__urls .fa, .author__urls .fab, .author__urls .fas, .author__urls .far,
         .author__urls svg { color:#111111 !important; opacity:1 !important; }
-
-        /* 코드 배경도 밝게 */
         code,pre{ background:#ffffff !important; color:#111111 !important; }
-
-        /* FAB: 라이트=달+검정 */
         #theme-toggle{ background:#000 !important; color:#fff !important; }
-
         ${shareOff}
       `;
     } else {
@@ -79,39 +64,37 @@
           background:#000000 !important; color:#e5e5e5 !important;
           background-image:none !important; box-shadow:none !important; border:0 !important;
         }
-        /* 본문 링크는 밝은 파란색 */
         a{ color:#8ab4ff !important; }
-
-        /* 사이드바(왼쪽 메뉴바) 링크와 아이콘은 흰색으로 고정 */
         .author__urls a,
         .author__urls .fa, .author__urls .fab, .author__urls .fas, .author__urls .far,
         .author__urls svg { color:#ffffff !important; opacity:1 !important; }
-
-        /* 코드 배경도 어둡게 */
         code,pre{ background:#0f0f0f !important; color:#e5e5e5 !important; }
-
-        /* FAB: 다크=해+하양 */
         #theme-toggle{ background:#fff !important; color:#000 !important; }
-
         ${shareOff}
       `;
     }
   }
 
-  function apply(mode){
-    root.setAttribute('data-theme', mode);
+  // Pure paint — does NOT mutate data-theme (head's click handler owns that).
+  function paint(mode){
+    if (mode !== 'light' && mode !== 'dark') mode = 'light';
     localStorage.setItem(KEY, mode);
     document.documentElement.style.colorScheme = mode;
     dyn.textContent = cssFor(mode);
-    btn.textContent = (mode === 'dark') ? '☀️' : '🌙';
+    var btn = document.getElementById('theme-toggle');
+    if (btn) btn.textContent = (mode === 'dark') ? '☀️' : '🌙';
   }
 
-  // 초기: 저장값 없으면 라이트
-  var saved = localStorage.getItem(KEY) || 'light';
-  apply(saved);
+  // Initial paint reflects whatever head/custom.html already set.
+  paint(root.getAttribute('data-theme') || localStorage.getItem(KEY) || 'light');
 
-  btn.addEventListener('click', function(){
-    var next = (root.getAttribute('data-theme') === 'dark') ? 'light' : 'dark';
-    apply(next);
-  });
+  // React to data-theme changes from the head's click handler (single source of truth).
+  new MutationObserver(function(muts){
+    for (var i = 0; i < muts.length; i++) {
+      if (muts[i].attributeName === 'data-theme') {
+        paint(root.getAttribute('data-theme'));
+        return;
+      }
+    }
+  }).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
 })();

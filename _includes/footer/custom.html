@@ -1,39 +1,10 @@
-<button id="theme-toggle" class="theme-fab" aria-label="Toggle theme" type="button">🌙</button>
-<script>
-(function(){
-  var KEY='theme';
-  var root=document.documentElement;
-  var btn=document.getElementById('theme-toggle');
-  if(!btn) return;
-
-  function apply(mode){
-    root.setAttribute('data-theme', mode);
-    localStorage.setItem(KEY, mode);
-    // 변수도 함께 덮어써서 즉시 체감되도록
-    var vars = (mode==='light')
-      ? {'--bg':'#ffffff','--text':'#111111','--accent':'#1a73e8','--card':'#ffffff'}
-      : {'--bg':'#000000','--text':'#e5e5e5','--accent':'#8ab4ff','--card':'#0f0f0f'};
-    for (var k in vars) root.style.setProperty(k, vars[k]);
-    root.style.colorScheme = mode;
-    btn.textContent = (mode==='dark') ? '☀️' : '🌙';
-  }
-
-  // 초기 동기화
-  apply(root.getAttribute('data-theme') || 'light');
-
-  btn.addEventListener('click', function(){
-    var next = (root.getAttribute('data-theme')==='dark') ? 'light' : 'dark';
-    apply(next);
-  });
-})();
-</script>
-
-<!-- Dynamic Island Music Player -->
+<!-- Dynamic Island Music Player (independent from theme toggle) -->
 <style>
+  /* Sit just to the left of the theme-toggle FAB (which is at right:22px, 48x48). */
   #dynamic-island {
     position: fixed;
-    right: 18px;
-    bottom: 18px;
+    right: 80px;
+    bottom: 22px;
     width: 48px;
     height: 48px;
     border-radius: 999px;
@@ -42,7 +13,7 @@
     transition: width .45s cubic-bezier(.32,.72,.16,1),
                 height .45s cubic-bezier(.32,.72,.16,1),
                 border-radius .45s cubic-bezier(.32,.72,.16,1);
-    z-index: 9999;
+    z-index: 1000;
     display: flex;
     align-items: center;
     background: #000;
@@ -58,24 +29,24 @@
     border-radius: 24px;
   }
 
-  #dynamic-island #theme-toggle.theme-fab,
-  #dynamic-island > #theme-toggle {
-    position: static !important;
-    right: auto !important; bottom: auto !important;
-    width: 48px !important; height: 48px !important;
-    background: transparent !important;
-    color: inherit !important;
-    box-shadow: none !important;
-    border: 0 !important;
-    border-radius: 999px !important;
-    flex-shrink: 0;
+  /* Always-visible collapsed trigger (the ▶ button users click to start music). */
+  .di-trigger {
+    width: 48px;
+    height: 48px;
+    background: transparent;
+    color: inherit;
+    border: 0;
+    border-radius: 999px;
+    cursor: pointer;
     display: grid;
     place-items: center;
-    cursor: pointer;
-    font-size: 20px;
-    transform: none !important;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0;
+    flex-shrink: 0;
   }
-  #dynamic-island #theme-toggle:hover { background: rgba(128,128,128,.2) !important; }
+  .di-trigger:hover { background: rgba(128,128,128,.2); }
+  #dynamic-island.di-expanded .di-trigger { display: none; }
 
   .di-player {
     flex: 1;
@@ -83,7 +54,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    padding-right: 10px;
+    padding: 0 10px;
     opacity: 0;
     transform: translateX(8px);
     transition: opacity .25s .15s ease, transform .25s .15s ease;
@@ -131,7 +102,7 @@
   .di-progress {
     position: absolute;
     bottom: 6px;
-    left: 56px;
+    left: 12px;
     right: 12px;
     height: 2px;
     background: rgba(128,128,128,.35);
@@ -171,25 +142,25 @@
     init();
   }
 
-  var island, themeBtn, playPauseBtn, nextBtn, titleEl, progressBar;
+  var island, triggerBtn, playPauseBtn, nextBtn, titleEl, progressBar;
   var player = null;
   var ytLoaded = false;
   var progressTimer = null;
   var titleTimer = null;
 
   function init(){
-    var btns = document.querySelectorAll('#theme-toggle');
-    if (!btns.length) return;
     if (document.getElementById('dynamic-island')) return;
-
-    themeBtn = btns[0];
-    for (var i = 1; i < btns.length; i++) btns[i].style.display = 'none';
 
     island = document.createElement('div');
     island.id = 'dynamic-island';
     island.className = 'di-collapsed';
-    themeBtn.parentNode.insertBefore(island, themeBtn);
-    island.appendChild(themeBtn);
+
+    triggerBtn = document.createElement('button');
+    triggerBtn.type = 'button';
+    triggerBtn.className = 'di-trigger';
+    triggerBtn.setAttribute('aria-label', 'Play music');
+    triggerBtn.textContent = '▶';
+    island.appendChild(triggerBtn);
 
     var playerEl = document.createElement('div');
     playerEl.className = 'di-player';
@@ -206,26 +177,18 @@
     progress.innerHTML = '<div class="di-progress-bar"></div>';
     island.appendChild(progress);
 
+    document.body.appendChild(island);
+
     titleEl = document.getElementById('di-title-text');
     playPauseBtn = playerEl.querySelector('.di-play-pause');
     nextBtn = playerEl.querySelector('.di-next');
     progressBar = progress.querySelector('.di-progress-bar');
 
-    // Capture-phase: collapsed → click anywhere expands (and blocks theme toggle on this gesture)
-    island.addEventListener('click', function(e){
-      if (island.classList.contains('di-collapsed')) {
-        e.stopImmediatePropagation();
-        e.preventDefault();
-        expand();
-      }
-    }, true);
-
-    // Bubble-phase: when expanded, stop propagation so document outside-click handler doesn't collapse
-    island.addEventListener('click', function(e){
-      if (island.classList.contains('di-expanded')) {
-        e.stopPropagation();
-      }
-    }, false);
+    // Only the dedicated trigger expands & starts music.
+    triggerBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      expand();
+    });
 
     playPauseBtn.addEventListener('click', function(e){
       e.stopPropagation();
@@ -247,6 +210,7 @@
       } catch(err){}
     });
 
+    // Click outside the island while expanded => collapse.
     document.addEventListener('click', function(e){
       if (island.classList.contains('di-expanded') && !island.contains(e.target)) {
         collapse();

@@ -92,3 +92,13 @@
 :root[data-theme="dark"] .btn,
 :root[data-theme="dark"] .button,
 :root[data-theme="dark"] button { background: #141414; border-color: #1f1f1f; color: #eaeaea; }
+
+/* ========= Text selection (drag highlight) ========= */
+/* Dark mode: white highlight on black text so the selection is visible. */
+:root[data-theme="dark"] ::selection      { background: #ffffff; color: #000000; }
+:root[data-theme="dark"] ::-moz-selection { background: #ffffff; color: #000000; }
+/* System dark (no manual override) — mirror the same behavior. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) ::selection      { background: #ffffff; color: #000000; }
+  :root:not([data-theme]) ::-moz-selection { background: #ffffff; color: #000000; }
+}

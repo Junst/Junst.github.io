@@ -16,6 +16,7 @@ I am currently supported by a Ph.D. Research Fellowship from the National Resear
 ## 🔥 News
 
 <ul style="list-style-type: square;">
+    <li><strong>May 2026</strong> : 1 paper is accepted to the ICME 2026 ATTM Grand Challenge! 🎵 </li>
     <li><strong>Apr 2026</strong> : MCJudgeBench is accepted to ACL 2026 Workshop (GEM)! </li>
     <li><strong>Apr 2026</strong> : Jamendo-MT-QA is accepted to ACL 2026 Findings! </li>
     <li><strong>Mar 2026</strong> : 1 paper is accepted to CVPR 2026 Workshop (P13N)! </li>
@@ -62,6 +63,10 @@ B.S., Major in Media
 
 ### Conference & Workshop Papers
 
+Instrumental Text-to-Music Generation with Auxiliary Conditioning Branches: A Submission to the ICME 2026 ATTM Grand Challenge <br>
+**Junyoung Koh** <br>
+ICME 2026 Audio-Text-to-Music (ATTM) Grand Challenge
+
 Jamendo-MT-QA: A Benchmark for Multi-Track Comparative Music Question Answering <br>
 **Junyoung Koh**, Jaeyun Lee, Soo Yong Kim, GYU HYEONG CHOI, Jung In Koh, Jordan Phillips, Yeonjin Lee, and Min Song <br>
 ACL 2026 Findings [[arXiv](https://arxiv.org/abs/2604.09721)] [[PDF](https://arxiv.org/pdf/2604.09721)] [[Project Page](https://maap-lab.github.io/Jamendo-MT-QA/)] [[HuggingFace](https://huggingface.co/datasets/m-a-a-p/Jamendo-MT-QA)]
@@ -95,10 +100,6 @@ Proposal of 3D Camera-Based Digital Coordinate Recognition Technology <br>
 Proceedings of the Korean Society of Computer Information Conference 2022 [[PDF](https://koreascience.kr/article/CFKO202232249429413.pdf)]
 
 ### Preprints & Under Review
-
-Instrumental Text-to-Music Generation with Auxiliary Conditioning Branches: A Submission to the ICME 2026 ATTM Grand Challenge <br>
-**Junyoung Koh** <br>
-ICME 2026 Audio-Text-to-Music (ATTM) Grand Challenge — Under Review
 
 Closing the STFT-CQT Gap: Simple Multi-Scale Features for Vocal Multi-Pitch Estimation <br>
 **Junyoung Koh**, and Hao-Wen Dong <br>
