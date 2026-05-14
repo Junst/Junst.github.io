@@ -151,6 +151,7 @@ AI Researcher Internship
 AI Team Leader & AI Researcher
 
 ## 🏆 Honors & Awards
+ICME 2026 ATTM Grand Challenge — **1st Place, Performance Track** & **#1 Overall MOS** *2026* <br>
 CES 2025 Innovation Award - AI category *2025* <br>
 CES 2024 Innovation Award - AI category *2024* <br>
 
