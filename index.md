@@ -16,6 +16,7 @@ I am currently supported by a Ph.D. Research Fellowship from the National Resear
 ## 🔥 News
 
 <ul style="list-style-type: square;">
+    <li><strong>May 2026</strong> : 🏆 Won <strong>1st place in the Performance Track</strong> AND <strong>#1 overall in MOS evaluation</strong> at the ICME 2026 ATTM Grand Challenge! </li>
     <li><strong>May 2026</strong> : 1 paper is accepted to the ICME 2026 ATTM Grand Challenge! 🎵 </li>
     <li><strong>Apr 2026</strong> : MCJudgeBench is accepted to ACL 2026 Workshop (GEM)! </li>
     <li><strong>Apr 2026</strong> : Jamendo-MT-QA is accepted to ACL 2026 Findings! </li>
@@ -65,7 +66,7 @@ B.S., Major in Media
 
 Instrumental Text-to-Music Generation with Auxiliary Conditioning Branches: A Submission to the ICME 2026 ATTM Grand Challenge <br>
 **Junyoung Koh** <br>
-ICME 2026 [Audio-Text-to-Music (ATTM) Grand Challenge](https://ntu-musicailab.github.io/ICME26-ATTM-Grand-Challenge/)
+ICME 2026 [Audio-Text-to-Music (ATTM) Grand Challenge](https://ntu-musicailab.github.io/ICME26-ATTM-Grand-Challenge/) — 🏆 **1st Place, Performance Track** · 🏆 **#1 Overall MOS**
 
 Jamendo-MT-QA: A Benchmark for Multi-Track Comparative Music Question Answering <br>
 **Junyoung Koh**, Jaeyun Lee, Soo Yong Kim, GYU HYEONG CHOI, Jung In Koh, Jordan Phillips, Yeonjin Lee, and Min Song <br>
