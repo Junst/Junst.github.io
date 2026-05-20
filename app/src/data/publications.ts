@@ -1,28 +1,26 @@
 export interface PublicationLink {
-  label: string
+  label: 'arXiv' | 'PDF' | 'Code' | 'HuggingFace' | 'Project' | 'CivitAI'
   href: string
 }
 
 export type PubTag = 'music' | 'nlp' | 'vision'
+export type PubStatus = 'preprint' | 'under-review' | 'tech-report'
 
 export interface Publication {
   title: string
   authors: string
   venue: string
+  status?: PubStatus
   awards?: string
   links?: PublicationLink[]
   tags: PubTag[]
   selected?: boolean
 }
 
-export interface PublicationGroup {
-  category: string
-  items: Publication[]
-}
-
-// "Conference & Workshop Papers" is the filterable group. Preprints & Tech Reports
-// are kept as separate always-visible sections below.
-export const conferenceAndWorkshopPapers: Publication[] = [
+// One unified list. Filter tabs control which subset is shown.
+// Preprints & Under Review and Technical Reports are now part of the same
+// list — distinguished only by an optional `status` badge after the venue.
+export const allPapers: Publication[] = [
   {
     title: 'Instrumental Text-to-Music Generation with Auxiliary Conditioning Branches: A Submission to the ICME 2026 ATTM Grand Challenge',
     authors: '<strong>Junyoung Koh</strong>',
@@ -37,6 +35,7 @@ export const conferenceAndWorkshopPapers: Publication[] = [
     links: [
       { label: 'arXiv',       href: 'https://arxiv.org/abs/2604.09721' },
       { label: 'PDF',         href: 'https://arxiv.org/pdf/2604.09721' },
+      { label: 'Code',        href: 'https://github.com/MAAP-LAB/Jamendo-MT-QA' },
       { label: 'Project',     href: 'https://maap-lab.github.io/Jamendo-MT-QA/' },
       { label: 'HuggingFace', href: 'https://huggingface.co/datasets/m-a-a-p/Jamendo-MT-QA' },
     ],
@@ -70,6 +69,7 @@ export const conferenceAndWorkshopPapers: Publication[] = [
     links: [
       { label: 'arXiv', href: 'https://arxiv.org/abs/2603.27199' },
       { label: 'PDF',   href: 'https://arxiv.org/pdf/2603.27199' },
+      { label: 'Code',  href: 'https://github.com/onoma-ai-cat/FAD-Frequency-Aware-Dropout-for-Effective-Token-Control' },
     ],
     tags: ['vision'],
   },
@@ -82,6 +82,54 @@ export const conferenceAndWorkshopPapers: Publication[] = [
       { label: 'PDF',   href: 'https://arxiv.org/pdf/2509.20891' },
     ],
     tags: ['music'],
+    selected: true,
+  },
+  {
+    title: 'Closing the STFT-CQT Gap: Simple Multi-Scale Features for Vocal Multi-Pitch Estimation',
+    authors: '<strong>Junyoung Koh</strong> and Hao-Wen Dong',
+    venue: 'Under Review',
+    status: 'under-review',
+    tags: ['music'],
+    selected: true,
+  },
+  {
+    title: 'MusicCritic: Test-Time Scaling for Music Generation with Feature-Based and Audio-Native LLM Critics',
+    authors: '<strong>Junyoung Koh</strong>, Jungwoo Kim, Sunghyeon Kim, Youngjin Na, Joonyong Park, Gyuhyeong Choi, and Soo Yong Kim',
+    venue: 'Under Review',
+    status: 'under-review',
+    tags: ['music'],
+  },
+  {
+    title: 'KoSCoPe: Hierarchical Safety Curriculum with Reasoning Internalization for Korean Small Language Models',
+    authors: 'Soo Yong Kim, <strong>Junyoung Koh</strong>, and Seunghyeok Hong',
+    venue: 'Under Review',
+    status: 'under-review',
+    tags: ['nlp'],
+  },
+  {
+    title: 'Jamendo-QA: A Large-Scale Music Question Answering Dataset',
+    authors: '<strong>Junyoung Koh</strong>, Sooyong Kim, Yongwon Choi, and Gyuhyeong Choi',
+    venue: 'Preprint',
+    status: 'preprint',
+    links: [
+      { label: 'arXiv',       href: 'https://arxiv.org/abs/2509.15662' },
+      { label: 'PDF',         href: 'https://arxiv.org/pdf/2509.15662' },
+      { label: 'HuggingFace', href: 'https://huggingface.co/datasets/m-a-a-p/Jamendo-QA' },
+    ],
+    tags: ['music'],
+  },
+  {
+    title: 'Illustrious: an Open Advanced Illustration Model',
+    authors: 'Sang Hyun Park*, <strong>Jun Young Koh</strong>*, Junha Lee, Joy Song, Dongha Kim, Hoyeon Moon, Hyunju Lee, and Min Song',
+    venue: 'Technical Report',
+    status: 'tech-report',
+    links: [
+      { label: 'arXiv',       href: 'https://arxiv.org/abs/2409.19946' },
+      { label: 'PDF',         href: 'https://arxiv.org/pdf/2409.19946' },
+      { label: 'HuggingFace', href: 'https://huggingface.co/OnomaAIResearch/Illustrious-xl-early-release-v0' },
+      { label: 'CivitAI',     href: 'https://civitai.com/models/795765/illustrious-xl' },
+    ],
+    tags: ['vision'],
     selected: true,
   },
   {
@@ -101,6 +149,7 @@ export const conferenceAndWorkshopPapers: Publication[] = [
     links: [
       { label: 'arXiv', href: 'https://arxiv.org/abs/2404.07554' },
       { label: 'PDF',   href: 'https://arxiv.org/pdf/2404.07554.pdf' },
+      { label: 'Code',  href: 'https://github.com/onoma-ai-cat/CAT' },
     ],
     tags: ['vision'],
   },
@@ -115,56 +164,25 @@ export const conferenceAndWorkshopPapers: Publication[] = [
   },
 ]
 
-export const preprints: Publication[] = [
-  {
-    title: 'Closing the STFT-CQT Gap: Simple Multi-Scale Features for Vocal Multi-Pitch Estimation',
-    authors: '<strong>Junyoung Koh</strong> and Hao-Wen Dong',
-    venue: 'Under Review',
-    tags: ['music'],
-  },
-  {
-    title: 'MusicCritic: Test-Time Scaling for Music Generation with Feature-Based and Audio-Native LLM Critics',
-    authors: '<strong>Junyoung Koh</strong>, Jungwoo Kim, Sunghyeon Kim, Youngjin Na, Joonyong Park, Gyuhyeong Choi, and Soo Yong Kim',
-    venue: 'Under Review',
-    tags: ['music'],
-  },
-  {
-    title: 'KoSCoPe: Hierarchical Safety Curriculum with Reasoning Internalization for Korean Small Language Models',
-    authors: 'Soo Yong Kim, <strong>Junyoung Koh</strong>, and Seunghyeok Hong',
-    venue: 'Under Review',
-    tags: ['nlp'],
-  },
-  {
-    title: 'Jamendo-QA: A Large-Scale Music Question Answering Dataset',
-    authors: '<strong>Junyoung Koh</strong>, Sooyong Kim, Yongwon Choi, and Gyuhyeong Choi',
-    venue: 'Preprint',
-    links: [
-      { label: 'arXiv',       href: 'https://arxiv.org/abs/2509.15662' },
-      { label: 'PDF',         href: 'https://arxiv.org/pdf/2509.15662' },
-      { label: 'HuggingFace', href: 'https://huggingface.co/datasets/m-a-a-p/Jamendo-QA' },
-    ],
-    tags: ['music'],
-  },
-]
-
-export const technicalReports: Publication[] = [
-  {
-    title: 'Illustrious: an Open Advanced Illustration Model',
-    authors: 'Sang Hyun Park*, <strong>Jun Young Koh</strong>*, Junha Lee, Joy Song, Dongha Kim, Hoyeon Moon, Hyunju Lee, and Min Song',
-    venue: 'Technical Report',
-    links: [
-      { label: 'arXiv',       href: 'https://arxiv.org/abs/2409.19946' },
-      { label: 'PDF',         href: 'https://arxiv.org/pdf/2409.19946' },
-      { label: 'HuggingFace', href: 'https://huggingface.co/OnomaAIResearch/Illustrious-xl-early-release-v0' },
-      { label: 'CivitAI',     href: 'https://civitai.com/models/795765/illustrious-xl' },
-    ],
-    tags: ['vision'],
-  },
-]
-
 export const equalContributionNote = '* Equal Contribution'
 
-// Filter options for Conference & Workshop Papers
+// Status badge text + style hint
+export const statusLabel: Record<PubStatus, string> = {
+  'preprint':     'Preprint',
+  'under-review': 'Under Review',
+  'tech-report':  'Technical Report',
+}
+
+// Small icon per link type — kept lightweight and recognizable
+export const linkIcons: Record<PublicationLink['label'], string> = {
+  arXiv:       '📜',
+  PDF:         '📄',
+  Code:        '💻',
+  HuggingFace: '🤗',
+  Project:     '🌐',
+  CivitAI:     '🎨',
+}
+
 export interface FilterTab {
   key: 'selected' | 'all' | PubTag
   label: string

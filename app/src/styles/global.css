@@ -317,8 +317,23 @@ html { scroll-behavior: smooth; }
   display: flex;
   flex-wrap: wrap;
   gap: 4px 10px;
+  align-items: center;
 }
 .pub-item .pub-links .sep { color: var(--text-muted); }
+.pub-item .pub-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.pub-item .pub-links .link-icon {
+  font-size: 0.85em;
+  line-height: 1;
+}
+.pub-item .pub-status {
+  color: var(--text-muted);
+  font-style: italic;
+  margin-left: 4px;
+}
 .equal-contrib {
   font-size: 0.85rem;
   color: var(--text-muted);
