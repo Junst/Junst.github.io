@@ -349,12 +349,20 @@ html { scroll-behavior: smooth; }
   align-items: center;
   margin-bottom: 14px;
 }
+.exp-item .exp-logo-wrap {
+  display: inline-block;
+  width: 36px; height: 36px;
+  position: relative;
+}
 .exp-item .exp-logo {
   width: 36px; height: 36px;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 8px;
-  background: #fff;
 }
+/* Light/dark logo swap based on the documented theme attribute */
+.exp-item .exp-logo-dark { display: none; }
+html[data-theme="dark"] .exp-item .exp-logo-light { display: none; }
+html[data-theme="dark"] .exp-item .exp-logo-dark { display: inline-block; }
 .exp-item .exp-logo-placeholder { width: 36px; height: 36px; }
 .exp-item .exp-company { font-weight: 600; }
 .exp-item .exp-role {

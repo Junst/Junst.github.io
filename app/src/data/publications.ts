@@ -70,7 +70,7 @@ export const allPapers: Publication[] = [
     links: [
       { label: 'arXiv', href: 'https://arxiv.org/abs/2603.27199' },
       { label: 'PDF',   href: 'https://arxiv.org/pdf/2603.27199' },
-      { label: 'Code',  href: 'https://github.com/onoma-ai-cat/FAD-Frequency-Aware-Dropout-for-Effective-Token-Control' },
+      { label: 'Code',  href: 'https://github.com/Junst/FAD-Frequency-Aware-Dropout-for-Effective-Token-Control' },
     ],
     tags: ['vision'],
   },
