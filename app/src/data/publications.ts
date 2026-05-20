@@ -1,5 +1,5 @@
 export interface PublicationLink {
-  label: 'arXiv' | 'PDF' | 'Code' | 'HuggingFace' | 'Project' | 'CivitAI'
+  label: 'arXiv' | 'PDF' | 'Code' | 'HuggingFace' | 'Project' | 'CivitAI' | 'Poster'
   href: string
 }
 
@@ -78,8 +78,9 @@ export const allPapers: Publication[] = [
     authors: '<strong>Junyoung Koh</strong>, Sooyong Kim, Gyuhyeong Choi, and Yongwon Choi',
     venue: 'NeurIPS 2025 Workshop on <a href="https://aiformusicworkshop.github.io/">AI for Music: Where Creativity Meets Computation</a>',
     links: [
-      { label: 'arXiv', href: 'https://arxiv.org/abs/2509.20891' },
-      { label: 'PDF',   href: 'https://arxiv.org/pdf/2509.20891' },
+      { label: 'arXiv',  href: 'https://arxiv.org/abs/2509.20891' },
+      { label: 'PDF',    href: 'https://arxiv.org/pdf/2509.20891' },
+      { label: 'Poster', href: '/assets/poster/AIBA_Poster.pdf' },
     ],
     tags: ['music'],
     selected: true,
@@ -181,6 +182,7 @@ export const linkIcons: Record<PublicationLink['label'], string> = {
   HuggingFace: '🤗',
   Project:     '🌐',
   CivitAI:     '🎨',
+  Poster:      '🖼️',
 }
 
 export interface FilterTab {
