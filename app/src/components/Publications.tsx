@@ -1,4 +1,13 @@
-import { publications, equalContributionNote, type Publication } from '../data/publications'
+import { useState } from 'react'
+import {
+  conferenceAndWorkshopPapers,
+  preprints,
+  technicalReports,
+  equalContributionNote,
+  filterTabs,
+  type Publication,
+  type FilterTab,
+} from '../data/publications'
 
 function PubEntry({ p }: { p: Publication }) {
   return (
@@ -21,15 +30,41 @@ function PubEntry({ p }: { p: Publication }) {
   )
 }
 
+function PubList({ items, emptyMsg }: { items: Publication[]; emptyMsg?: string }) {
+  if (items.length === 0) return <div className="pub-empty">{emptyMsg ?? 'No papers in this category yet.'}</div>
+  return <>{items.map((p, i) => <PubEntry key={i} p={p} />)}</>
+}
+
 export function Publications() {
+  const [activeTab, setActiveTab] = useState<FilterTab['key']>('selected')
+  const active = filterTabs.find((t) => t.key === activeTab) ?? filterTabs[0]
+  const filtered = conferenceAndWorkshopPapers.filter(active.filter)
+
   return (
     <div>
-      {publications.map((group) => (
-        <div key={group.category}>
-          <h3 className="subcategory">{group.category}</h3>
-          {group.items.map((p, i) => <PubEntry key={i} p={p} />)}
-        </div>
-      ))}
+      <h3 className="subcategory">Conference &amp; Workshop Papers</h3>
+      <div className="pub-tabs" role="tablist" aria-label="Publication filter">
+        {filterTabs.map((t) => (
+          <button
+            key={t.key}
+            type="button"
+            role="tab"
+            aria-selected={t.key === activeTab}
+            className={'pub-tab' + (t.key === activeTab ? ' active' : '')}
+            onClick={() => setActiveTab(t.key)}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+      <PubList items={filtered} emptyMsg="No papers in this category yet." />
+
+      <h3 className="subcategory">Preprints &amp; Under Review</h3>
+      <PubList items={preprints} />
+
+      <h3 className="subcategory">Technical Reports</h3>
+      <PubList items={technicalReports} />
+
       <div className="equal-contrib">{equalContributionNote}</div>
     </div>
   )

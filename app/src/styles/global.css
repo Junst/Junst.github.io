@@ -14,8 +14,8 @@
   --font-serif: 'Crimson Pro', 'PT Serif', Georgia, serif;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
-  --content-max: 920px;
-  --side-pad: 28px;
+  --content-max: 1040px;
+  --side-pad: 32px;
 }
 
 html[data-theme="dark"] {
@@ -82,7 +82,7 @@ p { margin: 0 0 0.75rem 0; }
   padding: 56px var(--side-pad) 96px;
 }
 
-/* Hero — desktop: photo on left, name/intro/links on right */
+/* Hero — desktop: photo on left (vertically centered), name/intro/links on right */
 .hero {
   display: grid;
   grid-template-columns: 200px 1fr;
@@ -90,11 +90,12 @@ p { margin: 0 0 0.75rem 0; }
     "photo name"
     "photo intro"
     "photo links";
-  column-gap: 36px;
+  column-gap: 40px;
   row-gap: 12px;
-  align-items: start;
+  align-items: center;
   margin-bottom: 48px;
 }
+.hero-photo { align-self: center; }
 .hero-name  { grid-area: name; }
 .hero-photo { grid-area: photo; }
 .hero-intro { grid-area: intro; }
@@ -226,6 +227,36 @@ p { margin: 0 0 0.75rem 0; }
 }
 
 /* Publications */
+.pub-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 4px 0 16px;
+}
+.pub-tab {
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--text-soft);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  padding: 5px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color .15s, color .15s, border-color .15s;
+}
+.pub-tab:hover { color: var(--text); border-color: var(--text-soft); }
+.pub-tab.active {
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+}
+.pub-empty {
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 0.95rem;
+  padding: 8px 0;
+}
+
 .pub-item {
   margin-bottom: 18px;
   padding-left: 0;
@@ -275,8 +306,9 @@ p { margin: 0 0 0.75rem 0; }
 }
 .exp-item .exp-logo {
   width: 36px; height: 36px;
-  object-fit: contain;
-  border-radius: 6px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #fff;
 }
 .exp-item .exp-logo-placeholder { width: 36px; height: 36px; }
 .exp-item .exp-company { font-weight: 600; }
@@ -305,14 +337,20 @@ p { margin: 0 0 0.75rem 0; }
 .funding-item .funding-desc { color: var(--text-soft); font-size: 0.95rem; margin: 2px 0; }
 .funding-item .funding-period { color: var(--text-muted); font-style: italic; font-size: 0.88rem; }
 
-/* Projects */
+/* Projects — subtle card wrapper */
 .project-item {
   display: grid;
   grid-template-columns: 1fr 200px;
   gap: 18px;
-  margin-bottom: 22px;
-  align-items: start;
+  margin-bottom: 16px;
+  padding: 18px 20px;
+  align-items: center;
+  background: var(--bg-soft);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  transition: border-color .15s, transform .15s;
 }
+.project-item:hover { border-color: var(--text-soft); }
 .project-item:not(:has(img)) { grid-template-columns: 1fr; }
 .project-item img {
   width: 100%;

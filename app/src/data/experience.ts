@@ -16,5 +16,6 @@ export const experience: ExperienceItem[] = [
     company: 'Onoma AI',
     role: 'AI Team Leader & AI Researcher',
     period: 'Aug 2023 – Feb 2025',
+    logo: '/assets/company/onoma.png',
   },
 ]
