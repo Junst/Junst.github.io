@@ -16,6 +16,7 @@ Gemfile.lock
 node_modules
 npm-debug.log*
 package-lock.json
+!app/package-lock.json
 codekit-config.json
 
 # macOS
