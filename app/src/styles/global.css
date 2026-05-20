@@ -115,7 +115,7 @@ html { scroll-behavior: smooth; }
 /* Hero — desktop: photo on left (vertically centered), name/intro/links on right */
 .hero {
   display: grid;
-  grid-template-columns: 250px 1fr;
+  grid-template-columns: 280px 1fr;
   grid-template-areas:
     "photo name"
     "photo intro"
@@ -125,9 +125,13 @@ html { scroll-behavior: smooth; }
   align-items: center;
   margin-bottom: 48px;
 }
-.hero-photo { align-self: center; }
 .hero-name  { grid-area: name; }
-.hero-photo { grid-area: photo; }
+.hero-photo {
+  grid-area: photo;
+  align-self: center;
+  width: 100%;
+  max-width: 260px;
+}
 .hero-intro { grid-area: intro; }
 .hero-links { grid-area: links; }
 
@@ -144,7 +148,9 @@ html { scroll-behavior: smooth; }
 }
 .hero-intro p { color: var(--text); margin-bottom: 0.9rem; }
 .hero-photo img {
+  display: block;
   width: 100%;
+  height: auto;
   border-radius: 50%;
   aspect-ratio: 1 / 1;
   object-fit: cover;
@@ -182,7 +188,7 @@ html { scroll-behavior: smooth; }
     row-gap: 10px;
     margin-bottom: 20px;
   }
-  .hero-photo { max-width: 150px; margin: 0 auto; }
+  .hero-photo { max-width: 200px; margin: 0 auto; }
   .hero-links { justify-content: center; margin-top: 0; font-size: 0.82rem; gap: 6px 12px; }
   .hero-name { text-align: center; }
   .hero-name h1 { font-size: 1.55rem; }
