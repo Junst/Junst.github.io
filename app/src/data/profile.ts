@@ -9,10 +9,11 @@ export const profile = {
     `Previously, I was an AI Team Leader and AI Researcher at <a href="https://huggingface.co/OnomaAIResearch">Onoma AI</a>, where I led the development of <a href="https://huggingface.co/OnomaAIResearch/Illustrious-xl-early-release-v0">Illustrious</a>, an open advanced illustration model with over 33,000 downloads worldwide.`,
   ],
   links: [
-    { label: 'Email',     href: 'mailto:arsol970812@gmail.com', icon: 'far fa-envelope' },
-    { label: 'GitHub',    href: 'https://github.com/Junst',     icon: 'fab fa-github' },
-    { label: 'Scholar',   href: 'https://scholar.google.com/citations?user=eK6sLwsAAAAJ', icon: 'fas fa-graduation-cap' },
-    { label: 'LinkedIn',  href: 'https://www.linkedin.com/in/junyoung-koh-a90651232/', icon: 'fab fa-linkedin' },
-    { label: 'CV',        href: '/assets/CV.pdf', icon: 'far fa-file-pdf' },
+    { label: 'Email',            href: 'mailto:arsol970812@gmail.com', icon: 'far fa-envelope' },
+    { label: 'GitHub',           href: 'https://github.com/Junst', icon: 'fab fa-github' },
+    { label: 'Google Scholar',   href: 'https://scholar.google.com/citations?user=-zUwo6kAAAAJ&hl=en', icon: 'fas fa-graduation-cap' },
+    { label: 'Semantic Scholar', href: 'https://www.semanticscholar.org/author/2295987662', icon: 'fas fa-microscope' },
+    { label: 'LinkedIn',         href: 'https://www.linkedin.com/in/junyoung-k-b54639169/', icon: 'fab fa-linkedin' },
+    { label: 'CV',               href: '/assets/CV.pdf', icon: 'far fa-file-pdf' },
   ],
 }
