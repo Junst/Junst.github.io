@@ -14,7 +14,7 @@
   --font-serif: 'Crimson Pro', 'PT Serif', Georgia, serif;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
-  --content-max: 760px;
+  --content-max: 920px;
   --side-pad: 28px;
 }
 
@@ -82,26 +82,36 @@ p { margin: 0 0 0.75rem 0; }
   padding: 56px var(--side-pad) 96px;
 }
 
-/* Hero */
+/* Hero — desktop: photo on left, name/intro/links on right */
 .hero {
   display: grid;
-  grid-template-columns: 1fr 180px;
-  gap: 32px;
+  grid-template-columns: 200px 1fr;
+  grid-template-areas:
+    "photo name"
+    "photo intro"
+    "photo links";
+  column-gap: 36px;
+  row-gap: 12px;
   align-items: start;
   margin-bottom: 48px;
 }
-.hero-text h1 {
+.hero-name  { grid-area: name; }
+.hero-photo { grid-area: photo; }
+.hero-intro { grid-area: intro; }
+.hero-links { grid-area: links; }
+
+.hero-name h1 {
   font-size: 2.6rem;
   margin-bottom: 0.25rem;
 }
-.hero-text .subtitle {
+.hero-name .subtitle {
   color: var(--text-muted);
   font-size: 0.95rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.25rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
-.hero-text p { color: var(--text); margin-bottom: 0.9rem; }
+.hero-intro p { color: var(--text); margin-bottom: 0.9rem; }
 .hero-photo img {
   width: 100%;
   border-radius: 50%;
@@ -113,7 +123,7 @@ p { margin: 0 0 0.75rem 0; }
   display: flex;
   flex-wrap: wrap;
   gap: 14px 20px;
-  margin-top: 14px;
+  margin-top: 8px;
   font-size: 0.95rem;
 }
 .hero-links a {
@@ -123,16 +133,28 @@ p { margin: 0 0 0.75rem 0; }
 }
 .hero-links a i { width: 14px; text-align: center; }
 
+/* Mobile: name → photo → links → intro */
 @media (max-width: 640px) {
   .hero {
     grid-template-columns: 1fr;
-    gap: 20px;
+    grid-template-areas:
+      "name"
+      "photo"
+      "links"
+      "intro";
+    column-gap: 0;
+    row-gap: 16px;
   }
   .hero-photo {
     max-width: 160px;
     margin: 0 auto;
   }
-  h1, .hero-text h1 { font-size: 2rem; }
+  .hero-links {
+    justify-content: center;
+    margin-top: 0;
+  }
+  .hero-name { text-align: center; }
+  .hero-name h1 { font-size: 2rem; }
 }
 
 /* Sections */
@@ -333,16 +355,22 @@ p { margin: 0 0 0.75rem 0; }
 .theme-fab:hover { transform: translateY(-1px); }
 
 .visitor-map-wrap {
-  margin: 56px auto 0;
-  max-width: 320px;
+  margin: 48px auto 0;
+  max-width: 180px;
   text-align: center;
 }
 .visitor-map-wrap .label {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+}
+.visitor-map-wrap iframe,
+.visitor-map-wrap img,
+.visitor-map-wrap > div > * {
+  max-width: 100% !important;
+  height: auto !important;
 }
 
 /* Dynamic island */
