@@ -47,8 +47,9 @@ export const allPapers: Publication[] = [
     authors: 'Seungmin Lee, Dongha Kim, Yuni Jeon, <strong>Junyoung Koh</strong>, and Min Song',
     venue: 'LREC 2026',
     links: [
-      { label: 'arXiv', href: 'https://arxiv.org/abs/2603.14257' },
-      { label: 'PDF',   href: 'https://arxiv.org/pdf/2603.14257' },
+      { label: 'arXiv',  href: 'https://arxiv.org/abs/2603.14257' },
+      { label: 'PDF',    href: 'https://arxiv.org/pdf/2603.14257' },
+      { label: 'Poster', href: '/assets/poster/LREC_M3_Poster.pdf' },
     ],
     tags: ['nlp'],
   },
