@@ -115,7 +115,7 @@ html { scroll-behavior: smooth; }
 /* Hero — desktop: photo on left (vertically centered), name/intro/links on right */
 .hero {
   display: grid;
-  grid-template-columns: 200px 1fr;
+  grid-template-columns: 250px 1fr;
   grid-template-areas:
     "photo name"
     "photo intro"
@@ -182,7 +182,7 @@ html { scroll-behavior: smooth; }
     row-gap: 10px;
     margin-bottom: 20px;
   }
-  .hero-photo { max-width: 100px; margin: 0 auto; }
+  .hero-photo { max-width: 150px; margin: 0 auto; }
   .hero-links { justify-content: center; margin-top: 0; font-size: 0.82rem; gap: 6px 12px; }
   .hero-name { text-align: center; }
   .hero-name h1 { font-size: 1.55rem; }
