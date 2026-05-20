@@ -166,10 +166,10 @@ html { scroll-behavior: smooth; }
 
 /* Mobile: name → photo → links → intro, with a tighter overall scale */
 @media (max-width: 640px) {
-  :root { --side-pad: 18px; }
-  html, body { font-size: 14.5px; line-height: 1.55; }
+  :root { --side-pad: 14px; }
+  html, body { font-size: 13.5px; line-height: 1.5; }
 
-  .app { padding: 20px var(--side-pad) 72px; }
+  .app { padding: 14px var(--side-pad) 56px; }
 
   .hero {
     grid-template-columns: 1fr;
@@ -179,32 +179,52 @@ html { scroll-behavior: smooth; }
       "links"
       "intro";
     column-gap: 0;
-    row-gap: 12px;
-    margin-bottom: 28px;
+    row-gap: 10px;
+    margin-bottom: 20px;
   }
-  .hero-photo { max-width: 120px; margin: 0 auto; }
-  .hero-links { justify-content: center; margin-top: 0; font-size: 0.88rem; gap: 8px 14px; }
+  .hero-photo { max-width: 100px; margin: 0 auto; }
+  .hero-links { justify-content: center; margin-top: 0; font-size: 0.82rem; gap: 6px 12px; }
   .hero-name { text-align: center; }
-  .hero-name h1 { font-size: 1.75rem; }
-  .hero-name .subtitle { font-size: 0.82rem; }
+  .hero-name h1 { font-size: 1.55rem; }
+  .hero-name .subtitle { font-size: 0.76rem; }
 
-  .top-nav { margin-bottom: 16px; }
-  .top-nav ul { gap: 2px 10px; font-size: 0.8rem; }
+  .top-nav { margin-bottom: 12px; }
+  .top-nav ul { gap: 2px 8px; font-size: 0.74rem; }
 
-  .section { margin-top: 28px; padding-top: 18px; }
-  .section-title { font-size: 1.2rem; margin-bottom: 12px; }
-  .subcategory { font-size: 0.98rem; margin: 16px 0 8px; }
+  .section { margin-top: 22px; padding-top: 14px; }
+  .section-title { font-size: 1.08rem; margin-bottom: 10px; }
+  .subcategory { font-size: 0.92rem; margin: 14px 0 6px; }
 
-  .pub-tabs { gap: 4px; margin: 2px 0 12px; }
-  .pub-tab  { font-size: 0.78rem; padding: 3px 9px; }
-  .pub-item { margin-bottom: 14px; }
-  .pub-item .pub-title { font-size: 0.95rem; }
-  .pub-item .pub-authors, .pub-item .pub-venue { font-size: 0.86rem; }
-  .pub-item .pub-links { font-size: 0.8rem; gap: 3px 8px; }
+  .pub-tabs { gap: 4px; margin: 2px 0 10px; }
+  .pub-tab  { font-size: 0.74rem; padding: 2px 8px; }
+  .pub-item { margin-bottom: 12px; }
+  .pub-item .pub-title { font-size: 0.9rem; }
+  .pub-item .pub-authors, .pub-item .pub-venue { font-size: 0.8rem; }
+  .pub-item .pub-links { font-size: 0.76rem; gap: 3px 7px; }
 
-  .project-item { padding: 12px 14px; margin-bottom: 12px; gap: 12px; }
+  .edu-item { margin-bottom: 10px; gap: 4px 12px; }
+  .edu-item .period { font-size: 0.82rem; }
+  .edu-item .detail { font-size: 0.86rem; }
 
-  .visitor-map-wrap { max-width: 200px; margin-top: 32px; }
+  .exp-item { gap: 2px 12px; margin-bottom: 10px; }
+  .exp-item .exp-logo-wrap, .exp-item .exp-logo { width: 30px; height: 30px; }
+  .exp-item .exp-period { font-size: 0.82rem; }
+  .exp-item .exp-role   { font-size: 0.86rem; }
+
+  .awards-list li, .funding-item .funding-desc { font-size: 0.88rem; }
+  .funding-item { margin-bottom: 10px; }
+  .funding-item .funding-period { font-size: 0.78rem; }
+
+  .project-item { padding: 10px 12px; margin-bottom: 10px; gap: 10px; border-radius: 8px; }
+  .project-item .project-blurb { font-size: 0.86rem; }
+
+  .visitor-map-wrap { max-width: 180px; margin-top: 24px; }
+  .visitor-map-wrap .label { font-size: 0.68rem; }
+
+  .theme-fab { width: 40px; height: 40px; right: 14px; bottom: 14px; font-size: 16px; }
+  #dynamic-island { right: 14px; bottom: 62px; width: 40px; height: 40px; }
+  #dynamic-island.di-expanded { width: 280px; height: 64px; }
+  .di-trigger { width: 40px; height: 40px; font-size: 16px; }
 }
 
 /* Sections */
