@@ -13,6 +13,6 @@ export const funding: Funding[] = [
   {
     org: 'Brian Impact Foundation (Kakao)',
     description: 'Publication support program — research funding of USD 1.5K (KRW 2M) per accepted paper',
-    period: '2025 – Present',
+    period: '2025',
   },
 ]
