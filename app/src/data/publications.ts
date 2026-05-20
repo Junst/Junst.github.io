@@ -22,7 +22,7 @@ export interface Publication {
 // list — distinguished only by an optional `status` badge after the venue.
 export const allPapers: Publication[] = [
   {
-    title: 'Instrumental Text-to-Music Generation with Auxiliary Conditioning Branches: A Submission to the ICME 2026 ATTM Grand Challenge',
+    title: 'Instrumental Text-to-Music Generation with Auxiliary Conditioning Branches',
     authors: '<strong>Junyoung Koh</strong>',
     venue: 'ICME 2026 <a href="https://ntu-musicailab.github.io/ICME26-ATTM-Grand-Challenge/">Audio-Text-to-Music (ATTM) Grand Challenge</a>',
     awards: '🏆 <strong>1st Place, Performance Track</strong> · 🏆 <strong>#1 Overall MOS</strong>',
