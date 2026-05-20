@@ -164,8 +164,13 @@ html { scroll-behavior: smooth; }
 }
 .hero-links a i { width: 14px; text-align: center; }
 
-/* Mobile: name → photo → links → intro */
+/* Mobile: name → photo → links → intro, with a tighter overall scale */
 @media (max-width: 640px) {
+  :root { --side-pad: 18px; }
+  html, body { font-size: 14.5px; line-height: 1.55; }
+
+  .app { padding: 20px var(--side-pad) 72px; }
+
   .hero {
     grid-template-columns: 1fr;
     grid-template-areas:
@@ -174,18 +179,32 @@ html { scroll-behavior: smooth; }
       "links"
       "intro";
     column-gap: 0;
-    row-gap: 16px;
+    row-gap: 12px;
+    margin-bottom: 28px;
   }
-  .hero-photo {
-    max-width: 160px;
-    margin: 0 auto;
-  }
-  .hero-links {
-    justify-content: center;
-    margin-top: 0;
-  }
+  .hero-photo { max-width: 120px; margin: 0 auto; }
+  .hero-links { justify-content: center; margin-top: 0; font-size: 0.88rem; gap: 8px 14px; }
   .hero-name { text-align: center; }
-  .hero-name h1 { font-size: 2rem; }
+  .hero-name h1 { font-size: 1.75rem; }
+  .hero-name .subtitle { font-size: 0.82rem; }
+
+  .top-nav { margin-bottom: 16px; }
+  .top-nav ul { gap: 2px 10px; font-size: 0.8rem; }
+
+  .section { margin-top: 28px; padding-top: 18px; }
+  .section-title { font-size: 1.2rem; margin-bottom: 12px; }
+  .subcategory { font-size: 0.98rem; margin: 16px 0 8px; }
+
+  .pub-tabs { gap: 4px; margin: 2px 0 12px; }
+  .pub-tab  { font-size: 0.78rem; padding: 3px 9px; }
+  .pub-item { margin-bottom: 14px; }
+  .pub-item .pub-title { font-size: 0.95rem; }
+  .pub-item .pub-authors, .pub-item .pub-venue { font-size: 0.86rem; }
+  .pub-item .pub-links { font-size: 0.8rem; gap: 3px 8px; }
+
+  .project-item { padding: 12px 14px; margin-bottom: 12px; gap: 12px; }
+
+  .visitor-map-wrap { max-width: 200px; margin-top: 32px; }
 }
 
 /* Sections */
