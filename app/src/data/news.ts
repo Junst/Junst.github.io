@@ -13,12 +13,12 @@ export const newsGroups: NewsGroup[] = [
   {
     year: 'current',
     items: [
-      { date: 'May 2026', text: '🏆 Won <strong>1st place in the Performance Track</strong> AND <strong>#1 overall in MOS evaluation</strong> at the ICME 2026 ATTM Grand Challenge!' },
-      { date: 'May 2026', text: '1 paper is accepted to the ICME 2026 ATTM Grand Challenge! 🎵' },
+      { date: 'May 2026', text: 'Got my US student visa for the upcoming visit to the University of Michigan! ✈️' },
+      { date: 'May 2026', text: '🏆 1 paper accepted to the ICME 2026 ATTM Grand Challenge — won <strong>1st place in the Performance Track</strong> AND <strong>#1 overall in MOS evaluation</strong>! 🎵' },
       { date: 'Apr 2026', text: 'MCJudgeBench is accepted to ACL 2026 Workshop (GEM)!' },
       { date: 'Apr 2026', text: 'Jamendo-MT-QA is accepted to ACL 2026 Findings!' },
       { date: 'Mar 2026', text: '1 paper is accepted to CVPR 2026 Workshop (P13N)!' },
-      { date: 'Feb 2026', text: "I'm going to University of Michigan as a Visiting Graduate Student 👨‍🎓" },
+      { date: 'Feb 2026', text: "I will be joining the University of Michigan as a Visiting Graduate Student in August 2026 👨‍🎓" },
       { date: 'Feb 2026', text: '1 paper is accepted to LREC 2026!' },
     ],
   },

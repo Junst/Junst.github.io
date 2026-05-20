@@ -14,6 +14,7 @@ export const education: EducationItem[] = [
   },
   {
     institution: 'University of Southern California',
+    location: 'Los Angeles, California, USA',
     period: 'Jul 2025 – Aug 2025',
     detail: 'Summer Session, Artificial Intelligence',
   },
