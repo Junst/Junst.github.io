@@ -79,7 +79,37 @@ p { margin: 0 0 0.75rem 0; }
 .app {
   max-width: var(--content-max);
   margin: 0 auto;
-  padding: 56px var(--side-pad) 96px;
+  padding: 32px var(--side-pad) 96px;
+  scroll-behavior: smooth;
+}
+html { scroll-behavior: smooth; }
+
+/* Top nav */
+.top-nav {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 28px;
+}
+.top-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+}
+.top-nav a {
+  color: var(--text-soft);
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-bottom: none;
+  letter-spacing: 0.01em;
+}
+.top-nav a:hover { color: var(--accent); border-bottom: none; }
+
+@media (max-width: 640px) {
+  .top-nav { justify-content: center; }
+  .top-nav ul { gap: 4px 12px; font-size: 0.85rem; }
 }
 
 /* Hero — desktop: photo on left (vertically centered), name/intro/links on right */

@@ -1,3 +1,4 @@
+import { Nav } from './components/Nav'
 import { Hero } from './components/Hero'
 import { Section } from './components/Section'
 import { News } from './components/News'
@@ -14,16 +15,17 @@ import { VisitorMap } from './components/VisitorMap'
 
 export function App() {
   return (
-    <div className="app">
+    <div className="app" id="top">
+      <Nav />
       <Hero />
-      <Section icon="🔥" title="News"><News /></Section>
-      <Section icon="🎓" title="Education"><Education /></Section>
-      <Section icon="✏️" title="Publications"><Publications /></Section>
-      <Section icon="📚" title="Academic Services"><Services /></Section>
-      <Section icon="🏢" title="Work Experience"><Experience /></Section>
-      <Section icon="🏆" title="Honors & Awards"><Awards /></Section>
-      <Section icon="💰" title="Funding"><Funding /></Section>
-      <Section icon="✨" title="Projects"><Projects /></Section>
+      <Section icon="🔥" title="News" id="news"><News /></Section>
+      <Section icon="🎓" title="Education" id="education"><Education /></Section>
+      <Section icon="✏️" title="Publications" id="publications"><Publications /></Section>
+      <Section icon="📚" title="Academic Services" id="services"><Services /></Section>
+      <Section icon="🏢" title="Work Experience" id="experience"><Experience /></Section>
+      <Section icon="🏆" title="Honors & Awards" id="awards"><Awards /></Section>
+      <Section icon="💰" title="Funding" id="funding"><Funding /></Section>
+      <Section icon="✨" title="Projects" id="projects"><Projects /></Section>
       <VisitorMap />
       <ThemeToggle />
       <MusicIsland />
