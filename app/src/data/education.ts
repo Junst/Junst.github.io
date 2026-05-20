@@ -7,6 +7,12 @@ export interface EducationItem {
 
 export const education: EducationItem[] = [
   {
+    institution: 'University of Michigan',
+    location: 'Ann Arbor, Michigan, USA',
+    period: 'Aug 2026 – Dec 2026',
+    detail: 'Visiting Student, School of Music, Theatre & Dance (SMTD)',
+  },
+  {
     institution: 'University of Southern California',
     period: 'Jul 2025 – Aug 2025',
     detail: 'Summer Session, Artificial Intelligence',
