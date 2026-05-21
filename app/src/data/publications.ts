@@ -26,6 +26,10 @@ export const allPapers: Publication[] = [
     authors: '<strong>Junyoung Koh</strong>',
     venue: 'ICME 2026 <a href="https://ntu-musicailab.github.io/ICME26-ATTM-Grand-Challenge/">Audio-Text-to-Music (ATTM) Grand Challenge</a>',
     awards: '🏆 <strong>1st Place, Performance Track</strong> · 🏆 <strong>#1 Overall MOS</strong>',
+    links: [
+      { label: 'arXiv', href: 'https://arxiv.org/abs/2605.21433' },
+      { label: 'PDF',   href: 'https://arxiv.org/pdf/2605.21433' },
+    ],
     tags: ['music'],
   },
   {
