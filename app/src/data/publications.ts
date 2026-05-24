@@ -120,8 +120,8 @@ export const allPapers: Publication[] = [
     tags: ['music'],
   },
   {
-    title: 'KoSCoPe: Hierarchical Safety Curriculum with Reasoning Internalization for Korean Small Language Models',
-    authors: 'Soo Yong Kim, <strong>Junyoung Koh</strong>, and Seunghyeok Hong',
+    title: 'Hierarchy Aware Preference Optimization for the Safety of Korean Small Language Models',
+    authors: 'Soo Yong Kim, <strong>Junyoung Koh</strong>, Kyeonghun Kim, and Seunghyeok Hong',
     venue: 'Under Review',
     status: 'under-review',
     tags: ['nlp'],
