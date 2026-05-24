@@ -106,6 +106,13 @@ export const allPapers: Publication[] = [
     tags: ['music'],
   },
   {
+    title: 'Probing Token Spaces under Generator Shift in AI-Generated Music Detection',
+    authors: 'Joonyong Park, Jungwoo Kim, <strong>Junyoung Koh</strong>, and Yuki Saito',
+    venue: 'Under Review',
+    status: 'under-review',
+    tags: ['music'],
+  },
+  {
     title: 'KoSCoPe: Hierarchical Safety Curriculum with Reasoning Internalization for Korean Small Language Models',
     authors: 'Soo Yong Kim, <strong>Junyoung Koh</strong>, and Seunghyeok Hong',
     venue: 'Under Review',
