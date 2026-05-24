@@ -113,6 +113,13 @@ export const allPapers: Publication[] = [
     tags: ['music'],
   },
   {
+    title: 'Probing-Based Test-Time Steering of Music Diffusion Transformers',
+    authors: '<strong>Junyoung Koh</strong>',
+    venue: 'Under Review',
+    status: 'under-review',
+    tags: ['music'],
+  },
+  {
     title: 'KoSCoPe: Hierarchical Safety Curriculum with Reasoning Internalization for Korean Small Language Models',
     authors: 'Soo Yong Kim, <strong>Junyoung Koh</strong>, and Seunghyeok Hong',
     venue: 'Under Review',
