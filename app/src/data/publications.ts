@@ -79,6 +79,18 @@ export const allPapers: Publication[] = [
     tags: ['vision'],
   },
   {
+    title: 'Probing Token Spaces under Generator Shift in AI-Generated Music Detection',
+    authors: 'Joonyong Park, Jungwoo Kim, <strong>Junyoung Koh</strong>, and Yuki Saito',
+    venue: 'ICML 2026 Workshop on Machine Learning for Audio',
+    tags: ['music'],
+  },
+  {
+    title: 'Probing-Based Test-Time Steering of Music Diffusion Transformers',
+    authors: '<strong>Junyoung Koh</strong>',
+    venue: 'ICML 2026 Workshop on Machine Learning for Audio',
+    tags: ['music'],
+  },
+  {
     title: 'AIBA: Attention-based Instrument Band Alignment for Text-to-Audio Diffusion',
     authors: '<strong>Junyoung Koh</strong>, Sooyong Kim, Gyuhyeong Choi, and Yongwon Choi',
     venue: 'NeurIPS 2025 Workshop on <a href="https://aiformusicworkshop.github.io/">AI for Music: Where Creativity Meets Computation</a>',
@@ -101,20 +113,6 @@ export const allPapers: Publication[] = [
   {
     title: 'MusicCritic: Test-Time Scaling for Music Generation with Feature-Based and Audio-Native LLM Critics',
     authors: '<strong>Junyoung Koh</strong>, Jungwoo Kim, Sunghyeon Kim, Youngjin Na, Joonyong Park, Gyuhyeong Choi, and Soo Yong Kim',
-    venue: 'Under Review',
-    status: 'under-review',
-    tags: ['music'],
-  },
-  {
-    title: 'Probing Token Spaces under Generator Shift in AI-Generated Music Detection',
-    authors: 'Joonyong Park, Jungwoo Kim, <strong>Junyoung Koh</strong>, and Yuki Saito',
-    venue: 'Under Review',
-    status: 'under-review',
-    tags: ['music'],
-  },
-  {
-    title: 'Probing-Based Test-Time Steering of Music Diffusion Transformers',
-    authors: '<strong>Junyoung Koh</strong>',
     venue: 'Under Review',
     status: 'under-review',
     tags: ['music'],
