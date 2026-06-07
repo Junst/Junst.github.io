@@ -42,6 +42,7 @@ export const allPapers: Publication[] = [
       { label: 'Code',        href: 'https://github.com/MAAP-LAB/Jamendo-MT-QA' },
       { label: 'Project',     href: 'https://maap-lab.github.io/Jamendo-MT-QA/' },
       { label: 'HuggingFace', href: 'https://huggingface.co/datasets/m-a-a-p/Jamendo-MT-QA' },
+      { label: 'Poster',      href: '/assets/poster/Jamendo-MT-QA_Poster.pdf' },
     ],
     tags: ['music', 'nlp'],
     selected: true,
