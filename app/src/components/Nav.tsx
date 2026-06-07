@@ -2,6 +2,7 @@ interface NavItem {
   label: string
   href: string
   external?: boolean
+  iconImg?: string   // optional logo to render in place of the label
 }
 
 const items: NavItem[] = [
@@ -11,6 +12,7 @@ const items: NavItem[] = [
   { label: 'Projects',  href: '#projects' },
   { label: 'Gallery',   href: '/legacy/2025/gallery/', external: true },
   { label: 'Blog',      href: 'https://blog.naver.com/solbon1212', external: true },
+  { label: 'MAAP',      href: 'https://maap-lab.github.io', external: true, iconImg: '/maap-textlogo.png' },
   { label: 'Legacy',    href: '/legacy/2025/', external: true },
 ]
 
@@ -24,8 +26,13 @@ export function Nav() {
               href={it.href}
               target={it.external ? '_blank' : undefined}
               rel={it.external ? 'noopener noreferrer' : undefined}
+              aria-label={it.iconImg ? it.label : undefined}
             >
-              {it.label}
+              {it.iconImg ? (
+                <img src={it.iconImg} alt={it.label} className="nav-logo" />
+              ) : (
+                it.label
+              )}
             </a>
           </li>
         ))}
