@@ -1,5 +1,5 @@
 export interface PublicationLink {
-  label: 'arXiv' | 'PDF' | 'Code' | 'HuggingFace' | 'Project' | 'CivitAI' | 'Poster'
+  label: 'arXiv' | 'PDF' | 'Code' | 'HuggingFace' | 'Project' | 'CivitAI' | 'Poster' | 'Video'
   href: string
 }
 
@@ -43,6 +43,7 @@ export const allPapers: Publication[] = [
       { label: 'Project',     href: 'https://maap-lab.github.io/Jamendo-MT-QA/' },
       { label: 'HuggingFace', href: 'https://huggingface.co/datasets/m-a-a-p/Jamendo-MT-QA' },
       { label: 'Poster',      href: '/assets/poster/Jamendo-MT-QA_Poster.pdf' },
+      { label: 'Video',       href: 'https://youtu.be/yRbXoxEzl7s' },
     ],
     tags: ['music', 'nlp'],
     selected: true,
@@ -201,6 +202,7 @@ export const linkIcons: Record<PublicationLink['label'], string> = {
   Project:     '🌐',
   CivitAI:     '🎨',
   Poster:      '🖼️',
+  Video:       '🎬',
 }
 
 export interface FilterTab {
