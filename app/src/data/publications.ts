@@ -84,6 +84,10 @@ export const allPapers: Publication[] = [
     title: 'Probing Token Spaces under Generator Shift in AI-Generated Music Detection',
     authors: 'Joonyong Park, Jungwoo Kim, <strong>Junyoung Koh</strong>, and Yuki Saito',
     venue: 'ICML 2026 Workshop on <a href="https://mlforaudioworkshop.github.io/">Machine Learning for Audio</a>',
+    links: [
+      { label: 'arXiv', href: 'https://arxiv.org/abs/2606.08663' },
+      { label: 'PDF',   href: 'https://arxiv.org/pdf/2606.08663' },
+    ],
     tags: ['music'],
   },
   {
