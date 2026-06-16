@@ -98,16 +98,35 @@ function Bubble({
         onFocus(focused ? null : key)
       }}
     >
+      {/* Soft shadow under the bubble for floating feel */}
+      <ellipse
+        cx={s.cx}
+        cy={s.cy + s.r * 0.92}
+        rx={s.r * 0.78}
+        ry={s.r * 0.18}
+        fill="#000"
+        opacity={focused ? 0.18 : 0.1}
+      />
+      {/* Main bubble — radial gradient */}
       <circle
         cx={s.cx}
         cy={s.cy}
         r={s.r}
-        fill={primary.color}
-        fillOpacity={focused ? 0.85 : 0.6}
+        fill={`url(#bubble-${primary.key})`}
         stroke={secondary?.color ?? primary.color}
-        strokeOpacity={0.95}
+        strokeOpacity={0.85}
         strokeWidth={secondary ? 4 : 2}
         strokeDasharray={secondary ? '6 4' : undefined}
+      />
+      {/* Specular highlight (top-left sheen) */}
+      <ellipse
+        cx={s.cx - s.r * 0.32}
+        cy={s.cy - s.r * 0.42}
+        rx={s.r * 0.42}
+        ry={s.r * 0.26}
+        fill="url(#bubble-highlight)"
+        opacity={focused ? 0.95 : 0.8}
+        pointerEvents="none"
       />
       <text x={s.cx} y={s.cy - 4} textAnchor="middle" dominantBaseline="middle" className="jumap-artist">
         {s.artist}
@@ -143,19 +162,29 @@ export function JumapPage() {
     : null
 
   return (
-    <div className="page-shell">
-      <header className="page-shell-header">
-        <Link to="/" className="back-link">← junst.github.io</Link>
-        <h1 className="page-shell-title">Jumap</h1>
-        <p className="page-shell-lead">
-          Jun's personal song critic — bubbles cluster by genre, sized by tier
-          (T1 flagship → T5 honourable mention). Tap a bubble for the rating
-          card; the water ring is just for fun.
-        </p>
-      </header>
-
-      <div className="jumap-stage">
+    <div className="jumap-page">
+      <Link to="/" className="back-link jumap-back">← back</Link>
+      <div className="jumap-stage jumap-stage-full">
         <svg viewBox={`0 0 ${width} ${height}`} className="jumap-svg" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            {GENRES.map((g) => (
+              <radialGradient
+                key={g.key}
+                id={`bubble-${g.key}`}
+                cx="32%"
+                cy="28%"
+                r="80%"
+              >
+                <stop offset="0%"  stopColor="#ffffff" stopOpacity="0.92" />
+                <stop offset="40%" stopColor={g.color} stopOpacity="0.85" />
+                <stop offset="100%" stopColor={g.color} stopOpacity="0.55" />
+              </radialGradient>
+            ))}
+            <radialGradient id="bubble-highlight" cx="32%" cy="22%" r="40%">
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
+              <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+            </radialGradient>
+          </defs>
           {placed.map((s) => (
             <Bubble
               key={s.artist + '—' + s.title}
