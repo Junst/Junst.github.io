@@ -1544,3 +1544,41 @@ html[data-theme="dark"] .jumap-detail { background: rgba(20,20,20,0.92); }
   .juward-voice-card-reason { font-size: 0.95rem; }
   .juward-voice-tab { font-size: 0.8rem; padding: 6px 12px; }
 }
+
+/* ARASHI year-tab strip on the dedicated ARASHI page */
+.juward-year-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0 20px;
+}
+.juward-year-pill {
+  background: var(--bg-soft);
+  border: 1px solid var(--rule);
+  color: var(--text-soft);
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color .15s, color .15s, border-color .15s, transform .12s;
+}
+.juward-year-pill:hover {
+  color: var(--text);
+  border-color: var(--text-soft);
+  transform: translateY(-1px);
+}
+.juward-year-pill.active {
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+}
+
+.juward-recap-row { margin-bottom: 18px; }
+
+.juward-empty {
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 16px 0;
+}

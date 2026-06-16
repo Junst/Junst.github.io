@@ -57,18 +57,6 @@ export function JuwardVoicePage() {
           </div>
         </article>
       )}
-
-      <aside className="juward-voice-legend">
-        <div className="juward-voice-legend-head">Member palette</div>
-        <ul>
-          {Object.entries(MEMBER_COLOR).map(([name, color]) => (
-            <li key={name}>
-              <span className="juward-voice-legend-chip" style={{ background: color }} />
-              {name}
-            </li>
-          ))}
-        </ul>
-      </aside>
     </div>
   )
 }
