@@ -1318,3 +1318,97 @@ html[data-theme="dark"] .jumap-detail { background: rgba(20,20,20,0.92); }
   color: var(--accent);
   min-width: 40px;
 }
+
+/* === Juward sub-nav menu === */
+.juward-nav {
+  margin: 6px 0 10px;
+}
+.juward-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.juward-nav-link {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-soft);
+  background: var(--bg-soft);
+  border: 1px solid var(--rule);
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule);
+  transition: background-color .15s, color .15s, border-color .15s;
+}
+.juward-nav-link:hover {
+  color: var(--text);
+  border-color: var(--text-soft);
+  border-bottom: 1px solid var(--text-soft);
+}
+.juward-nav-link.active {
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+}
+
+/* === Voice of the Year — standalone timeline === */
+.juward-voice-timeline {
+  list-style: none;
+  padding: 0;
+  margin: 18px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.juward-voice-row {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 18px;
+  align-items: start;
+  padding: 16px 18px;
+  background: linear-gradient(90deg, var(--tint, #eee) 0%, transparent 35%);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  border-left: 4px solid var(--tint, #ddd);
+}
+.juward-voice-year-cell {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  line-height: 1;
+  padding-top: 4px;
+}
+.juward-voice-body { display: flex; flex-direction: column; gap: 4px; }
+.juward-voice-member-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.juward-voice-chip {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+.juward-voice-member {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+.juward-voice-reason {
+  color: var(--text-soft);
+  font-size: 0.92rem;
+  font-style: italic;
+}
+
+@media (max-width: 640px) {
+  .juward-voice-row { grid-template-columns: 64px 1fr; padding: 12px 14px; gap: 12px; }
+  .juward-voice-year-cell { font-size: 1.5rem; }
+  .juward-voice-member { font-size: 1rem; }
+}

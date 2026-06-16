@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
+import { JuwardNav } from '../components/JuwardNav'
 import {
   arashiForYear,
-  voiceUpTo,
   otherRankingUpTo,
   otherNominees,
   jpopRankingUpTo,
@@ -65,7 +65,6 @@ export function JuwardYearPage() {
   const { year: yParam } = useParams<{ year: string }>()
   const year = Number(yParam)
   const arashi = arashiForYear(year)
-  const voiceList = voiceUpTo(year)
   const otherList = otherRankingUpTo(year)
   const jpopList = jpopRankingUpTo(year)
   const otherNoms = otherNominees[year]
@@ -89,10 +88,11 @@ export function JuwardYearPage() {
   return (
     <div className="page-shell juward-year-page">
       <header className="page-shell-header">
+        <Link to="/" className="back-link">← junst.github.io</Link>
+        <JuwardNav />
         <div className="juward-year-nav">
-          <Link to="/juward" className="back-link">← Juward</Link>
-          <div className="juward-year-nav-spacer" />
           {prevYear && <Link to={`/juward/${prevYear}`} className="juward-year-nav-link">← {prevYear}</Link>}
+          <div className="juward-year-nav-spacer" />
           {nextYear && <Link to={`/juward/${nextYear}`} className="juward-year-nav-link">{nextYear} →</Link>}
         </div>
         <h1 className="page-shell-title juward-year-title">{year} Juward</h1>
@@ -121,22 +121,6 @@ export function JuwardYearPage() {
               </li>
             ))}
           </ul>
-        </section>
-      )}
-
-      {/* Voice of the Year history */}
-      {voiceList.length > 0 && (
-        <section className="juward-section">
-          <h2 className="juward-section-title">올해의 목소리 (Voice of the Year)</h2>
-          <ol className="juward-voice">
-            {voiceList.map((v) => (
-              <li key={v.year} className={v.year === year ? 'juward-voice-now' : undefined}>
-                <span className="juward-voice-year">{v.year}</span>
-                <span className="juward-voice-member">{v.member}</span>
-                <span className="juward-voice-reason">{v.reason}</span>
-              </li>
-            ))}
-          </ol>
         </section>
       )}
 
