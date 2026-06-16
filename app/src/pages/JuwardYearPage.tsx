@@ -29,7 +29,7 @@ function RankingTable({
         >
           {r.streamingStartHere && (
             <div className="juward-streaming-divider">
-              <span>스트리밍 시작</span>
+              <span>Streaming era begins</span>
             </div>
           )}
           <span className="juward-ranking-year">{r.year}</span>
@@ -108,7 +108,7 @@ export function JuwardYearPage() {
       {/* ARASHI annual ceremony */}
       {arashi && arashi.entries.length > 0 && (
         <section className="juward-section">
-          <h2 className="juward-section-title">아라시 시상식 {year}</h2>
+          <h2 className="juward-section-title">ARASHI Awards {year}</h2>
           <ul className="juward-entries-grid">
             {arashi.entries.map((e, i) => (
               <li key={i}>
@@ -124,28 +124,28 @@ export function JuwardYearPage() {
         </section>
       )}
 
-      {/* 기타 타악 순위 */}
+      {/* Other Genres Ranking */}
       {otherList.length > 0 && (
         <section className="juward-section">
-          <h2 className="juward-section-title">기타 타악 순위</h2>
+          <h2 className="juward-section-title">Other Genres Ranking</h2>
           <RankingTable rows={otherList} highlightYear={year} />
           {otherNoms && otherNoms.length > 0 && (
             <div className="juward-subsection">
-              <h3 className="juward-subsection-title">{year} 후보</h3>
+              <h3 className="juward-subsection-title">{year} Nominees</h3>
               <Nominees list={otherNoms} />
             </div>
           )}
         </section>
       )}
 
-      {/* J-POP 대상 */}
+      {/* J-Pop Grand Prize */}
       {jpopList.length > 0 && (
         <section className="juward-section">
-          <h2 className="juward-section-title">J-POP 대상 (아라시 제외)</h2>
+          <h2 className="juward-section-title">J-Pop Grand Prize (excluding ARASHI)</h2>
           <RankingTable rows={jpopList} highlightYear={year} />
           {jpopNoms && jpopNoms.length > 0 && (
             <div className="juward-subsection">
-              <h3 className="juward-subsection-title">{year} 후보</h3>
+              <h3 className="juward-subsection-title">{year} Nominees</h3>
               <Nominees list={jpopNoms} />
             </div>
           )}
@@ -153,7 +153,7 @@ export function JuwardYearPage() {
       )}
 
       <section className="juward-section juward-notation-section">
-        <h2 className="juward-section-title">표기 규칙</h2>
+        <h2 className="juward-section-title">Notation Guide</h2>
         <ul className="juward-notation-list">
           {NOTATION_LEGEND.map((n) => (
             <li key={n.code}>

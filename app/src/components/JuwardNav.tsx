@@ -4,7 +4,7 @@ interface Item { to: string; label: string }
 
 const items: Item[] = [
   { to: '/juward',       label: 'Years' },
-  { to: '/juward/voice', label: '올해의 목소리' },
+  { to: '/juward/voice', label: 'Voice of the Year' },
 ]
 
 export function JuwardNav() {
