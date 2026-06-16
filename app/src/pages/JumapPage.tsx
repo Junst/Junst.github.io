@@ -97,35 +97,54 @@ function ArtistBubble({
         onFocus(focused ? null : a.name)
       }}
     >
-      {/* Shadow ellipse underneath */}
+      {/* Soft drop shadow ellipse far underneath */}
       <ellipse
         cx={a.cx}
-        cy={a.cy + a.r * 0.94}
-        rx={a.r * 0.74}
-        ry={a.r * 0.14}
+        cy={a.cy + a.r * 1.02}
+        rx={a.r * 0.62}
+        ry={a.r * 0.1}
         fill="#000"
-        opacity={focused ? 0.14 : 0.07}
+        opacity={focused ? 0.1 : 0.05}
       />
-      {/* Bubble — radial gradient through pastel band, soft transparent */}
+      {/* Bubble — translucent pastel core */}
       <circle
         cx={a.cx}
         cy={a.cy}
         r={a.r}
         fill={`url(#bubble-${primary.key})`}
-        opacity={focused ? 0.95 : 0.72}
+        opacity={focused ? 0.85 : 0.62}
         stroke={secondary?.color ?? primary.color}
-        strokeOpacity={secondary ? 0.6 : 0.45}
-        strokeWidth={secondary ? 3 : 1.5}
+        strokeOpacity={secondary ? 0.45 : 0.28}
+        strokeWidth={secondary ? 2.5 : 1.2}
         strokeDasharray={secondary ? '5 4' : undefined}
       />
-      {/* Specular sheen */}
+      {/* Bottom-right glow → adds a watery dimensionality */}
+      <circle
+        cx={a.cx}
+        cy={a.cy}
+        r={a.r}
+        fill="url(#bubble-glow)"
+        opacity={focused ? 0.6 : 0.4}
+        pointerEvents="none"
+      />
+      {/* Top-left specular sheen — moved a bit for a softer feel */}
       <ellipse
-        cx={a.cx - a.r * 0.34}
-        cy={a.cy - a.r * 0.42}
-        rx={a.r * 0.4}
-        ry={a.r * 0.22}
+        cx={a.cx - a.r * 0.32}
+        cy={a.cy - a.r * 0.38}
+        rx={a.r * 0.45}
+        ry={a.r * 0.26}
         fill="url(#bubble-highlight)"
         opacity={focused ? 0.85 : 0.7}
+        pointerEvents="none"
+      />
+      {/* Tiny pinpoint highlight inside the larger sheen */}
+      <ellipse
+        cx={a.cx - a.r * 0.38}
+        cy={a.cy - a.r * 0.46}
+        rx={a.r * 0.1}
+        ry={a.r * 0.05}
+        fill="#ffffff"
+        opacity={focused ? 0.95 : 0.7}
         pointerEvents="none"
       />
       {/* Artist name centred */}
@@ -179,17 +198,28 @@ export function JumapPage() {
                 id={`bubble-${g.key}`}
                 cx="32%"
                 cy="28%"
-                r="80%"
+                r="85%"
               >
-                <stop offset="0%"  stopColor="#ffffff" stopOpacity="0.95" />
-                <stop offset="55%" stopColor={g.color} stopOpacity="0.75" />
-                <stop offset="100%" stopColor={g.color} stopOpacity="0.45" />
+                {/* Soap-bubble: bright translucent core → pastel midband → very soft edge */}
+                <stop offset="0%"   stopColor="#ffffff" stopOpacity="0.85" />
+                <stop offset="35%"  stopColor={g.color} stopOpacity="0.5" />
+                <stop offset="75%"  stopColor={g.color} stopOpacity="0.32" />
+                <stop offset="100%" stopColor={g.color} stopOpacity="0.18" />
               </radialGradient>
             ))}
-            <radialGradient id="bubble-highlight" cx="32%" cy="22%" r="40%">
-              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
+            <radialGradient id="bubble-highlight" cx="32%" cy="22%" r="36%">
+              <stop offset="0%"  stopColor="#ffffff" stopOpacity="0.95" />
+              <stop offset="60%" stopColor="#ffffff" stopOpacity="0.25" />
               <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
             </radialGradient>
+            {/* Tiny crescent sheen on the bottom-right for extra dimensionality */}
+            <radialGradient id="bubble-glow" cx="70%" cy="80%" r="40%">
+              <stop offset="0%"   stopColor="#ffffff" stopOpacity="0.5" />
+              <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+            </radialGradient>
+            <filter id="bubble-blur" x="-10%" y="-10%" width="120%" height="120%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="0.3" />
+            </filter>
           </defs>
           {placed.map((a) => (
             <ArtistBubble

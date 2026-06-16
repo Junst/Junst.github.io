@@ -19,7 +19,18 @@ export function RankingTable({ rows, highlightYear }: {
           )}
           <span className="juward-ranking-year">{r.year}</span>
           <span className="juward-ranking-winner">
-            {r.winner}
+            {r.picks.map((p, i) => (
+              <span key={i} className="juward-ranking-pick">
+                {i > 0 && <span className="juward-ranking-sep"> / </span>}
+                <span className="juward-ranking-artist">{p.artist}</span>
+                {p.title && (
+                  <>
+                    {' '}
+                    <span className="juward-ranking-title">{p.title}</span>
+                  </>
+                )}
+              </span>
+            ))}
             {r.notation && <span className="juward-ranking-notation"> ({r.notation})</span>}
           </span>
         </li>

@@ -19,9 +19,14 @@ export interface ArashiAnnual {
 
 export type Notation = '-' | 'Tie #1' | 'Tie #2' | 'Tie =' | 'Tie +'
 
+export interface SongPick {
+  artist: string
+  title: string
+}
+
 export interface RankingPick {
   year: number
-  winner: string
+  picks: SongPick[]              // one entry = solo winner; multiple = tied
   notation?: Notation
   streamingStartHere?: boolean
 }
@@ -210,69 +215,80 @@ export const voiceOfTheYear: VoicePick[] = [
 
 // ----- Other Genres Ranking (cumulative non-Arashi pick) -----
 export const otherRanking: RankingPick[] = [
-  { year: 2015, winner: 'BIGBANG BANG BANG BANG / Girls’ Generation PARTY', notation: 'Tie #1' },
-  { year: 2016, winner: 'Beenzino Time Travel' },
-  { year: 2017, winner: 'BTS DNA',  notation: '-' },
-  { year: 2018, winner: 'TWICE Dance The Night Away', notation: '-' },
-  { year: 2019, winner: 'Official髭男dism Pretender / Billie Eilish Bad Guy', notation: 'Tie #1' },
-  { year: 2020, winner: 'BTS Dynamite / ReoNa ANIMA', notation: 'Tie =', streamingStartHere: true },
-  { year: 2021, winner: 'Red Velvet Queendom' },
-  { year: 2022, winner: 'NewJeans Hype Boy / Attention', notation: 'Tie +' },
-  { year: 2023, winner: 'NewJeans OMG / GODS', notation: 'Tie +' },
-  { year: 2024, winner: 'ILLIT Magnetic / Number_i GOAT', notation: 'Tie #1' },
-  { year: 2025, winner: 'Drake NOKIA / Effie CAN I SIP 담배', notation: 'Tie #1' },
+  { year: 2015, picks: [{ artist: 'BIGBANG', title: 'BANG BANG BANG' }, { artist: 'Girls’ Generation', title: 'PARTY' }], notation: 'Tie #1' },
+  { year: 2016, picks: [{ artist: 'Beenzino', title: 'Time Travel' }] },
+  { year: 2017, picks: [{ artist: 'BTS', title: 'DNA' }], notation: '-' },
+  { year: 2018, picks: [{ artist: 'TWICE', title: 'Dance The Night Away' }], notation: '-' },
+  { year: 2019, picks: [{ artist: 'Official髭男dism', title: 'Pretender' }, { artist: 'Billie Eilish', title: 'Bad Guy' }], notation: 'Tie #1' },
+  { year: 2020, picks: [{ artist: 'BTS', title: 'Dynamite' }, { artist: 'ReoNa', title: 'ANIMA' }], notation: 'Tie =', streamingStartHere: true },
+  { year: 2021, picks: [{ artist: 'Red Velvet', title: 'Queendom' }] },
+  { year: 2022, picks: [{ artist: 'NewJeans', title: 'Hype Boy' }, { artist: 'NewJeans', title: 'Attention' }], notation: 'Tie +' },
+  { year: 2023, picks: [{ artist: 'NewJeans', title: 'OMG' }, { artist: 'NewJeans', title: 'GODS' }], notation: 'Tie +' },
+  { year: 2024, picks: [{ artist: 'ILLIT', title: 'Magnetic' }, { artist: 'Number_i', title: 'GOAT' }], notation: 'Tie #1' },
+  { year: 2025, picks: [{ artist: 'Drake', title: 'NOKIA' }, { artist: 'Effie', title: 'CAN I SIP 담배' }], notation: 'Tie #1' },
 ]
 
 // Nominees per year for the Other Genres track. Empty years render an
 // 'No nominees logged yet' card so the tab strip still works.
 export const otherNominees: Record<number, NomineeEntry[]> = {
   2025: [
-    { artist: 'Drake',                  songs: ['NOKIA'] },
-    { artist: 'BOYNEXTDOOR',            songs: ['오늘만 I LOVE YOU'] },
-    { artist: 'Number_i',               songs: ['未確認領域', 'GOD_i', 'Numbers', 'Ur Zone'] },
-    { artist: 'aespa',                  songs: ['Dark Arts'] },
-    { artist: 'Effie',                  songs: ['down', 'CAN I SIP 담배', 'MAKGEOLLI BANGER'] },
-    { artist: 'Hearts2Hearts',          songs: ['STYLE'] },
-    { artist: 'TVXQ',                   songs: ['Psycho'] },
-    { artist: 'ILLIT',                  songs: ['빌려온 고양이 (Do the Dance)'] },
-    { artist: 'Sik-K & Lil Moshpit',    songs: ['LOV3'] },
-    { artist: 'Noducksoon (노덕순)',     songs: ['Fancy Car'] },
-    { artist: 'Snow Man',               songs: ['カリスマックス'] },
-    { artist: 'Hey! Say! JUMP',         songs: ['encore'] },
-    { artist: 'King & Prince',          songs: ['HEART'] },
-    { artist: 'SYSTEM SEOUL',           songs: ['SS'] },
-    { artist: 'Zico & Lilas',           songs: ['DUET'] },
-    { artist: 'LE SSERAFIM',            songs: ['SPAGHETTI'] },
-    { artist: 'Playboi Carti',          songs: ['EVIL J0RDAN'] },
+    { artist: 'Drake',               songs: ['NOKIA'],
+      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Drake_at_The_Carter_Effect_2017_%2836818935200%29_%28cropped%29.jpg/330px-Drake_at_The_Carter_Effect_2017_%2836818935200%29_%28cropped%29.jpg' },
+    { artist: 'BOYNEXTDOOR',         songs: ['오늘만 I LOVE YOU'],
+      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/2026-01-16_BOYNEXTDOOR_at_Golden_Disc_Awards_05_%28cropped%29.png/330px-2026-01-16_BOYNEXTDOOR_at_Golden_Disc_Awards_05_%28cropped%29.png' },
+    { artist: 'Number_i',            songs: ['未確認領域', 'GOD_i', 'Numbers', 'Ur Zone'] },
+    { artist: 'aespa',               songs: ['Dark Arts'],
+      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/241005_aespa_K-Link_Festival_%28cropped%29.jpg/330px-241005_aespa_K-Link_Festival_%28cropped%29.jpg' },
+    { artist: 'Effie',               songs: ['down', 'CAN I SIP 담배', 'MAKGEOLLI BANGER'] },
+    { artist: 'Hearts2Hearts',       songs: ['STYLE'],
+      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/260221_HEARTS2HEARTS_%40_2026_Fanmeeting_HEARTS2HOUSE.jpg/330px-260221_HEARTS2HEARTS_%40_2026_Fanmeeting_HEARTS2HOUSE.jpg' },
+    { artist: 'TVXQ',                songs: ['Psycho'],
+      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/TVXQ_December_2023.jpg/330px-TVXQ_December_2023.jpg' },
+    { artist: 'ILLIT',               songs: ['빌려온 고양이 (Do the Dance)'],
+      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Illit_in_January_2026.png/330px-Illit_in_January_2026.png' },
+    { artist: 'Sik-K & Lil Moshpit', songs: ['LOV3'],
+      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Sik-K_2020.png/330px-Sik-K_2020.png' },
+    { artist: 'Noducksoon (노덕순)',  songs: ['Fancy Car'] },
+    { artist: 'Snow Man',            songs: ['カリスマックス'] },
+    { artist: 'Hey! Say! JUMP',      songs: ['encore'] },
+    { artist: 'King & Prince',       songs: ['HEART'] },
+    { artist: 'SYSTEM SEOUL',        songs: ['SS'] },
+    { artist: 'Zico & Lilas',        songs: ['DUET'],
+      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/ZICO_Damiani_May_2024.jpg/330px-ZICO_Damiani_May_2024.jpg' },
+    { artist: 'LE SSERAFIM',         songs: ['SPAGHETTI'],
+      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Le_Sserafim_at_2026_Golden_Disc_awards.png/330px-Le_Sserafim_at_2026_Golden_Disc_awards.png' },
+    { artist: 'Playboi Carti',       songs: ['EVIL J0RDAN'],
+      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Playboi_Carti%2C_Clout_Festival_2024_05_%28cropped%29.jpg/330px-Playboi_Carti%2C_Clout_Festival_2024_05_%28cropped%29.jpg' },
   ],
 }
 
 // ----- J-Pop Grand Prize (cumulative non-Arashi J-Pop pick) -----
 export const jpopRanking: RankingPick[] = [
-  { year: 2008, winner: 'Buono! Kiss! Kiss! Kiss!' },
-  { year: 2009, winner: 'TVXQ share the world / Buono! 消失点-Vanishing Point', notation: 'Tie #1' },
-  { year: 2010, winner: '— (TBD)' },
-  { year: 2011, winner: 'Perfume ねぇ (in Album JPN)' },
-  { year: 2012, winner: 'Ikimonogakari ハルウタ' },
-  { year: 2013, winner: 'SMAP JOY / SEKAI NO OWARI RPG', notation: 'Tie #1' },
-  { year: 2014, winner: 'SEKAI NO OWARI Dragon Night', notation: '-' },
-  { year: 2015, winner: '— (TBD)' },
-  { year: 2016, winner: 'RADWIMPS 「前前前世」', notation: '-' },
-  { year: 2017, winner: 'Hoshino Gen 恋' },
-  { year: 2018, winner: 'King & Prince シンデレラガール' },
-  { year: 2019, winner: 'Official髭男dism Pretender', streamingStartHere: true },
-  { year: 2020, winner: 'ReoNa ANIMA' },
-  { year: 2021, winner: 'なにわ男子 初心LOVE (うぶらぶ)', notation: '-' },
-  { year: 2022, winner: 'King & Prince Trace&Trace' },
-  { year: 2023, winner: 'Hey! Say! JUMP DEAR MY LOVER / なにわ男子 Poppin’ Hoppin’ Lovin’', notation: 'Tie =' },
-  { year: 2024, winner: 'Number_i GOAT', notation: '-' },
-  { year: 2025, winner: 'King & Prince HEART / Zico & Lilas DUET', notation: '-' },
+  { year: 2008, picks: [{ artist: 'Buono!', title: 'Kiss! Kiss! Kiss!' }] },
+  { year: 2009, picks: [{ artist: 'TVXQ', title: 'share the world' }, { artist: 'Buono!', title: '消失点 -Vanishing Point-' }], notation: 'Tie #1' },
+  { year: 2010, picks: [{ artist: '— (TBD)', title: '' }] },
+  { year: 2011, picks: [{ artist: 'Perfume', title: 'ねぇ (in Album JPN)' }] },
+  { year: 2012, picks: [{ artist: 'Ikimonogakari', title: 'ハルウタ' }] },
+  { year: 2013, picks: [{ artist: 'SMAP', title: 'JOY' }, { artist: 'SEKAI NO OWARI', title: 'RPG' }], notation: 'Tie #1' },
+  { year: 2014, picks: [{ artist: 'SEKAI NO OWARI', title: 'Dragon Night' }], notation: '-' },
+  { year: 2015, picks: [{ artist: '— (TBD)', title: '' }] },
+  { year: 2016, picks: [{ artist: 'RADWIMPS', title: '前前前世' }], notation: '-' },
+  { year: 2017, picks: [{ artist: 'Hoshino Gen', title: '恋' }] },
+  { year: 2018, picks: [{ artist: 'King & Prince', title: 'シンデレラガール' }] },
+  { year: 2019, picks: [{ artist: 'Official髭男dism', title: 'Pretender' }], streamingStartHere: true },
+  { year: 2020, picks: [{ artist: 'ReoNa', title: 'ANIMA' }] },
+  { year: 2021, picks: [{ artist: 'Naniwa Danshi', title: '初心LOVE (うぶらぶ)' }], notation: '-' },
+  { year: 2022, picks: [{ artist: 'King & Prince', title: 'Trace&Trace' }] },
+  { year: 2023, picks: [{ artist: 'Hey! Say! JUMP', title: 'DEAR MY LOVER' }, { artist: 'Naniwa Danshi', title: 'Poppin’ Hoppin’ Lovin’' }], notation: 'Tie =' },
+  { year: 2024, picks: [{ artist: 'Number_i', title: 'GOAT' }], notation: '-' },
+  { year: 2025, picks: [{ artist: 'King & Prince', title: 'HEART' }, { artist: 'Zico & Lilas', title: 'DUET' }], notation: '-' },
 ]
 
 export const jpopNominees: Record<number, NomineeEntry[]> = {
   2025: [
     { artist: 'King & Prince', songs: ['HEART'] },
-    { artist: 'Zico & Lilas',  songs: ['DUET'] },
+    { artist: 'Zico & Lilas',  songs: ['DUET'],
+      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/ZICO_Damiani_May_2024.jpg/330px-ZICO_Damiani_May_2024.jpg' },
     { artist: 'Number_i',      songs: ['未確認領域'] },
   ],
 }
