@@ -1,20 +1,22 @@
-import { useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  songs,
+  artists,
   GENRES,
   TIERS,
   TIER_LABEL,
   bubbleRadius,
+  bestTier,
   genreFor,
-  groupByGenre,
+  groupArtistsByGenre,
   presentGenres,
-  primaryGenre,
-  sortByTier,
-  type Song,
+  artistPrimaryGenre,
+  artistGenres,
+  sortArtists,
+  type Artist,
 } from '../data/jumap'
 
-interface PlacedSong extends Song {
+interface PlacedArtist extends Artist {
   cx: number
   cy: number
   r: number
@@ -26,42 +28,39 @@ function seed(name: string): number {
   return (h >>> 0) / 0xffffffff
 }
 
-// Lay each genre out in its own "continent" — a soft cluster of bubbles
-// arranged around a genre centre. Continents are scattered across the canvas.
-function place(items: Song[], width: number, height: number): PlacedSong[] {
-  const groups = groupByGenre(items)
+function place(items: Artist[], width: number, height: number): PlacedArtist[] {
+  const groups = groupArtistsByGenre(items)
   const primaryGenres = GENRES.filter((g) => groups.has(g.key))
-  const out: PlacedSong[] = []
+  const out: PlacedArtist[] = []
+  const cx = width / 2
+  const cy = height / 2
 
   const centres: Record<string, { x: number; y: number }> = {}
-  const gcx = width / 2
-  const gcy = height / 2
   if (primaryGenres.length === 1) {
-    centres[primaryGenres[0].key] = { x: gcx, y: gcy }
+    centres[primaryGenres[0].key] = { x: cx, y: cy }
   } else {
     const ringR = Math.min(width, height) * 0.27
     primaryGenres.forEach((g, i) => {
       const angle = (i / primaryGenres.length) * Math.PI * 2 - Math.PI / 2
       centres[g.key] = {
-        x: gcx + Math.cos(angle) * ringR,
-        y: gcy + Math.sin(angle) * ringR,
+        x: cx + Math.cos(angle) * ringR,
+        y: cy + Math.sin(angle) * ringR,
       }
     })
   }
 
   for (const g of primaryGenres) {
     const c = centres[g.key]
-    const cluster = sortByTier(groups.get(g.key) ?? [])
-    cluster.forEach((s, i) => {
-      const r = bubbleRadius(s)
-      const seedAngle = seed(s.title + s.artist) * Math.PI * 2
-      // Local ring around the genre centre, scaled by cluster size
+    const cluster = sortArtists(groups.get(g.key) ?? [])
+    cluster.forEach((a, i) => {
+      const r = bubbleRadius(a)
+      const seedAngle = seed(a.name) * Math.PI * 2
       const localRadius = cluster.length === 1
         ? 0
-        : Math.min(width, height) * 0.08 + i * 6
+        : Math.min(width, height) * 0.09 + i * 10
       const angle = (i / Math.max(1, cluster.length)) * Math.PI * 2 + seedAngle
       out.push({
-        ...s,
+        ...a,
         cx: c.x + Math.cos(angle) * localRadius,
         cy: c.y + Math.sin(angle) * localRadius,
         r,
@@ -74,68 +73,78 @@ function place(items: Song[], width: number, height: number): PlacedSong[] {
 
 interface Ripple { id: number; cx: number; cy: number; r: number }
 
-function Bubble({
-  s, focus, onFocus, onRipple,
+function ArtistBubble({
+  a, focus, onFocus, onRipple,
 }: {
-  s: PlacedSong
+  a: PlacedArtist
   focus: string | null
   onFocus: (key: string | null) => void
   onRipple: (r: Ripple) => void
 }) {
-  const primary = genreFor(primaryGenre(s))
-  const secondary = s.genres[1] ? genreFor(s.genres[1]) : null
-  const key = s.artist + '—' + s.title
-  const focused = focus === key
+  const primary = genreFor(artistPrimaryGenre(a))
+  const genres = artistGenres(a)
+  const secondary = genres.length > 1 ? genreFor(genres.find((g) => g !== primary.key) ?? '') : null
+  const focused = focus === a.name
   const dim = focus != null && !focused
   return (
     <g
-      className="jumap-bubble"
-      style={{ opacity: dim ? 0.22 : 1 }}
-      onMouseEnter={() => onFocus(key)}
+      className={'jumap-bubble' + (focused ? ' focused' : '')}
+      style={{ opacity: dim ? 0.18 : 1 }}
+      onMouseEnter={() => onFocus(a.name)}
       onMouseLeave={() => onFocus(null)}
       onClick={() => {
-        onRipple({ id: Date.now() + Math.random(), cx: s.cx, cy: s.cy, r: s.r })
-        onFocus(focused ? null : key)
+        onRipple({ id: Date.now() + Math.random(), cx: a.cx, cy: a.cy, r: a.r })
+        onFocus(focused ? null : a.name)
       }}
     >
-      {/* Soft shadow under the bubble for floating feel */}
+      {/* Shadow ellipse underneath */}
       <ellipse
-        cx={s.cx}
-        cy={s.cy + s.r * 0.92}
-        rx={s.r * 0.78}
-        ry={s.r * 0.18}
+        cx={a.cx}
+        cy={a.cy + a.r * 0.94}
+        rx={a.r * 0.74}
+        ry={a.r * 0.14}
         fill="#000"
-        opacity={focused ? 0.18 : 0.1}
+        opacity={focused ? 0.14 : 0.07}
       />
-      {/* Main bubble — radial gradient */}
+      {/* Bubble — radial gradient through pastel band, soft transparent */}
       <circle
-        cx={s.cx}
-        cy={s.cy}
-        r={s.r}
+        cx={a.cx}
+        cy={a.cy}
+        r={a.r}
         fill={`url(#bubble-${primary.key})`}
+        opacity={focused ? 0.95 : 0.72}
         stroke={secondary?.color ?? primary.color}
-        strokeOpacity={0.85}
-        strokeWidth={secondary ? 4 : 2}
-        strokeDasharray={secondary ? '6 4' : undefined}
+        strokeOpacity={secondary ? 0.6 : 0.45}
+        strokeWidth={secondary ? 3 : 1.5}
+        strokeDasharray={secondary ? '5 4' : undefined}
       />
-      {/* Specular highlight (top-left sheen) */}
+      {/* Specular sheen */}
       <ellipse
-        cx={s.cx - s.r * 0.32}
-        cy={s.cy - s.r * 0.42}
-        rx={s.r * 0.42}
-        ry={s.r * 0.26}
+        cx={a.cx - a.r * 0.34}
+        cy={a.cy - a.r * 0.42}
+        rx={a.r * 0.4}
+        ry={a.r * 0.22}
         fill="url(#bubble-highlight)"
-        opacity={focused ? 0.95 : 0.8}
+        opacity={focused ? 0.85 : 0.7}
         pointerEvents="none"
       />
-      <text x={s.cx} y={s.cy - 4} textAnchor="middle" dominantBaseline="middle" className="jumap-artist">
-        {s.artist}
+      {/* Artist name centred */}
+      <text
+        x={a.cx}
+        y={a.cy + 2}
+        textAnchor="middle"
+        dominantBaseline="middle"
+        className="jumap-artist"
+      >
+        {a.name}
       </text>
-      <text x={s.cx} y={s.cy + 12} textAnchor="middle" dominantBaseline="middle" className="jumap-title">
-        {s.title}
-      </text>
-      <text x={s.cx} y={s.cy + s.r * 0.55} textAnchor="middle" className="jumap-tier">
-        {TIER_LABEL[s.tier]}
+      <text
+        x={a.cx}
+        y={a.cy + a.r * 0.55}
+        textAnchor="middle"
+        className="jumap-tier"
+      >
+        {TIER_LABEL[bestTier(a)]}
       </text>
     </g>
   )
@@ -144,26 +153,23 @@ function Bubble({
 export function JumapPage() {
   const [focus, setFocus] = useState<string | null>(null)
   const [ripples, setRipples] = useState<Ripple[]>([])
-  const ripplesRef = useRef<number[]>([])
   const width = 960
   const height = 640
-  const placed = useMemo(() => place(songs, width, height), [])
+  const placed = useMemo(() => place(artists, width, height), [])
 
   function addRipple(r: Ripple) {
     setRipples((cur) => [...cur, r])
-    const id = window.setTimeout(() => {
+    window.setTimeout(() => {
       setRipples((cur) => cur.filter((x) => x.id !== r.id))
     }, 900)
-    ripplesRef.current.push(id)
   }
 
-  const focused = focus
-    ? songs.find((s) => s.artist + '—' + s.title === focus)
-    : null
+  const focused = focus ? artists.find((a) => a.name === focus) : null
 
   return (
     <div className="jumap-page">
       <Link to="/" className="back-link jumap-back">← back</Link>
+
       <div className="jumap-stage jumap-stage-full">
         <svg viewBox={`0 0 ${width} ${height}`} className="jumap-svg" preserveAspectRatio="xMidYMid meet">
           <defs>
@@ -175,20 +181,20 @@ export function JumapPage() {
                 cy="28%"
                 r="80%"
               >
-                <stop offset="0%"  stopColor="#ffffff" stopOpacity="0.92" />
-                <stop offset="40%" stopColor={g.color} stopOpacity="0.85" />
-                <stop offset="100%" stopColor={g.color} stopOpacity="0.55" />
+                <stop offset="0%"  stopColor="#ffffff" stopOpacity="0.95" />
+                <stop offset="55%" stopColor={g.color} stopOpacity="0.75" />
+                <stop offset="100%" stopColor={g.color} stopOpacity="0.45" />
               </radialGradient>
             ))}
             <radialGradient id="bubble-highlight" cx="32%" cy="22%" r="40%">
-              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
               <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
             </radialGradient>
           </defs>
-          {placed.map((s) => (
-            <Bubble
-              key={s.artist + '—' + s.title}
-              s={s}
+          {placed.map((a) => (
+            <ArtistBubble
+              key={a.name}
+              a={a}
               focus={focus}
               onFocus={setFocus}
               onRipple={addRipple}
@@ -211,7 +217,7 @@ export function JumapPage() {
         <aside className="jumap-legend" aria-label="Genre legend">
           <div className="jumap-legend-section">
             <div className="jumap-legend-head">Genres</div>
-            {presentGenres(songs).map((g) => (
+            {presentGenres(artists).map((g) => (
               <div key={g.key} className="jumap-legend-row">
                 <span className="jumap-swatch" style={{ background: g.color }} />
                 <span className="jumap-legend-label">{g.label}</span>
@@ -234,19 +240,30 @@ export function JumapPage() {
           <div className="jumap-detail-head">
             <span
               className="jumap-detail-tier"
-              style={{ background: genreFor(primaryGenre(focused)).color }}
+              style={{ background: genreFor(artistPrimaryGenre(focused)).color }}
             >
-              {TIER_LABEL[focused.tier]}
+              {TIER_LABEL[bestTier(focused)]}
             </span>
-            <h2>{focused.artist} <span className="jumap-detail-dash">—</span> {focused.title}</h2>
+            <h2>{focused.name}</h2>
             <span className="jumap-detail-genre">
-              {focused.genres.map((k) => genreFor(k).label).join(' · ')}
+              {artistGenres(focused).map((k) => genreFor(k).label).join(' · ')}
             </span>
           </div>
-          {focused.note ? (
-            <p className="jumap-detail-note" dangerouslySetInnerHTML={{ __html: focused.note }} />
+          {focused.songs.length === 0 ? (
+            <p className="jumap-empty">No songs logged yet.</p>
           ) : (
-            <p className="jumap-empty">No review written yet.</p>
+            <ul className="jumap-songs">
+              {[...focused.songs]
+                .sort((x, y) => x.tier - y.tier || x.title.localeCompare(y.title))
+                .map((s, i) => (
+                  <li key={i}>
+                    <span className="jumap-song-tier">{TIER_LABEL[s.tier]}</span>
+                    <span className="jumap-song-title">{s.title}</span>
+                    {s.year && <span className="jumap-song-year">{s.year}</span>}
+                    {s.note && <span className="jumap-song-note" dangerouslySetInnerHTML={{ __html: s.note }} />}
+                  </li>
+                ))}
+            </ul>
           )}
         </div>
       )}

@@ -1058,3 +1058,263 @@ html[data-theme="dark"] .jumap-detail { background: rgba(20,20,20,0.92); }
   font-family: var(--font-sans);
   font-size: 0.85rem;
 }
+
+/* === Juward year-grid (index page) === */
+.juward-year-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 14px;
+}
+.juward-year-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 22px 18px;
+  background: var(--bg-soft);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  text-decoration: none;
+  border-bottom: none;
+  transition: border-color .15s, transform .15s, box-shadow .15s;
+}
+.juward-year-tile:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  border-bottom: none;
+}
+.juward-year-tile-num {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+.juward-year-tile-meta {
+  color: var(--text-soft);
+  font-size: 0.82rem;
+}
+.juward-year-tile-recap { color: var(--accent); }
+
+/* === Juward year page === */
+.juward-year-page { padding-bottom: 80px; }
+.juward-year-nav {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+.juward-year-nav-spacer { flex: 1; }
+.juward-year-nav-link {
+  font-size: 0.92rem;
+  color: var(--text-soft);
+  border-bottom: none;
+  padding: 4px 12px;
+  background: var(--bg-soft);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+}
+.juward-year-nav-link:hover {
+  color: var(--text);
+  border-color: var(--text-soft);
+  border-bottom: 1px solid var(--text-soft);
+}
+.juward-year-title {
+  font-size: 3rem;
+  letter-spacing: -0.02em;
+}
+
+.juward-section {
+  margin-top: 36px;
+  padding-top: 22px;
+  border-top: 1px solid var(--rule);
+}
+.juward-section-title {
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  margin: 0 0 16px;
+}
+.juward-subsection {
+  margin-top: 18px;
+  padding: 14px 18px;
+  background: var(--bg-soft);
+  border-radius: 10px;
+}
+.juward-subsection-title {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  margin: 0 0 8px;
+  color: var(--text-soft);
+}
+
+/* ARASHI entries grid */
+.juward-entries-grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+.juward-entries-grid li {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  background: var(--bg-soft);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  transition: border-color .15s;
+}
+.juward-entries-grid li:hover { border-color: var(--text-soft); }
+.juward-entries-grid .juward-category {
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+.juward-entries-grid .juward-winner {
+  font-weight: 600;
+  font-size: 0.98rem;
+}
+.juward-entries-grid .juward-runners {
+  font-size: 0.85rem;
+  color: var(--text-soft);
+}
+.juward-entries-grid .juward-note {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Voice of the Year */
+.juward-voice {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.juward-voice li {
+  display: grid;
+  grid-template-columns: 64px auto 1fr;
+  gap: 4px 14px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--rule);
+}
+.juward-voice li:first-child { border-top: 0; }
+.juward-voice-year {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+.juward-voice-member { font-weight: 600; }
+.juward-voice-reason {
+  grid-column: 2 / -1;
+  color: var(--text-soft);
+  font-size: 0.88rem;
+  font-style: italic;
+}
+.juward-voice-now {
+  background: linear-gradient(90deg, rgba(176,52,52,0.06), transparent);
+}
+.juward-voice-now .juward-voice-year { color: var(--accent); }
+
+/* Ranking table */
+.juward-ranking {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.juward-ranking li {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 14px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--rule);
+  position: relative;
+}
+.juward-ranking li:first-child { border-top: 0; }
+.juward-ranking-year {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+.juward-ranking-winner { font-weight: 500; }
+.juward-ranking-notation { color: var(--text-muted); font-style: italic; font-size: 0.85rem; }
+.juward-ranking-now {
+  background: linear-gradient(90deg, rgba(176,52,52,0.06), transparent);
+}
+.juward-ranking-now .juward-ranking-year { color: var(--accent); }
+
+/* Streaming divider before a row */
+.juward-streaming-divider {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin: -10px -14px 6px;
+  padding: 4px 14px;
+  background: rgba(0,0,0,0.03);
+  border-bottom: 1px solid var(--rule);
+}
+.juward-streaming-divider::before,
+.juward-streaming-divider::after {
+  content: '';
+  flex: 1;
+  border-top: 1px dashed var(--rule);
+}
+
+/* Nominees */
+.juward-nominees {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 6px 14px;
+}
+.juward-nominees li {
+  padding: 4px 0;
+  font-size: 0.88rem;
+}
+.juward-nominee-artist { font-weight: 600; }
+.juward-nominee-songs { color: var(--text-soft); }
+
+/* Notation legend */
+.juward-notation-section { border-top-color: transparent; }
+.juward-notation-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 6px;
+}
+.juward-notation-list li {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 10px;
+  font-size: 0.85rem;
+}
+.juward-notation-code { font-weight: 700; color: var(--accent); }
+.juward-notation-meaning { color: var(--text-soft); }
+
+/* Jumap song detail (per-artist) */
+.jumap-song-tier {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  color: var(--accent);
+  min-width: 40px;
+}
