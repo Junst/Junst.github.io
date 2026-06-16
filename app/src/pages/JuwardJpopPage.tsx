@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { JuwardNav } from '../components/JuwardNav'
 import { RankingTable, Nominees, NotationLegend } from '../components/RankingTable'
@@ -6,7 +7,10 @@ import { jpopRanking, jpopNominees } from '../data/juward'
 export function JuwardJpopPage() {
   const rows = [...jpopRanking].sort((a, b) => a.year - b.year)
   const latestYear = rows[rows.length - 1]?.year
-  const nomineeYears = Object.keys(jpopNominees).map(Number).sort((a, b) => b - a)
+  const years = rows.map((r) => r.year).reverse()
+  const defaultYear = years.find((y) => (jpopNominees[y]?.length ?? 0) > 0) ?? years[0]
+  const [nominationYear, setNominationYear] = useState<number>(defaultYear)
+  const list = jpopNominees[nominationYear] ?? []
 
   return (
     <div className="page-shell juward-track-page">
@@ -25,16 +29,31 @@ export function JuwardJpopPage() {
         <RankingTable rows={rows} highlightYear={latestYear} />
       </section>
 
-      {nomineeYears.map((y) => {
-        const list = jpopNominees[y]
-        if (!list || list.length === 0) return null
-        return (
-          <section className="juward-section" key={y}>
-            <h2 className="juward-section-title">{y} Nominees</h2>
-            <Nominees list={list} />
-          </section>
-        )
-      })}
+      <section className="juward-section">
+        <h2 className="juward-section-title">Nominees</h2>
+        <nav className="juward-year-strip" role="tablist" aria-label="Nominee year selector">
+          {years.map((y) => {
+            const hasData = (jpopNominees[y]?.length ?? 0) > 0
+            return (
+              <button
+                key={y}
+                type="button"
+                role="tab"
+                aria-selected={y === nominationYear}
+                className={
+                  'juward-year-pill'
+                  + (y === nominationYear ? ' active' : '')
+                  + (hasData ? '' : ' empty')
+                }
+                onClick={() => setNominationYear(y)}
+              >
+                {y}
+              </button>
+            )
+          })}
+        </nav>
+        <Nominees list={list} />
+      </section>
 
       <NotationLegend />
     </div>

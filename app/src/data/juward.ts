@@ -44,6 +44,10 @@ export interface VoicePick {
 export interface NomineeEntry {
   artist: string
   songs: string[]
+  // Optional artist photo. Paste a hot-linkable URL from the artist's official
+  // site, an open Wikipedia Commons URL, or a public CDN avatar. Leave empty
+  // and the card shows pastel initials instead.
+  image?: string
 }
 
 export const NOTATION_LEGEND: { code: string; meaning: string }[] = [
@@ -219,8 +223,10 @@ export const otherRanking: RankingPick[] = [
   { year: 2025, winner: 'Drake NOKIA / Effie CAN I SIP 담배', notation: 'Tie #1' },
 ]
 
+// Nominees per year for the Other Genres track. Empty years render an
+// 'No nominees logged yet' card so the tab strip still works.
 export const otherNominees: Record<number, NomineeEntry[]> = {
-  2024: [
+  2025: [
     { artist: 'Drake',                  songs: ['NOKIA'] },
     { artist: 'BOYNEXTDOOR',            songs: ['오늘만 I LOVE YOU'] },
     { artist: 'Number_i',               songs: ['未確認領域', 'GOD_i', 'Numbers', 'Ur Zone'] },
