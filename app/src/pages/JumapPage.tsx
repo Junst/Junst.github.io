@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   artists,
@@ -74,11 +74,12 @@ function place(items: Artist[], width: number, height: number): PlacedArtist[] {
 interface Ripple { id: number; cx: number; cy: number; r: number }
 
 function ArtistBubble({
-  a, focus, onFocus, onRipple,
+  a, focus, onFocus, onOpen, onRipple,
 }: {
   a: PlacedArtist
   focus: string | null
   onFocus: (key: string | null) => void
+  onOpen: (a: Artist) => void
   onRipple: (r: Ripple) => void
 }) {
   const primary = genreFor(artistPrimaryGenre(a))
@@ -86,15 +87,16 @@ function ArtistBubble({
   const secondary = genres.length > 1 ? genreFor(genres.find((g) => g !== primary.key) ?? '') : null
   const focused = focus === a.name
   const dim = focus != null && !focused
+  // Shape opacity dims with focus; text stays fully opaque.
+  const shapeOpacity = dim ? 0.22 : 1
   return (
     <g
       className={'jumap-bubble' + (focused ? ' focused' : '')}
-      style={{ opacity: dim ? 0.18 : 1 }}
       onMouseEnter={() => onFocus(a.name)}
       onMouseLeave={() => onFocus(null)}
       onClick={() => {
         onRipple({ id: Date.now() + Math.random(), cx: a.cx, cy: a.cy, r: a.r })
-        onFocus(focused ? null : a.name)
+        onOpen(a)
       }}
     >
       {/* Soft drop shadow ellipse far underneath */}
@@ -104,7 +106,7 @@ function ArtistBubble({
         rx={a.r * 0.62}
         ry={a.r * 0.1}
         fill="#000"
-        opacity={focused ? 0.1 : 0.05}
+        opacity={(focused ? 0.1 : 0.05) * shapeOpacity}
       />
       {/* Bubble — translucent pastel core */}
       <circle
@@ -112,48 +114,50 @@ function ArtistBubble({
         cy={a.cy}
         r={a.r}
         fill={`url(#bubble-${primary.key})`}
-        opacity={focused ? 0.85 : 0.62}
+        opacity={(focused ? 0.85 : 0.62) * shapeOpacity}
         stroke={secondary?.color ?? primary.color}
-        strokeOpacity={secondary ? 0.45 : 0.28}
+        strokeOpacity={(secondary ? 0.45 : 0.28) * shapeOpacity}
         strokeWidth={secondary ? 2.5 : 1.2}
         strokeDasharray={secondary ? '5 4' : undefined}
       />
-      {/* Bottom-right glow → adds a watery dimensionality */}
+      {/* Bottom-right glow */}
       <circle
         cx={a.cx}
         cy={a.cy}
         r={a.r}
         fill="url(#bubble-glow)"
-        opacity={focused ? 0.6 : 0.4}
+        opacity={(focused ? 0.6 : 0.4) * shapeOpacity}
         pointerEvents="none"
       />
-      {/* Top-left specular sheen — moved a bit for a softer feel */}
+      {/* Top-left specular sheen */}
       <ellipse
         cx={a.cx - a.r * 0.32}
         cy={a.cy - a.r * 0.38}
         rx={a.r * 0.45}
         ry={a.r * 0.26}
         fill="url(#bubble-highlight)"
-        opacity={focused ? 0.85 : 0.7}
+        opacity={(focused ? 0.85 : 0.7) * shapeOpacity}
         pointerEvents="none"
       />
-      {/* Tiny pinpoint highlight inside the larger sheen */}
+      {/* Tiny pinpoint highlight */}
       <ellipse
         cx={a.cx - a.r * 0.38}
         cy={a.cy - a.r * 0.46}
         rx={a.r * 0.1}
         ry={a.r * 0.05}
         fill="#ffffff"
-        opacity={focused ? 0.95 : 0.7}
+        opacity={(focused ? 0.95 : 0.7) * shapeOpacity}
         pointerEvents="none"
       />
-      {/* Artist name centred */}
+      {/* Artist name — always opacity 1 so the labels stay legible
+          even when other bubbles dim */}
       <text
         x={a.cx}
         y={a.cy + 2}
         textAnchor="middle"
         dominantBaseline="middle"
         className="jumap-artist"
+        opacity="1"
       >
         {a.name}
       </text>
@@ -162,6 +166,7 @@ function ArtistBubble({
         y={a.cy + a.r * 0.55}
         textAnchor="middle"
         className="jumap-tier"
+        opacity="1"
       >
         {TIER_LABEL[bestTier(a)]}
       </text>
@@ -169,8 +174,87 @@ function ArtistBubble({
   )
 }
 
+function ArtistModal({ artist, onClose }: { artist: Artist; onClose: () => void }) {
+  // Close on Esc
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', onKey)
+    // Lock body scroll while modal open
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prev
+    }
+  }, [onClose])
+
+  const primary = genreFor(artistPrimaryGenre(artist))
+  const sorted = [...artist.songs].sort(
+    (a, b) => a.tier - b.tier || a.title.localeCompare(b.title),
+  )
+
+  return (
+    <div className="jumap-modal-backdrop" onClick={onClose}>
+      <div
+        className="jumap-modal"
+        role="dialog"
+        aria-label={artist.name}
+        onClick={(e) => e.stopPropagation()}
+        style={{ ['--modal-tint' as string]: primary.color }}
+      >
+        <button
+          type="button"
+          className="jumap-modal-close"
+          aria-label="Close"
+          onClick={onClose}
+        >
+          ×
+        </button>
+        <header className="jumap-modal-head">
+          <span
+            className="jumap-modal-tier"
+            style={{ background: primary.color }}
+          >
+            {TIER_LABEL[bestTier(artist)]}
+          </span>
+          <h2 className="jumap-modal-name">{artist.name}</h2>
+          <div className="jumap-modal-genres">
+            {artistGenres(artist).map((k) => genreFor(k).label).join(' · ')}
+          </div>
+        </header>
+        {sorted.length === 0 ? (
+          <p className="jumap-modal-empty">No songs logged yet.</p>
+        ) : (
+          <ol className="jumap-modal-songs">
+            {sorted.map((s, i) => (
+              <li key={i}>
+                <span className="jumap-modal-song-tier">{TIER_LABEL[s.tier]}</span>
+                <div className="jumap-modal-song-body">
+                  <div className="jumap-modal-song-title">{s.title}</div>
+                  {(s.year || s.note) && (
+                    <div className="jumap-modal-song-meta">
+                      {s.year && <span className="jumap-modal-song-year">{s.year}</span>}
+                      {s.note && (
+                        <span
+                          className="jumap-modal-song-note"
+                          dangerouslySetInnerHTML={{ __html: s.note }}
+                        />
+                      )}
+                    </div>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
+    </div>
+  )
+}
+
 export function JumapPage() {
   const [focus, setFocus] = useState<string | null>(null)
+  const [open, setOpen] = useState<Artist | null>(null)
   const [ripples, setRipples] = useState<Ripple[]>([])
   const width = 960
   const height = 640
@@ -182,8 +266,6 @@ export function JumapPage() {
       setRipples((cur) => cur.filter((x) => x.id !== r.id))
     }, 900)
   }
-
-  const focused = focus ? artists.find((a) => a.name === focus) : null
 
   return (
     <div className="jumap-page">
@@ -200,7 +282,6 @@ export function JumapPage() {
                 cy="28%"
                 r="85%"
               >
-                {/* Soap-bubble: bright translucent core → pastel midband → very soft edge */}
                 <stop offset="0%"   stopColor="#ffffff" stopOpacity="0.85" />
                 <stop offset="35%"  stopColor={g.color} stopOpacity="0.5" />
                 <stop offset="75%"  stopColor={g.color} stopOpacity="0.32" />
@@ -212,14 +293,10 @@ export function JumapPage() {
               <stop offset="60%" stopColor="#ffffff" stopOpacity="0.25" />
               <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
             </radialGradient>
-            {/* Tiny crescent sheen on the bottom-right for extra dimensionality */}
             <radialGradient id="bubble-glow" cx="70%" cy="80%" r="40%">
               <stop offset="0%"   stopColor="#ffffff" stopOpacity="0.5" />
               <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
             </radialGradient>
-            <filter id="bubble-blur" x="-10%" y="-10%" width="120%" height="120%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="0.3" />
-            </filter>
           </defs>
           {placed.map((a) => (
             <ArtistBubble
@@ -227,6 +304,7 @@ export function JumapPage() {
               a={a}
               focus={focus}
               onFocus={setFocus}
+              onOpen={setOpen}
               onRipple={addRipple}
             />
           ))}
@@ -265,38 +343,7 @@ export function JumapPage() {
         </aside>
       </div>
 
-      {focused && (
-        <div className="jumap-detail">
-          <div className="jumap-detail-head">
-            <span
-              className="jumap-detail-tier"
-              style={{ background: genreFor(artistPrimaryGenre(focused)).color }}
-            >
-              {TIER_LABEL[bestTier(focused)]}
-            </span>
-            <h2>{focused.name}</h2>
-            <span className="jumap-detail-genre">
-              {artistGenres(focused).map((k) => genreFor(k).label).join(' · ')}
-            </span>
-          </div>
-          {focused.songs.length === 0 ? (
-            <p className="jumap-empty">No songs logged yet.</p>
-          ) : (
-            <ul className="jumap-songs">
-              {[...focused.songs]
-                .sort((x, y) => x.tier - y.tier || x.title.localeCompare(y.title))
-                .map((s, i) => (
-                  <li key={i}>
-                    <span className="jumap-song-tier">{TIER_LABEL[s.tier]}</span>
-                    <span className="jumap-song-title">{s.title}</span>
-                    {s.year && <span className="jumap-song-year">{s.year}</span>}
-                    {s.note && <span className="jumap-song-note" dangerouslySetInnerHTML={{ __html: s.note }} />}
-                  </li>
-                ))}
-            </ul>
-          )}
-        </div>
-      )}
+      {open && <ArtistModal artist={open} onClose={() => setOpen(null)} />}
     </div>
   )
 }
