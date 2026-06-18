@@ -3,6 +3,25 @@ import { Link } from 'react-router-dom'
 import { JuwardNav } from '../components/JuwardNav'
 import { JuwardAtmosphere } from '../components/JuwardAtmosphere'
 import { arashiAnnual, YOUTUBE_RECAPS } from '../data/juward'
+import { albumArtFor } from '../data/album-art'
+
+// Pull a likely album-art URL for an ARASHI entry. Most winners are just
+// ARASHI track titles ("Love so sweet"); a few are "Member — Title" or
+// "Member — Title (note)" or a slash list. We try the most-likely song
+// first and fall back to nothing.
+function pickWinnerArt(winner: string): string | undefined {
+  // Strip trailing parens like " (2 years in a row)"
+  const cleaned = winner.replace(/\s*\([^)]*\)\s*/g, '').trim()
+  // Pattern: "Member — Title"
+  const m = cleaned.match(/^([^—]+?)\s+—\s+(.+)$/)
+  if (m) {
+    const art = albumArtFor(m[1].trim(), m[2].trim()) ?? albumArtFor('ARASHI', m[2].trim())
+    if (art) return art
+  }
+  // Multi-pick: "A / B / C" → try the first
+  const first = cleaned.split(/\s*[\/,]\s*/)[0]
+  return albumArtFor('ARASHI', first) ?? albumArtFor('ARASHI', cleaned)
+}
 
 export function JuwardArashiPage() {
   const years = arashiAnnual.map((a) => a.year).sort((a, b) => a - b)
@@ -79,6 +98,18 @@ export function JuwardArashiPage() {
                   />
                 )}
               </div>
+              {(() => {
+                const art = pickWinnerArt(e.winner)
+                return art ? (
+                  <img
+                    className="juward-arashi-art"
+                    src={art}
+                    alt=""
+                    loading="lazy"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : null
+              })()}
             </article>
           ))}
         </div>

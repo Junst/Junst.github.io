@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { JuwardNav } from '../components/JuwardNav'
 import { JuwardAtmosphere } from '../components/JuwardAtmosphere'
-import { RankingTable, Nominees, NotationLegend } from '../components/RankingTable'
+import { Nominees, NotationLegend } from '../components/RankingTable'
+import { EditorialRanking } from '../components/EditorialRanking'
 import { jpopRanking, jpopNominees } from '../data/juward'
 
 export function JuwardJpopPage() {
@@ -28,7 +29,7 @@ export function JuwardJpopPage() {
 
       <section className="juward-section">
         <h2 className="juward-section-title">Cumulative Picks</h2>
-        <RankingTable rows={rows} highlightYear={latestYear} />
+        <EditorialRanking rows={rows.slice().reverse()} highlightYear={latestYear} />
       </section>
 
       <section className="juward-section">

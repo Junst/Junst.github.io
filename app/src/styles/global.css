@@ -1804,9 +1804,9 @@ html[data-theme="dark"] .jumap-modal {
    colour through --song-tint. */
 .jumap-modal-song {
   --song-tint: rgba(0, 0, 0, 0);
-  display: grid;
-  grid-template-columns: 1fr 96px;
-  gap: 16px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
   padding: 18px 20px;
   background:
     linear-gradient(180deg,
@@ -1839,7 +1839,13 @@ html[data-theme="dark"] .jumap-modal {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  flex: 1;
   min-width: 0;
+}
+.jumap-modal-song-art,
+.jumap-modal-song-art-placeholder {
+  flex-shrink: 0;
+  margin-left: auto;
 }
 .jumap-modal-song-title {
   margin: 0;
@@ -2365,4 +2371,169 @@ html[data-theme="dark"] .juward-atmo-blob {
 
 @media (max-width: 640px) {
   .juward-voice-card { padding: 28px 24px; }
+}
+
+/* === Tier badge (Diamond / Platinum / Gold / Silver / Bronze) === */
+.tier-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px 3px 6px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.78);
+  white-space: nowrap;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+.tier-badge-sm { font-size: 0.65rem; }
+.tier-badge-lg { font-size: 0.85rem; padding: 5px 14px 5px 9px; }
+.tier-crown { display: block; flex-shrink: 0; }
+.tier-badge-name { line-height: 1; }
+
+/* SVG bubble label uses material colour (set via inline style fill) */
+.jumap-tier {
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 10px;
+  paint-order: stroke;
+  stroke: rgba(255, 255, 255, 0.85);
+  stroke-width: 3px;
+}
+
+/* === ARASHI editorial: album art on the right === */
+.juward-arashi-row {
+  grid-template-columns: 220px 1fr auto;  /* category | winner | art */
+  align-items: start;
+}
+.juward-arashi-art {
+  width: 96px;
+  height: 96px;
+  border-radius: 14px;
+  object-fit: cover;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.16);
+  transition: transform .25s cubic-bezier(.32,.72,.16,1);
+  align-self: center;
+}
+.juward-arashi-row:hover .juward-arashi-art { transform: rotate(-2deg) scale(1.04); }
+
+@media (max-width: 640px) {
+  .juward-arashi-row {
+    grid-template-columns: 80px 1fr;
+    grid-template-areas:
+      'cat winner'
+      'art winner';
+  }
+  .juward-arashi-cat { grid-area: cat; }
+  .juward-arashi-winner-block { grid-area: winner; }
+  .juward-arashi-art { grid-area: art; width: 64px; height: 64px; border-radius: 10px; }
+}
+
+/* === Other / J-Pop editorial ranking === */
+.juward-editorial-list {
+  display: flex;
+  flex-direction: column;
+}
+.juward-editorial-row {
+  --row-i: 0;
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 24px;
+  padding: 22px 0;
+  border-top: 1px solid var(--rule);
+  position: relative;
+  animation: juward-fade-up .5s cubic-bezier(.32,.72,.16,1) backwards;
+  animation-delay: calc(var(--row-i) * 40ms);
+  transition: background-color .25s;
+}
+.juward-editorial-row:first-child { border-top: 0; }
+.juward-editorial-row:hover { background: color-mix(in srgb, var(--accent) 4%, transparent); }
+.juward-editorial-now {
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+}
+.juward-editorial-year {
+  font-family: var(--font-serif);
+  font-size: 2.4rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+  color: var(--text-muted);
+}
+.juward-editorial-now .juward-editorial-year { color: var(--accent); }
+.juward-editorial-picks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+.juward-editorial-pick {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.juward-editorial-pick-sep {
+  color: var(--text-muted);
+  font-weight: 700;
+}
+.juward-editorial-art {
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  flex-shrink: 0;
+}
+.juward-editorial-pick-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.juward-editorial-artist {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: -0.005em;
+  color: var(--text);
+  line-height: 1.2;
+}
+.juward-editorial-title {
+  font-family: var(--font-sans);
+  color: var(--text-soft);
+  font-size: 0.86rem;
+  font-style: italic;
+}
+.juward-editorial-notation {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-style: italic;
+  margin-left: 4px;
+}
+.juward-streaming-tag {
+  position: absolute;
+  top: -10px;
+  left: 0;
+  font-family: var(--font-sans);
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--bg);
+  padding: 2px 10px;
+  border: 1px dashed var(--rule);
+  border-radius: 999px;
+}
+
+@media (max-width: 640px) {
+  .juward-editorial-row { grid-template-columns: 60px 1fr; gap: 14px; }
+  .juward-editorial-year { font-size: 1.6rem; }
+  .juward-editorial-art { width: 44px; height: 44px; }
+  .juward-editorial-artist { font-size: 0.92rem; }
 }

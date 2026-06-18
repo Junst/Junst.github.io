@@ -18,6 +18,7 @@ import {
   type Song,
 } from '../data/jumap'
 import { useAlbumArt } from '../components/AlbumArt'
+import { TierBadge, TIER_META } from '../components/TierBadge'
 import { albumArtFor } from '../data/album-art'
 import { artistPhotoFor } from '../data/artist-photos'
 
@@ -268,8 +269,9 @@ function ArtistBubble({
         textAnchor="middle"
         className="jumap-tier"
         opacity="1"
+        style={{ fill: TIER_META[bestTier(a)].crown }}
       >
-        {TIER_LABEL[bestTier(a)]}
+        {TIER_META[bestTier(a)].name}
       </text>
     </g>
   )
@@ -296,8 +298,8 @@ function SongRow({ artist, song }: { artist: string; song: Song }) {
       <div className="jumap-modal-song-body">
         <h3 className="jumap-modal-song-title">{song.title}</h3>
         <div className="jumap-modal-song-row">
+          <TierBadge tier={song.tier} />
           <Stars tier={song.tier} />
-          <span className="jumap-modal-song-tier-chip">{TIER_LABEL[song.tier]}</span>
           {song.year && <span className="jumap-modal-song-year">{song.year}</span>}
         </div>
         {song.note ? (
