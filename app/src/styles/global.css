@@ -2275,8 +2275,9 @@ html[data-theme="dark"] .juward-atmo-blob {
 .juward-arashi-row {
   --row-i: 0;
   display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 32px;
+  grid-template-columns: 240px 1fr;
+  column-gap: 24px;
+  row-gap: 8px;
   padding: 26px 0;
   border-top: 1px solid var(--rule);
   animation: juward-fade-up .5s cubic-bezier(.32,.72,.16,1) backwards;
@@ -2289,12 +2290,17 @@ html[data-theme="dark"] .juward-atmo-blob {
 }
 .juward-arashi-cat {
   font-family: var(--font-sans);
-  font-size: 0.74rem;
+  font-size: 0.7rem;
   font-weight: 800;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-muted);
   padding-top: 6px;
+  padding-right: 12px;
+  line-height: 1.45;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  min-width: 0;
 }
 .juward-arashi-winner-block { min-width: 0; }
 .juward-arashi-winner {
@@ -2480,22 +2486,29 @@ html[data-theme="dark"] .juward-atmo-blob {
   color: var(--text-muted);
 }
 .juward-editorial-now .juward-editorial-year { color: var(--accent); }
-.juward-editorial-picks {
+.juward-editorial-year-cell {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+}
+.juward-editorial-picks {
+  display: grid;
+  /* When there are 2+ picks, share width evenly; never let a long title push
+     them out of alignment. minmax(0, 1fr) prevents grid blowout from wide
+     children. */
+  grid-template-columns: 1fr;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   min-width: 0;
 }
+.juward-editorial-picks-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.juward-editorial-picks-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .juward-editorial-pick {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 10px;
   min-width: 0;
-}
-.juward-editorial-pick-sep {
-  color: var(--text-muted);
-  font-weight: 700;
 }
 .juward-editorial-art {
   width: 52px;
@@ -2527,9 +2540,19 @@ html[data-theme="dark"] .juward-atmo-blob {
 }
 .juward-editorial-notation {
   color: var(--text-muted);
-  font-size: 0.82rem;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
   font-style: italic;
-  margin-left: 4px;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+.juward-editorial-now .juward-editorial-notation { color: var(--accent); opacity: 0.7; }
+.juward-editorial-pick-text { min-width: 0; }
+.juward-editorial-artist,
+.juward-editorial-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
 }
 .juward-streaming-tag {
   position: absolute;
@@ -2552,6 +2575,9 @@ html[data-theme="dark"] .juward-atmo-blob {
   .juward-editorial-year { font-size: 1.6rem; }
   .juward-editorial-art { width: 44px; height: 44px; }
   .juward-editorial-artist { font-size: 0.92rem; }
+  /* Always stack picks vertically on phones */
+  .juward-editorial-picks-2,
+  .juward-editorial-picks-3 { grid-template-columns: 1fr; gap: 12px; }
 }
 
 /* === Sub-page home bar (replaces inline back-link) === */
@@ -2658,4 +2684,19 @@ html[data-theme="dark"] .subpage-home-bar { background: rgba(20, 20, 20, 0.78); 
     -webkit-backdrop-filter: none;
   }
   .jumap-legend, .jumap-detail { background: var(--bg); }
+}
+
+/* Mobile: push sub-page header below the fixed home pill */
+@media (max-width: 640px) {
+  .subpage-home-bar {
+    top: 10px;
+    left: 10px;
+    padding: 4px 12px 4px 9px;
+    font-size: 0.78rem;
+  }
+  .juward-arashi-page .page-shell-header,
+  .juward-voice-page .page-shell-header,
+  .juward-track-page .page-shell-header {
+    padding-top: 40px;
+  }
 }

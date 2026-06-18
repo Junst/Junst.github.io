@@ -30,11 +30,20 @@ export function EditorialRanking({ rows, highlightYear }: {
           {r.streamingStartHere && (
             <div className="juward-streaming-tag">Streaming era begins</div>
           )}
-          <div className="juward-editorial-year">{r.year}</div>
-          <div className="juward-editorial-picks">
+          <div className="juward-editorial-year-cell">
+            <div className="juward-editorial-year">{r.year}</div>
+            {r.notation && (
+              <div className="juward-editorial-notation">({r.notation})</div>
+            )}
+          </div>
+          <div
+            className={
+              'juward-editorial-picks juward-editorial-picks-' +
+              Math.min(r.picks.length, 3)
+            }
+          >
             {r.picks.map((p, j) => (
               <div className="juward-editorial-pick" key={j}>
-                {j > 0 && <span className="juward-editorial-pick-sep">·</span>}
                 <PickArt artist={p.artist} title={p.title} />
                 <div className="juward-editorial-pick-text">
                   <span className="juward-editorial-artist">{p.artist}</span>
@@ -44,9 +53,6 @@ export function EditorialRanking({ rows, highlightYear }: {
                 </div>
               </div>
             ))}
-            {r.notation && (
-              <span className="juward-editorial-notation">({r.notation})</span>
-            )}
           </div>
         </article>
       ))}
