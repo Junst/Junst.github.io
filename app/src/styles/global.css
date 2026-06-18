@@ -792,6 +792,13 @@ html[data-theme="dark"] .jumap-back { background: rgba(20,20,20,0.7); }
   .jumap-territories { mix-blend-mode: screen; }
   .jumap-territory   { mix-blend-mode: screen; }
 }
+/* Per-artist orbit halos sit between the genre territory blob and the
+   bubbles. Multiply so the soft tint layers cleanly over whatever
+   genre colour the territory laid down. */
+.jumap-orbits { mix-blend-mode: multiply; }
+@media (prefers-color-scheme: dark) {
+  .jumap-orbits { mix-blend-mode: screen; }
+}
 .jumap-territory-label {
   font-family: var(--font-serif);
   font-weight: 600;
@@ -1957,10 +1964,11 @@ html[data-theme="dark"] .jumap-modal {
   letter-spacing: -0.01em;
   color: var(--text);
   line-height: 1.25;
-  /* Lets the title use as much grid-area as it can; falls back to wrapping
-     by word, then breaks long single words rather than overflowing. */
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  /* Wrap only at word boundaries by default — only break a single long
+     word (e.g. "TraceTrace") if it truly can't fit the line, so we don't
+     get cosmetically ugly mid-word splits like "TraceT / race". */
+  overflow-wrap: break-word;
+  hyphens: none;
 }
 .jumap-modal-song-row {
   display: flex;

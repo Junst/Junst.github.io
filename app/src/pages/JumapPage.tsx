@@ -687,6 +687,28 @@ export function JumapPage() {
   }, [])
   const placed = artistsPlaced
   const territories = useMemo(() => computeTerritories(placed), [placed])
+  // Per-artist orbit halo: a soft tinted disk that contains the artist + all
+  // its songs, giving a visual cue that those moons belong to the same
+  // planet. Colour is the artist's primary genre tint.
+  const orbits = useMemo(() => {
+    return artistsPlaced.map((a) => {
+      let maxReach = a.r
+      for (const s of songsPlaced) {
+        if (s.primaryArtist !== a.name) continue
+        const d = Math.hypot(s.cx - a.cx, s.cy - a.cy) + s.r
+        if (d > maxReach) maxReach = d
+      }
+      return {
+        cx: a.cx,
+        cy: a.cy,
+        r: maxReach + 14,
+        color: genreFor(artistPrimaryGenre(a)).color,
+        // Sanitize artist name to a safe SVG id token.
+        id: `orbit-${a.name.replace(/[^a-z0-9]/gi, '_')}`,
+        name: a.name,
+      }
+    })
+  }, [artistsPlaced, songsPlaced])
   // Replace the old intra-genre bonds with featuring bonds: lines from each
   // song with `features` to every named featured artist that's in the
   // roster. Falls back to the (artist-name) being missing silently.
@@ -1024,6 +1046,16 @@ export function JumapPage() {
               <stop offset="0%"   stopColor="#b03434" stopOpacity="0.65" />
               <stop offset="100%" stopColor="#205493" stopOpacity="0.65" />
             </linearGradient>
+            {/* Per-artist orbit halo gradients — solid core, soft falloff
+                at the rim so the disk fades into the canvas instead of
+                showing a hard edge against the territory blob below. */}
+            {orbits.map((o) => (
+              <radialGradient key={o.id} id={o.id} cx="50%" cy="50%" r="50%">
+                <stop offset="0%"  stopColor={o.color} stopOpacity="0.22" />
+                <stop offset="70%" stopColor={o.color} stopOpacity="0.13" />
+                <stop offset="100%" stopColor={o.color} stopOpacity="0" />
+              </radialGradient>
+            ))}
             {/* Metaball goo filter — fuses individual circle footprints inside
                 a single <g> into one organic blob with crisp soft edges. */}
             <filter id="jumap-goo" x="-15%" y="-15%" width="130%" height="130%">
@@ -1074,6 +1106,26 @@ export function JumapPage() {
                 {t.label}
               </text>
             ))}
+          </g>
+          {/* Per-artist orbit halos — soft tinted disk underneath the
+              moons so songs visibly belong to their planet. Sits above
+              the genre territory but below bonds + bubbles. */}
+          <g className="jumap-orbits" aria-hidden="true">
+            {orbits.map((o) => {
+              const dim = focus !== null && focus !== o.name &&
+                !(focus.startsWith(o.name + '|'))
+              return (
+                <circle
+                  key={o.id}
+                  cx={o.cx}
+                  cy={o.cy}
+                  r={o.r}
+                  fill={`url(#${o.id})`}
+                  opacity={dim ? 0.4 : 1}
+                  style={{ transition: 'opacity 0.25s' }}
+                />
+              )
+            })}
           </g>
           {/* Connective bonds — drawn first so bubbles sit on top */}
           <g className="jumap-bonds">
