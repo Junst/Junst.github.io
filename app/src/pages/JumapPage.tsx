@@ -3,7 +3,6 @@ import {
   artists,
   GENRES,
   TIERS,
-  TIER_LABEL,
   bubbleRadius,
   bestTier,
   genreFor,
@@ -17,7 +16,7 @@ import {
   type Song,
 } from '../data/jumap'
 import { useAlbumArt } from '../components/AlbumArt'
-import { TierBadge, TIER_META, CROWN_PATH } from '../components/TierBadge'
+import { TierBadge, tierCrownSrc } from '../components/TierBadge'
 import { albumArtFor } from '../data/album-art'
 import { artistPhotoFor } from '../data/artist-photos'
 
@@ -251,26 +250,22 @@ function ArtistBubble({
         opacity={(focused ? 1 : 0.85) * shapeOpacity}
         pointerEvents="none"
       />
-      {/* Crown sitting above the artist name; colour encodes the tier */}
+      {/* Metallic crown above the artist name — material encodes the tier. */}
       {(() => {
         const t = bestTier(a)
-        const meta = TIER_META[t]
-        const crownH = Math.max(12, a.r * 0.22)
-        const crownW = (crownH * 32) / 22
+        const crownW = Math.max(20, a.r * 0.42)
+        const crownH = (crownW * 232) / 354
         return (
-          <g
-            transform={`translate(${a.cx - crownW / 2}, ${a.cy - a.r * 0.55 - crownH / 2})`}
-            opacity="1"
-          >
-            <path
-              d={CROWN_PATH}
-              transform={`scale(${crownW / 32})`}
-              fill={meta.crown}
-              stroke="rgba(0,0,0,0.25)"
-              strokeWidth={0.7 * (32 / crownW)}
-              strokeLinejoin="round"
-            />
-          </g>
+          <image
+            href={tierCrownSrc(t)}
+            x={a.cx - crownW / 2}
+            y={a.cy - a.r * 0.58 - crownH / 2}
+            width={crownW}
+            height={crownH}
+            preserveAspectRatio="xMidYMid meet"
+            pointerEvents="none"
+            style={{ filter: 'drop-shadow(0 1px 1px rgba(0,0,0,0.25))' }}
+          />
         )
       })()}
       {/* Artist name centered, always full opacity */}
@@ -376,12 +371,13 @@ function ArtistModal({ artist, onClose }: { artist: Artist; onClose: () => void 
           ×
         </button>
         <header className="jumap-modal-head">
-          <span
-            className="jumap-modal-tier"
-            style={{ background: primary.color }}
-          >
-            {TIER_LABEL[bestTier(artist)]}
-          </span>
+          <img
+            className="jumap-modal-tier-crown"
+            src={tierCrownSrc(bestTier(artist))}
+            alt=""
+            width={32}
+            height={Math.round((32 * 232) / 354)}
+          />
           <h2 className="jumap-modal-name">{artist.name}</h2>
           <div className="jumap-modal-genres">
             {artistGenres(artist).map((k) => genreFor(k).label).join(' · ')}
@@ -523,8 +519,15 @@ export function JumapPage() {
           <div className="jumap-legend-section">
             <div className="jumap-legend-head">Tiers</div>
             {TIERS.map((t) => (
-              <div key={t} className="jumap-legend-row">
-                <span className="jumap-tier-chip">{TIER_LABEL[t]}</span>
+              <div key={t} className="jumap-legend-row jumap-legend-tier-row">
+                <img
+                  className="jumap-legend-tier-crown"
+                  src={tierCrownSrc(t)}
+                  alt=""
+                  width={26}
+                  height={Math.round((26 * 232) / 354)}
+                  loading="lazy"
+                />
               </div>
             ))}
           </div>
