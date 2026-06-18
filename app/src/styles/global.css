@@ -2700,3 +2700,19 @@ html[data-theme="dark"] .subpage-home-bar { background: rgba(20, 20, 20, 0.78); 
     padding-top: 40px;
   }
 }
+
+/* ARASHI: 'Not awarded' style — keeps the row but softens the visual weight */
+.juward-arashi-row-empty .juward-arashi-cat { opacity: 0.55; }
+.juward-arashi-winner-empty {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  padding: 4px 14px;
+  background: var(--bg-soft);
+  border: 1px dashed var(--rule);
+  border-radius: 999px;
+}

@@ -166,7 +166,7 @@ export const arashiAnnual: ArashiAnnual[] = [
     year: 2019,
     entries: [
       { category: 'Best Single',           winner: 'Turning Up' },
-      { category: 'Best Coupling Song',             winner: 'TBD' },
+      { category: 'Best Coupling Song',             winner: '' },
       { category: 'Best Album',                     winner: '5x20' },
       { category: 'Best Album Song',                winner: '5x20' },
       { category: 'Special: Song of the Year',      winner: 'Ray of Water' },
@@ -179,8 +179,8 @@ export const arashiAnnual: ArashiAnnual[] = [
     entries: [
       { category: 'Best Single',          winner: 'Find The Answer' },
       { category: 'Best Coupling Song',            winner: '白が舞う' },
-      { category: 'Best Album',                    winner: 'TBD' },
-      { category: 'Best Album Song',               winner: 'TBD' },
+      { category: 'Best Album',                    winner: '' },
+      { category: 'Best Album Song',               winner: '' },
       { category: 'Special: Song of the Year',     winner: '5x20' },
       { category: 'Special: Tearful Song',         winner: 'アオゾラペダル' },
     ],

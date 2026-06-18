@@ -89,18 +89,19 @@ export function JuwardArashiPage() {
         <div key={year} className="juward-arashi-editorial">
           {current.entries.map((e, i) => {
             const { clean, streak } = parseStreak(e.winner)
-            const art = pickWinnerArt(clean)
+            const hasWinner = clean.trim().length > 0
+            const art = hasWinner ? pickWinnerArt(clean) : undefined
             return (
               <article
-                className="juward-arashi-row"
+                className={'juward-arashi-row' + (hasWinner ? '' : ' juward-arashi-row-empty')}
                 key={i}
                 style={{ ['--row-i' as string]: i }}
               >
                 <div className="juward-arashi-cat">{e.category}</div>
                 <div className="juward-arashi-winner-block">
                   <div className="juward-arashi-winner">
-                    {clean}
-                    {streak && (
+                    {hasWinner ? clean : <span className="juward-arashi-winner-empty">Not awarded</span>}
+                    {streak && hasWinner && (
                       <span
                         className="juward-arashi-streak"
                         title={`${streak} years in a row`}
