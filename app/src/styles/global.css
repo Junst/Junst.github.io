@@ -1917,3 +1917,105 @@ html[data-theme="dark"] .jumap-modal {
   .jumap-modal-song-art, .jumap-modal-song-art-placeholder { width: 44px; height: 44px; }
   .juward-ranking-art { width: 22px; height: 22px; }
 }
+
+/* === Jumap atmosphere & polish === */
+
+/* Soft drifting background blobs */
+.jumap-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.jumap-bg-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.55;
+  animation: jumap-bg-drift 28s ease-in-out infinite alternate;
+}
+.jumap-bg-blob.blob-1 {
+  width: 520px; height: 520px;
+  left: -120px; top: -100px;
+  background: radial-gradient(circle, #ffd6e7, transparent 65%);
+  animation-delay: 0s;
+}
+.jumap-bg-blob.blob-2 {
+  width: 480px; height: 480px;
+  right: -80px; top: 5%;
+  background: radial-gradient(circle, #cfeff7, transparent 65%);
+  animation-delay: -7s;
+  animation-duration: 32s;
+}
+.jumap-bg-blob.blob-3 {
+  width: 420px; height: 420px;
+  left: 20%; bottom: -100px;
+  background: radial-gradient(circle, #fff5b8, transparent 65%);
+  animation-delay: -14s;
+  animation-duration: 36s;
+}
+.jumap-bg-blob.blob-4 {
+  width: 380px; height: 380px;
+  right: 18%; bottom: 5%;
+  background: radial-gradient(circle, #d6f5d6, transparent 65%);
+  animation-delay: -21s;
+  animation-duration: 40s;
+}
+html[data-theme="dark"] .jumap-bg-blob { opacity: 0.28; mix-blend-mode: screen; }
+
+@keyframes jumap-bg-drift {
+  0%   { transform: translate(0, 0) scale(1); }
+  33%  { transform: translate(40px, -30px) scale(1.08); }
+  66%  { transform: translate(-30px, 40px) scale(0.95); }
+  100% { transform: translate(20px, 20px) scale(1.05); }
+}
+
+/* Make sure the SVG sits above the background blobs */
+.jumap-stage-full { z-index: 1; }
+.jumap-legend { z-index: 4; }
+
+/* Bubble — idle drift */
+.jumap-bubble {
+  --drift-delay: 0s;
+  --drift-duration: 10s;
+  animation: jumap-bubble-drift var(--drift-duration) ease-in-out infinite alternate;
+  animation-delay: var(--drift-delay);
+  transform-origin: center;
+  transform-box: fill-box;
+  cursor: pointer;
+  transition: filter 0.25s;
+}
+.jumap-bubble:hover { filter: drop-shadow(0 4px 16px rgba(0,0,0,0.18)); }
+.jumap-bubble.focused {
+  animation-play-state: paused;
+  filter: drop-shadow(0 8px 24px rgba(0,0,0,0.22));
+}
+
+@keyframes jumap-bubble-drift {
+  0%   { transform: translate(0px, 0px); }
+  50%  { transform: translate(3px, -4px); }
+  100% { transform: translate(-2px, 3px); }
+}
+
+/* Make labels pop on top of the (sometimes busy) artist photos */
+.jumap-artist {
+  paint-order: stroke;
+  stroke: rgba(255, 255, 255, 0.65);
+  stroke-width: 3.5px;
+  font-size: 14px;
+}
+.jumap-tier {
+  paint-order: stroke;
+  stroke: rgba(255, 255, 255, 0.55);
+  stroke-width: 2.5px;
+  font-weight: 700;
+}
+html[data-theme="dark"] .jumap-artist,
+html[data-theme="dark"] .jumap-tier {
+  stroke: rgba(255, 255, 255, 0.85);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jumap-bg-blob, .jumap-bubble { animation: none; }
+}

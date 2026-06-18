@@ -21,6 +21,10 @@ export interface Artist {
   // Optional: pin the artist to a specific genre cluster. Otherwise the most
   // common genre across their songs is used.
   primaryGenre?: string
+  // Optional artist portrait (Wikipedia Commons URL or any hot-linkable
+  // image). If absent, the bubble falls back to the artist's top song's
+  // album art via the album-art lookup.
+  photoUrl?: string
   songs: Song[]
 }
 
@@ -151,6 +155,7 @@ export const artists: Artist[] = [
   {
     name: 'Drake',
     primaryGenre: 'hiphop',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Drake_at_The_Carter_Effect_2017_%2836818935200%29_%28cropped%29.jpg/330px-Drake_at_The_Carter_Effect_2017_%2836818935200%29_%28cropped%29.jpg',
     songs: [
       { title: 'Nokia',      tier: 2, genres: ['hiphop'] },
       { title: "God's Plan", tier: 3, genres: ['hiphop'] },
@@ -159,6 +164,7 @@ export const artists: Artist[] = [
   {
     name: 'Travis Scott',
     primaryGenre: 'rage',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/2025-0120_Cole_Gahagan_Michael_Rubin_Travis_Scott_%28cropped%29.jpg/330px-2025-0120_Cole_Gahagan_Michael_Rubin_Travis_Scott_%28cropped%29.jpg',
     songs: [
       { title: 'FE!N', tier: 2, genres: ['rage', 'hiphop'] },
     ],
@@ -166,8 +172,26 @@ export const artists: Artist[] = [
   {
     name: 'Post Malone',
     primaryGenre: 'pop',
+    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Post_Malone_July_2021_%28cropped%29.jpg/330px-Post_Malone_July_2021_%28cropped%29.jpg',
     songs: [
       { title: 'I Like You (A Happier Song)', tier: 3, genres: ['pop', 'hiphop'] },
     ],
   },
 ]
+
+// Pick a face for the bubble. Prefer the explicit photoUrl; otherwise fall
+// back to the best (lowest tier) song's album art so every bubble shows
+// *something* recognisable.
+export function artistFaceFor(
+  a: Artist,
+  albumArtLookup: (artist: string, title: string) => string | undefined,
+): string | undefined {
+  if (a.photoUrl) return a.photoUrl
+  if (a.songs.length === 0) return undefined
+  const sorted = [...a.songs].sort((x, y) => x.tier - y.tier)
+  for (const s of sorted) {
+    const url = albumArtLookup(a.name, s.title)
+    if (url) return url
+  }
+  return undefined
+}

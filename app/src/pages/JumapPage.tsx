@@ -13,15 +13,20 @@ import {
   artistPrimaryGenre,
   artistGenres,
   sortArtists,
+  artistFaceFor,
   type Artist,
   type Song,
 } from '../data/jumap'
 import { useAlbumArt } from '../components/AlbumArt'
+import { albumArtFor } from '../data/album-art'
 
 interface PlacedArtist extends Artist {
   cx: number
   cy: number
   r: number
+  // Idle drift seeds (deterministic so the motion is stable per artist)
+  driftDelay: number
+  driftDuration: number
 }
 
 function seed(name: string): number {
@@ -56,7 +61,8 @@ function place(items: Artist[], width: number, height: number): PlacedArtist[] {
     const cluster = sortArtists(groups.get(g.key) ?? [])
     cluster.forEach((a, i) => {
       const r = bubbleRadius(a)
-      const seedAngle = seed(a.name) * Math.PI * 2
+      const sd = seed(a.name)
+      const seedAngle = sd * Math.PI * 2
       const localRadius = cluster.length === 1
         ? 0
         : Math.min(width, height) * 0.09 + i * 10
@@ -66,6 +72,8 @@ function place(items: Artist[], width: number, height: number): PlacedArtist[] {
         cx: c.x + Math.cos(angle) * localRadius,
         cy: c.y + Math.sin(angle) * localRadius,
         r,
+        driftDelay: -(sd * 12),                  // 0..-12s offset
+        driftDuration: 8 + (sd * 6),             // 8..14s loop
       })
     })
   }
@@ -89,11 +97,16 @@ function ArtistBubble({
   const secondary = genres.length > 1 ? genreFor(genres.find((g) => g !== primary.key) ?? '') : null
   const focused = focus === a.name
   const dim = focus != null && !focused
-  // Shape opacity dims with focus; text stays fully opaque.
   const shapeOpacity = dim ? 0.22 : 1
+  const face = artistFaceFor(a, albumArtFor)
+  const clipId = `bubble-face-${a.name.replace(/[^a-z0-9]/gi, '_')}`
   return (
     <g
       className={'jumap-bubble' + (focused ? ' focused' : '')}
+      style={{
+        ['--drift-delay' as string]: `${a.driftDelay}s`,
+        ['--drift-duration' as string]: `${a.driftDuration}s`,
+      }}
       onMouseEnter={() => onFocus(a.name)}
       onMouseLeave={() => onFocus(null)}
       onClick={() => {
@@ -101,25 +114,44 @@ function ArtistBubble({
         onOpen(a)
       }}
     >
-      {/* Soft drop shadow ellipse far underneath */}
+      <defs>
+        <clipPath id={clipId}>
+          <circle cx={a.cx} cy={a.cy} r={a.r} />
+        </clipPath>
+      </defs>
+      {/* Drop shadow */}
       <ellipse
         cx={a.cx}
-        cy={a.cy + a.r * 1.02}
+        cy={a.cy + a.r * 1.04}
         rx={a.r * 0.62}
         ry={a.r * 0.1}
         fill="#000"
-        opacity={(focused ? 0.1 : 0.05) * shapeOpacity}
+        opacity={(focused ? 0.18 : 0.08) * shapeOpacity}
       />
-      {/* Bubble — translucent pastel core */}
+      {/* Artist face — clipped to circle, frosted */}
+      {face && (
+        <image
+          href={face}
+          x={a.cx - a.r}
+          y={a.cy - a.r}
+          width={a.r * 2}
+          height={a.r * 2}
+          preserveAspectRatio="xMidYMid slice"
+          clipPath={`url(#${clipId})`}
+          opacity={(focused ? 0.92 : 0.78) * shapeOpacity}
+          style={{ filter: focused ? 'saturate(1.05)' : 'saturate(0.92) brightness(1.02)' }}
+        />
+      )}
+      {/* Frosted pastel overlay sitting on top of the face */}
       <circle
         cx={a.cx}
         cy={a.cy}
         r={a.r}
         fill={`url(#bubble-${primary.key})`}
-        opacity={(focused ? 0.85 : 0.62) * shapeOpacity}
+        opacity={(focused ? 0.55 : 0.7) * shapeOpacity}
         stroke={secondary?.color ?? primary.color}
-        strokeOpacity={(secondary ? 0.45 : 0.28) * shapeOpacity}
-        strokeWidth={secondary ? 2.5 : 1.2}
+        strokeOpacity={(secondary ? 0.55 : 0.42) * shapeOpacity}
+        strokeWidth={secondary ? 2.5 : 1.4}
         strokeDasharray={secondary ? '5 4' : undefined}
       />
       {/* Bottom-right glow */}
@@ -128,17 +160,17 @@ function ArtistBubble({
         cy={a.cy}
         r={a.r}
         fill="url(#bubble-glow)"
-        opacity={(focused ? 0.6 : 0.4) * shapeOpacity}
+        opacity={(focused ? 0.55 : 0.35) * shapeOpacity}
         pointerEvents="none"
       />
       {/* Top-left specular sheen */}
       <ellipse
         cx={a.cx - a.r * 0.32}
         cy={a.cy - a.r * 0.38}
-        rx={a.r * 0.45}
-        ry={a.r * 0.26}
+        rx={a.r * 0.5}
+        ry={a.r * 0.28}
         fill="url(#bubble-highlight)"
-        opacity={(focused ? 0.85 : 0.7) * shapeOpacity}
+        opacity={(focused ? 0.95 : 0.78) * shapeOpacity}
         pointerEvents="none"
       />
       {/* Tiny pinpoint highlight */}
@@ -148,11 +180,10 @@ function ArtistBubble({
         rx={a.r * 0.1}
         ry={a.r * 0.05}
         fill="#ffffff"
-        opacity={(focused ? 0.95 : 0.7) * shapeOpacity}
+        opacity={(focused ? 1 : 0.85) * shapeOpacity}
         pointerEvents="none"
       />
-      {/* Artist name — always opacity 1 so the labels stay legible
-          even when other bubbles dim */}
+      {/* Artist name + tier label — always full opacity */}
       <text
         x={a.cx}
         y={a.cy + 2}
@@ -292,6 +323,13 @@ export function JumapPage() {
 
   return (
     <div className="jumap-page">
+      {/* Soft drifting background blobs */}
+      <div className="jumap-bg" aria-hidden="true">
+        <span className="jumap-bg-blob blob-1" />
+        <span className="jumap-bg-blob blob-2" />
+        <span className="jumap-bg-blob blob-3" />
+        <span className="jumap-bg-blob blob-4" />
+      </div>
       <Link to="/" className="back-link jumap-back">← back</Link>
 
       <div className="jumap-stage jumap-stage-full">
