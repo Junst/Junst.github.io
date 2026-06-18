@@ -77,7 +77,7 @@ export const arashiAnnual: ArashiAnnual[] = [
     year: 2025,
     recapUrl: YOUTUBE_RECAPS[2025],
     entries: [
-      { category: 'Best Single (A-side)',      winner: 'Love so sweet' },
+      { category: 'Best Single',      winner: 'Love so sweet' },
       { category: 'Best Coupling Song',        winner: 'Sky Again' },
       { category: 'Best Album',                winner: 'Do you... ?' },
       { category: 'Best Album Song',           winner: 'ココロチラリ, 空高く' },
@@ -91,8 +91,8 @@ export const arashiAnnual: ArashiAnnual[] = [
     year: 2024,
     recapUrl: YOUTUBE_RECAPS[2024],
     entries: [
-      { category: 'Best Single (A-side)',          winner: 'Turning Up' },
-      { category: 'Best Coupling Song',            winner: 'TBD (Still…)' },
+      { category: 'Best Single',          winner: 'Turning Up' },
+      { category: 'Best Coupling Song',            winner: 'Still…' },
       { category: 'Best Album',                    winner: '5x20' },
       { category: 'Best Album Song',               winner: '5x20' },
       { category: 'Special: Song of the Year',     winner: 'Troublemaker / GUTS!' },
@@ -106,7 +106,7 @@ export const arashiAnnual: ArashiAnnual[] = [
     year: 2023,
     recapUrl: YOUTUBE_RECAPS[2023],
     entries: [
-      { category: 'Best Single (A-side)',          winner: 'Love so sweet (2nd year in a row)' },
+      { category: 'Best Single',          winner: 'Love so sweet (2nd year in a row)' },
       { category: 'Best Coupling Song',            winner: '抱きしめたい' },
       { category: 'Best Album',                    winner: 'Oh Yeah! (3rd year in a row)', runnersUp: ['Do you?'] },
       { category: 'Best Album Song',               winner: 'Only Love' },
@@ -120,7 +120,7 @@ export const arashiAnnual: ArashiAnnual[] = [
     year: 2022,
     recapUrl: YOUTUBE_RECAPS[2022],
     entries: [
-      { category: 'Best Single (A-side)',          winner: 'Love so sweet' },
+      { category: 'Best Single',          winner: 'Love so sweet' },
       { category: 'Best Coupling Song',            winner: 'Monochrome' },
       { category: 'Best Album',                    winner: 'Oh Yeah! (2 in a row)' },
       { category: 'Best Album Song',               winner: 'Rock You', runnersUp: ['身長差のない恋人 (revised)'] },
@@ -135,7 +135,7 @@ export const arashiAnnual: ArashiAnnual[] = [
     year: 2021,
     recapUrl: YOUTUBE_RECAPS[2021],
     entries: [
-      { category: 'Best Single (A-side)',          winner: 'Turning Up' },
+      { category: 'Best Single',          winner: 'Turning Up' },
       { category: 'Best Coupling Song',            winner: 'Kissからはじめようよ' },
       { category: 'Best Album',                    winner: 'Oh Yeah!' },
       { category: 'Best Album Song',               winner: '夏の名前' },
@@ -150,7 +150,7 @@ export const arashiAnnual: ArashiAnnual[] = [
   {
     year: 2020,
     entries: [
-      { category: 'Best Single (A-side)',          winner: 'カイト' },
+      { category: 'Best Single',          winner: 'カイト' },
       { category: 'Best Coupling Song',            winner: 'Journey to Harmony' },
       { category: 'Best Album',                    winner: 'Do you?' },
       { category: 'Best Album Song',               winner: 'SHOW TIME' },
@@ -165,7 +165,7 @@ export const arashiAnnual: ArashiAnnual[] = [
   {
     year: 2019,
     entries: [
-      { category: 'Best Single (A-side)',           winner: 'Turning Up' },
+      { category: 'Best Single',           winner: 'Turning Up' },
       { category: 'Best Coupling Song',             winner: 'TBD' },
       { category: 'Best Album',                     winner: '5x20' },
       { category: 'Best Album Song',                winner: '5x20' },
@@ -177,7 +177,7 @@ export const arashiAnnual: ArashiAnnual[] = [
   {
     year: 2018,
     entries: [
-      { category: 'Best Single (A-side)',          winner: 'Find The Answer' },
+      { category: 'Best Single',          winner: 'Find The Answer' },
       { category: 'Best Coupling Song',            winner: '白が舞う' },
       { category: 'Best Album',                    winner: 'TBD' },
       { category: 'Best Album Song',               winner: 'TBD' },
@@ -188,7 +188,7 @@ export const arashiAnnual: ArashiAnnual[] = [
   {
     year: 2017,
     entries: [
-      { category: 'Best Single (A-side)',          winner: 'つなぐ' },
+      { category: 'Best Single',          winner: 'つなぐ' },
       { category: 'Best Coupling Song',            winner: 'お気に召すまま' },
       { category: 'Best Album',                    winner: '「未完」' },
       { category: 'Best Album Song',               winner: 'Song for you' },
