@@ -234,7 +234,7 @@ export const otherNominees: Record<number, NomineeEntry[]> = {
   2025: [
     { artist: 'Drake',               songs: ['NOKIA'] },
     { artist: 'BOYNEXTDOOR',         songs: ['오늘만 I LOVE YOU'] },
-    { artist: 'Number_i',            songs: ['未確認領域', 'GOD_i', 'Numbers', 'Ur Zone'] },
+    { artist: 'Number_i',            songs: ['未確認領域', 'GOD_i', 'Numbers Ur Zone'] },
     { artist: 'aespa',               songs: ['Dark Arts'] },
     { artist: 'Effie',               songs: ['down', 'CAN I SIP 담배', 'MAKGEOLLI BANGER'] },
     { artist: 'Hearts2Hearts',       songs: ['STYLE'] },
