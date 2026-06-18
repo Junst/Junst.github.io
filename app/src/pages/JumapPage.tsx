@@ -1116,6 +1116,7 @@ export function JumapPage() {
   useEffect(() => () => {
     if (stateRafRef.current != null) cancelAnimationFrame(stateRafRef.current)
   }, [])
+
   // All active pointers currently down on the SVG. 1 = drag, 2 = pinch.
   const pointersRef = useRef<Map<number, { x: number; y: number }>>(new Map())
   const dragRef = useRef<
@@ -1167,11 +1168,57 @@ export function JumapPage() {
     [PAN_MAX_X, PAN_MAX_Y, width, height],
   )
 
+  // macOS Safari trackpad pinch fires GestureEvent (not ctrl+wheel like
+  // Chrome / Firefox), so without handling it the page itself zooms via
+  // Safari's default. Listen for the gesture events, prevent default, and
+  // map them through commitView like a wheel zoom.
+  useEffect(() => {
+    const svg = svgRef.current
+    if (!svg) return
+    let baseZoom = 1
+    let baseCx = 0
+    let baseCy = 0
+    function onGestureStart(e: Event) {
+      e.preventDefault()
+      baseZoom = viewRef.current.z
+      const ge = e as unknown as { clientX: number; clientY: number }
+      baseCx = ge.clientX
+      baseCy = ge.clientY
+    }
+    function onGestureChange(e: Event) {
+      e.preventDefault()
+      const ge = e as unknown as { scale: number; clientX: number; clientY: number }
+      if (!svgRef.current) return
+      const rect = svgRef.current.getBoundingClientRect()
+      const targetZ = baseZoom * ge.scale
+      const cx = ge.clientX || baseCx
+      const cy = ge.clientY || baseCy
+      commitView((v) => reframeAt(v, cx, cy, rect, targetZ))
+    }
+    function onGestureEnd(e: Event) { e.preventDefault() }
+    svg.addEventListener('gesturestart' as keyof SVGSVGElementEventMap, onGestureStart as EventListener)
+    svg.addEventListener('gesturechange' as keyof SVGSVGElementEventMap, onGestureChange as EventListener)
+    svg.addEventListener('gestureend' as keyof SVGSVGElementEventMap, onGestureEnd as EventListener)
+    return () => {
+      svg.removeEventListener('gesturestart' as keyof SVGSVGElementEventMap, onGestureStart as EventListener)
+      svg.removeEventListener('gesturechange' as keyof SVGSVGElementEventMap, onGestureChange as EventListener)
+      svg.removeEventListener('gestureend' as keyof SVGSVGElementEventMap, onGestureEnd as EventListener)
+    }
+  }, [commitView, reframeAt])
+
   const onPointerDown = useCallback(
     (e: React.PointerEvent<SVGSVGElement>) => {
       if (e.button !== 0 && e.pointerType === 'mouse') return
       pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY })
-      try { e.currentTarget.setPointerCapture(e.pointerId) } catch { /* noop */ }
+      // Only capture for touch / pen pointers. Capturing a *mouse*
+      // pointer makes Safari dispatch the subsequent click to the
+      // captured element (the SVG) rather than the original target
+      // (the song bubble), so the song modal never opens. Mouse
+      // mousemove still fires document-wide without capture, so drag
+      // tracking works fine without it.
+      if (e.pointerType !== 'mouse') {
+        try { e.currentTarget.setPointerCapture(e.pointerId) } catch { /* noop */ }
+      }
 
       // Read the live view from the ref — state can lag behind during a
       // pinch since we rAF-throttle setView. Reading viewRef avoids the
