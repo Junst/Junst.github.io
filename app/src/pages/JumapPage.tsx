@@ -14,7 +14,9 @@ import {
   artistGenres,
   sortArtists,
   type Artist,
+  type Song,
 } from '../data/jumap'
+import { useAlbumArt } from '../components/AlbumArt'
 
 interface PlacedArtist extends Artist {
   cx: number
@@ -174,6 +176,43 @@ function ArtistBubble({
   )
 }
 
+function SongRow({ artist, song }: { artist: string; song: Song }) {
+  const { src, color } = useAlbumArt(artist, song.title)
+  return (
+    <li
+      className="jumap-modal-song"
+      style={color ? { ['--song-tint' as string]: color } : undefined}
+    >
+      <span className="jumap-modal-song-tier">{TIER_LABEL[song.tier]}</span>
+      {src ? (
+        <img
+          className="jumap-modal-song-art"
+          src={src}
+          alt=""
+          loading="lazy"
+          referrerPolicy="no-referrer"
+        />
+      ) : (
+        <span className="jumap-modal-song-art-placeholder" aria-hidden="true">♪</span>
+      )}
+      <div className="jumap-modal-song-body">
+        <div className="jumap-modal-song-title">{song.title}</div>
+        {(song.year || song.note) && (
+          <div className="jumap-modal-song-meta">
+            {song.year && <span className="jumap-modal-song-year">{song.year}</span>}
+            {song.note && (
+              <span
+                className="jumap-modal-song-note"
+                dangerouslySetInnerHTML={{ __html: song.note }}
+              />
+            )}
+          </div>
+        )}
+      </div>
+    </li>
+  )
+}
+
 function ArtistModal({ artist, onClose }: { artist: Artist; onClose: () => void }) {
   // Close on Esc
   useEffect(() => {
@@ -227,23 +266,7 @@ function ArtistModal({ artist, onClose }: { artist: Artist; onClose: () => void 
         ) : (
           <ol className="jumap-modal-songs">
             {sorted.map((s, i) => (
-              <li key={i}>
-                <span className="jumap-modal-song-tier">{TIER_LABEL[s.tier]}</span>
-                <div className="jumap-modal-song-body">
-                  <div className="jumap-modal-song-title">{s.title}</div>
-                  {(s.year || s.note) && (
-                    <div className="jumap-modal-song-meta">
-                      {s.year && <span className="jumap-modal-song-year">{s.year}</span>}
-                      {s.note && (
-                        <span
-                          className="jumap-modal-song-note"
-                          dangerouslySetInnerHTML={{ __html: s.note }}
-                        />
-                      )}
-                    </div>
-                  )}
-                </div>
-              </li>
+              <SongRow key={i} artist={artist.name} song={s} />
             ))}
           </ol>
         )}

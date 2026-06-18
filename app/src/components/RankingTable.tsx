@@ -1,5 +1,34 @@
-import type { RankingPick, NomineeEntry } from '../data/juward'
+import type { RankingPick, NomineeEntry, SongPick } from '../data/juward'
 import { NOTATION_LEGEND } from '../data/juward'
+import { useAlbumArt } from './AlbumArt'
+
+function PickRow({ p, isFirst }: { p: SongPick; isFirst: boolean }) {
+  const { src, color } = useAlbumArt(p.artist, p.title)
+  return (
+    <span
+      className="juward-ranking-pick"
+      style={color ? { ['--pick-tint' as string]: color } : undefined}
+    >
+      {!isFirst && <span className="juward-ranking-sep"> / </span>}
+      {src && (
+        <img
+          className="juward-ranking-art"
+          src={src}
+          alt=""
+          loading="lazy"
+          referrerPolicy="no-referrer"
+        />
+      )}
+      <span className="juward-ranking-artist">{p.artist}</span>
+      {p.title && (
+        <>
+          {' '}
+          <span className="juward-ranking-title">{p.title}</span>
+        </>
+      )}
+    </span>
+  )
+}
 
 export function RankingTable({ rows, highlightYear }: {
   rows: RankingPick[]
@@ -20,16 +49,7 @@ export function RankingTable({ rows, highlightYear }: {
           <span className="juward-ranking-year">{r.year}</span>
           <span className="juward-ranking-winner">
             {r.picks.map((p, i) => (
-              <span key={i} className="juward-ranking-pick">
-                {i > 0 && <span className="juward-ranking-sep"> / </span>}
-                <span className="juward-ranking-artist">{p.artist}</span>
-                {p.title && (
-                  <>
-                    {' '}
-                    <span className="juward-ranking-title">{p.title}</span>
-                  </>
-                )}
-              </span>
+              <PickRow key={i} p={p} isFirst={i === 0} />
             ))}
             {r.notation && <span className="juward-ranking-notation"> ({r.notation})</span>}
           </span>
@@ -46,7 +66,6 @@ function initials(name: string): string {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
 }
 
-// Deterministic pastel tint per artist so each card has its own colour.
 const PASTEL_PALETTE = [
   '#ffd6e7', '#cfeff7', '#ffe5b4', '#d6f5d6',
   '#d6d6ff', '#f0d6ff', '#fff5b8', '#ffc4b8',
@@ -80,23 +99,59 @@ function NomineeAvatar({ n }: { n: NomineeEntry }) {
   )
 }
 
+function NomineeSongChip({ artist, title }: { artist: string; title: string }) {
+  const { src, color } = useAlbumArt(artist, title)
+  return (
+    <span
+      className="nominee-song-chip"
+      style={color ? { ['--chip-tint' as string]: color } : undefined}
+    >
+      {src && (
+        <img
+          className="nominee-song-art"
+          src={src}
+          alt=""
+          loading="lazy"
+          referrerPolicy="no-referrer"
+        />
+      )}
+      <span className="nominee-song-title">{title}</span>
+    </span>
+  )
+}
+
+function NomineeCard({ n }: { n: NomineeEntry }) {
+  // Pick the first song's album-art colour as the card's accent tint when
+  // available so the card softly inherits the lead song's mood.
+  const lead = n.songs[0] ?? ''
+  const { color } = useAlbumArt(n.artist, lead)
+  return (
+    <li
+      className="nominee-card"
+      style={color ? { ['--card-tint' as string]: color } : undefined}
+    >
+      <NomineeAvatar n={n} />
+      <div className="nominee-body">
+        <div className="nominee-artist">{n.artist}</div>
+        {n.songs.length > 0 && (
+          <div className="nominee-song-chips">
+            {n.songs.map((s, i) => (
+              <NomineeSongChip key={i} artist={n.artist} title={s} />
+            ))}
+          </div>
+        )}
+      </div>
+    </li>
+  )
+}
+
 export function Nominees({ list }: { list: NomineeEntry[] }) {
   if (list.length === 0) {
     return <div className="juward-nominees-empty">No nominees logged yet.</div>
   }
   return (
     <ul className="juward-nominees-grid">
-      {list.map((n, i) => (
-        <li className="nominee-card" key={i}>
-          <NomineeAvatar n={n} />
-          <div className="nominee-body">
-            <div className="nominee-artist">{n.artist}</div>
-            {n.songs.length > 0 && (
-              <div className="nominee-songs">{n.songs.join(' · ')}</div>
-            )}
-          </div>
-        </li>
-      ))}
+      {list.map((n, i) => <NomineeCard key={i} n={n} />)}
     </ul>
   )
 }
