@@ -141,7 +141,7 @@ function place(items: Artist[], width: number, height: number): PlacedArtist[] {
     // Wider ring so distinct genres have visible breathing room between
     // their territories; cross-genre overlap still happens via the
     // secondary-genre pull below.
-    const ringR = Math.min(width, height) * 0.78
+    const ringR = Math.min(width, height) * 0.95
     primaryGenres.forEach((g, i) => {
       const angle = (i / primaryGenres.length) * Math.PI * 2 - Math.PI / 2
       centres[g.key] = {
@@ -160,7 +160,7 @@ function place(items: Artist[], width: number, height: number): PlacedArtist[] {
       const seedAngle = sd * Math.PI * 2
       const localRadius = cluster.length === 1
         ? 0
-        : Math.min(width, height) * 0.15 + i * 22
+        : Math.min(width, height) * 0.22 + i * 34
 
       // Pull toward the average of this artist's *secondary* genre centroids,
       // so cross-genre artists (e.g. Travis Scott rage+hiphop) sit between
@@ -515,7 +515,7 @@ export function JumapPage() {
   const height = 640
   const placed = useMemo(() => {
     const p = place(artists, width, height)
-    relaxOverlaps(p, width, height, 160, 70)
+    relaxOverlaps(p, width, height, 220, 120)
     return p
   }, [])
   const bonds = useMemo(() => computeBonds(placed), [placed])
@@ -546,8 +546,8 @@ export function JumapPage() {
   // Wide pan envelope — about ±2× the virtual canvas in either axis so the
   // user can drift far outside the now-larger territory cluster before
   // hitting a wall.
-  const PAN_MAX_X = Math.round(width * 2)
-  const PAN_MAX_Y = Math.round(height * 2)
+  const PAN_MAX_X = Math.round(width * 2.5)
+  const PAN_MAX_Y = Math.round(height * 2.5)
   const MIN_ZOOM = 0.3
   const MAX_ZOOM = 4
   const clamp = (n: number, lo: number, hi: number) =>
