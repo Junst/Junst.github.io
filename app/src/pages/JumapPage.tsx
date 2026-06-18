@@ -19,6 +19,7 @@ import {
 } from '../data/jumap'
 import { useAlbumArt } from '../components/AlbumArt'
 import { albumArtFor } from '../data/album-art'
+import { artistPhotoFor } from '../data/artist-photos'
 
 interface PlacedArtist extends Artist {
   cx: number
@@ -33,6 +34,36 @@ function seed(name: string): number {
   let h = 0
   for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) | 0
   return (h >>> 0) / 0xffffffff
+}
+
+interface Bond { from: string; to: string; x1: number; y1: number; x2: number; y2: number; intensity: number }
+
+function computeBonds(placed: PlacedArtist[]): Bond[] {
+  const bonds: Bond[] = []
+  // Intra-cluster bonds: connect artists who share a primary genre, weight by
+  // proximity so close pairs draw a brighter line.
+  for (let i = 0; i < placed.length; i++) {
+    for (let j = i + 1; j < placed.length; j++) {
+      const a = placed[i], b = placed[j]
+      const samePrimary = artistPrimaryGenre(a) === artistPrimaryGenre(b)
+      const aSet = new Set(artistGenres(a))
+      const sharedSecondary = artistGenres(b).some((g) => aSet.has(g))
+      if (!samePrimary && !sharedSecondary) continue
+      const dx = a.cx - b.cx, dy = a.cy - b.cy
+      const dist = Math.sqrt(dx * dx + dy * dy)
+      // Skip ultra-far cross-cluster bonds to keep the graph readable
+      if (!samePrimary && dist > 320) continue
+      const intensity = samePrimary
+        ? Math.max(0.18, Math.min(0.5, 1 - dist / 320))
+        : Math.max(0.08, Math.min(0.22, 1 - dist / 360))
+      bonds.push({
+        from: a.name, to: b.name,
+        x1: a.cx, y1: a.cy, x2: b.cx, y2: b.cy,
+        intensity,
+      })
+    }
+  }
+  return bonds
 }
 
 function place(items: Artist[], width: number, height: number): PlacedArtist[] {
@@ -98,7 +129,7 @@ function ArtistBubble({
   const focused = focus === a.name
   const dim = focus != null && !focused
   const shapeOpacity = dim ? 0.22 : 1
-  const face = artistFaceFor(a, albumArtFor)
+  const face = artistFaceFor(a, albumArtFor, artistPhotoFor)
   const clipId = `bubble-face-${a.name.replace(/[^a-z0-9]/gi, '_')}`
   return (
     <g
@@ -313,6 +344,8 @@ export function JumapPage() {
   const width = 960
   const height = 640
   const placed = useMemo(() => place(artists, width, height), [])
+  const bonds = useMemo(() => computeBonds(placed), [placed])
+  const focusedBond = (b: Bond) => focus === b.from || focus === b.to
 
   function addRipple(r: Ripple) {
     setRipples((cur) => [...cur, r])
@@ -358,7 +391,34 @@ export function JumapPage() {
               <stop offset="0%"   stopColor="#ffffff" stopOpacity="0.5" />
               <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
             </radialGradient>
+            <linearGradient id="bond-grad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%"   stopColor="#b03434" stopOpacity="0.65" />
+              <stop offset="100%" stopColor="#205493" stopOpacity="0.65" />
+            </linearGradient>
           </defs>
+          {/* Connective bonds — drawn first so bubbles sit on top */}
+          <g className="jumap-bonds">
+            {bonds.map((b, i) => {
+              const active = focusedBond(b)
+              const dim = focus !== null && !active
+              return (
+                <line
+                  key={`${b.from}|${b.to}`}
+                  className={'jumap-bond' + (active ? ' jumap-bond-active' : '')}
+                  x1={b.x1}
+                  y1={b.y1}
+                  x2={b.x2}
+                  y2={b.y2}
+                  stroke={active ? 'url(#bond-grad)' : 'currentColor'}
+                  strokeOpacity={dim ? 0.05 : b.intensity * (active ? 1.4 : 1)}
+                  strokeWidth={active ? 1.6 : 0.9}
+                  style={{
+                    ['--bond-i' as string]: i,
+                  }}
+                />
+              )
+            })}
+          </g>
           {placed.map((a) => (
             <ArtistBubble
               key={a.name}

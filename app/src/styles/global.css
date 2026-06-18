@@ -2019,3 +2019,51 @@ html[data-theme="dark"] .jumap-tier {
 @media (prefers-reduced-motion: reduce) {
   .jumap-bg-blob, .jumap-bubble { animation: none; }
 }
+
+/* === Jumap connective bonds (cell/chemistry vibe) === */
+.jumap-bonds { color: #5a5a5a; }
+html[data-theme="dark"] .jumap-bonds { color: #d6d6d6; }
+.jumap-bond {
+  stroke-linecap: round;
+  pointer-events: none;
+  stroke-dasharray: 320;
+  stroke-dashoffset: 320;
+  animation: bond-draw 1.4s cubic-bezier(.32,.72,.16,1) forwards;
+  animation-delay: calc(var(--bond-i, 0) * 35ms);
+  transition: stroke-opacity .3s, stroke-width .25s;
+}
+.jumap-bond-active {
+  animation: bond-flow 2.4s linear infinite;
+  filter: drop-shadow(0 0 4px rgba(176, 52, 52, 0.45));
+}
+@keyframes bond-draw {
+  from { stroke-dashoffset: 320; }
+  to   { stroke-dashoffset: 0; }
+}
+@keyframes bond-flow {
+  from { stroke-dasharray: 6 8; stroke-dashoffset: 0; }
+  to   { stroke-dasharray: 6 8; stroke-dashoffset: -28; }
+}
+
+/* Bubble idle pulse — subtle scale (separate from drift) */
+.jumap-bubble > circle:nth-of-type(1) {
+  animation: bubble-pulse calc(var(--drift-duration, 10s) * 0.7) ease-in-out infinite alternate;
+  animation-delay: var(--drift-delay, 0s);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.jumap-bubble.focused > circle:nth-of-type(1) { animation: none; }
+@keyframes bubble-pulse {
+  0%   { filter: brightness(1) saturate(1); }
+  100% { filter: brightness(1.04) saturate(1.08); }
+}
+
+/* Modal entrance refinement */
+.jumap-modal {
+  animation: jumap-pop-in .32s cubic-bezier(.18,.78,.22,1.18) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jumap-bond { animation: none; stroke-dashoffset: 0; }
+  .jumap-bond-active { animation: none; }
+}

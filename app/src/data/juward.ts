@@ -232,33 +232,23 @@ export const otherRanking: RankingPick[] = [
 // 'No nominees logged yet' card so the tab strip still works.
 export const otherNominees: Record<number, NomineeEntry[]> = {
   2025: [
-    { artist: 'Drake',               songs: ['NOKIA'],
-      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Drake_at_The_Carter_Effect_2017_%2836818935200%29_%28cropped%29.jpg/330px-Drake_at_The_Carter_Effect_2017_%2836818935200%29_%28cropped%29.jpg' },
-    { artist: 'BOYNEXTDOOR',         songs: ['오늘만 I LOVE YOU'],
-      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/2026-01-16_BOYNEXTDOOR_at_Golden_Disc_Awards_05_%28cropped%29.png/330px-2026-01-16_BOYNEXTDOOR_at_Golden_Disc_Awards_05_%28cropped%29.png' },
+    { artist: 'Drake',               songs: ['NOKIA'] },
+    { artist: 'BOYNEXTDOOR',         songs: ['오늘만 I LOVE YOU'] },
     { artist: 'Number_i',            songs: ['未確認領域', 'GOD_i', 'Numbers', 'Ur Zone'] },
-    { artist: 'aespa',               songs: ['Dark Arts'],
-      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/241005_aespa_K-Link_Festival_%28cropped%29.jpg/330px-241005_aespa_K-Link_Festival_%28cropped%29.jpg' },
+    { artist: 'aespa',               songs: ['Dark Arts'] },
     { artist: 'Effie',               songs: ['down', 'CAN I SIP 담배', 'MAKGEOLLI BANGER'] },
-    { artist: 'Hearts2Hearts',       songs: ['STYLE'],
-      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/260221_HEARTS2HEARTS_%40_2026_Fanmeeting_HEARTS2HOUSE.jpg/330px-260221_HEARTS2HEARTS_%40_2026_Fanmeeting_HEARTS2HOUSE.jpg' },
-    { artist: 'TVXQ',                songs: ['Psycho'],
-      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/TVXQ_December_2023.jpg/330px-TVXQ_December_2023.jpg' },
-    { artist: 'ILLIT',               songs: ['빌려온 고양이 (Do the Dance)'],
-      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Illit_in_January_2026.png/330px-Illit_in_January_2026.png' },
-    { artist: 'Sik-K & Lil Moshpit', songs: ['LOV3'],
-      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Sik-K_2020.png/330px-Sik-K_2020.png' },
+    { artist: 'Hearts2Hearts',       songs: ['STYLE'] },
+    { artist: 'TVXQ',                songs: ['Psycho'] },
+    { artist: 'ILLIT',               songs: ['빌려온 고양이 (Do the Dance)'] },
+    { artist: 'Sik-K & Lil Moshpit', songs: ['LOV3'] },
     { artist: 'Noducksoon (노덕순)',  songs: ['Fancy Car'] },
     { artist: 'Snow Man',            songs: ['カリスマックス'] },
     { artist: 'Hey! Say! JUMP',      songs: ['encore'] },
     { artist: 'King & Prince',       songs: ['HEART'] },
     { artist: 'SYSTEM SEOUL',        songs: ['SS'] },
-    { artist: 'Zico & Lilas',        songs: ['DUET'],
-      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/ZICO_Damiani_May_2024.jpg/330px-ZICO_Damiani_May_2024.jpg' },
-    { artist: 'LE SSERAFIM',         songs: ['SPAGHETTI'],
-      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Le_Sserafim_at_2026_Golden_Disc_awards.png/330px-Le_Sserafim_at_2026_Golden_Disc_awards.png' },
-    { artist: 'Playboi Carti',       songs: ['EVIL J0RDAN'],
-      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Playboi_Carti%2C_Clout_Festival_2024_05_%28cropped%29.jpg/330px-Playboi_Carti%2C_Clout_Festival_2024_05_%28cropped%29.jpg' },
+    { artist: 'Zico & Lilas',        songs: ['DUET'] },
+    { artist: 'LE SSERAFIM',         songs: ['SPAGHETTI'] },
+    { artist: 'Playboi Carti',       songs: ['EVIL J0RDAN'] },
   ],
 }
 
@@ -287,8 +277,7 @@ export const jpopRanking: RankingPick[] = [
 export const jpopNominees: Record<number, NomineeEntry[]> = {
   2025: [
     { artist: 'King & Prince', songs: ['HEART'] },
-    { artist: 'Zico & Lilas',  songs: ['DUET'],
-      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/ZICO_Damiani_May_2024.jpg/330px-ZICO_Damiani_May_2024.jpg' },
+    { artist: 'Zico & Lilas',  songs: ['DUET'] },
     { artist: 'Number_i',      songs: ['未確認領域'] },
   ],
 }

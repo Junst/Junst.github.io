@@ -1,6 +1,7 @@
 import type { RankingPick, NomineeEntry, SongPick } from '../data/juward'
 import { NOTATION_LEGEND } from '../data/juward'
 import { useAlbumArt } from './AlbumArt'
+import { artistPhotoFor } from '../data/artist-photos'
 
 function PickRow({ p, isFirst }: { p: SongPick; isFirst: boolean }) {
   const { src, color } = useAlbumArt(p.artist, p.title)
@@ -77,11 +78,13 @@ function pastelFor(name: string): string {
 }
 
 function NomineeAvatar({ n }: { n: NomineeEntry }) {
-  if (n.image) {
+  const auto = artistPhotoFor(n.artist)
+  const src = n.image ?? auto
+  if (src) {
     return (
       <img
         className="nominee-photo"
-        src={n.image}
+        src={src}
         alt={n.artist}
         loading="lazy"
         referrerPolicy="no-referrer"

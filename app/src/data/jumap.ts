@@ -155,7 +155,6 @@ export const artists: Artist[] = [
   {
     name: 'Drake',
     primaryGenre: 'hiphop',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Drake_at_The_Carter_Effect_2017_%2836818935200%29_%28cropped%29.jpg/330px-Drake_at_The_Carter_Effect_2017_%2836818935200%29_%28cropped%29.jpg',
     songs: [
       { title: 'Nokia',      tier: 2, genres: ['hiphop'] },
       { title: "God's Plan", tier: 3, genres: ['hiphop'] },
@@ -164,7 +163,6 @@ export const artists: Artist[] = [
   {
     name: 'Travis Scott',
     primaryGenre: 'rage',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/2025-0120_Cole_Gahagan_Michael_Rubin_Travis_Scott_%28cropped%29.jpg/330px-2025-0120_Cole_Gahagan_Michael_Rubin_Travis_Scott_%28cropped%29.jpg',
     songs: [
       { title: 'FE!N', tier: 2, genres: ['rage', 'hiphop'] },
     ],
@@ -172,21 +170,24 @@ export const artists: Artist[] = [
   {
     name: 'Post Malone',
     primaryGenre: 'pop',
-    photoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Post_Malone_July_2021_%28cropped%29.jpg/330px-Post_Malone_July_2021_%28cropped%29.jpg',
     songs: [
       { title: 'I Like You (A Happier Song)', tier: 3, genres: ['pop', 'hiphop'] },
     ],
   },
 ]
 
-// Pick a face for the bubble. Prefer the explicit photoUrl; otherwise fall
-// back to the best (lowest tier) song's album art so every bubble shows
-// *something* recognisable.
+// Pick a face for the bubble. Order of preference:
+//   1. Explicit artist.photoUrl (one-off override)
+//   2. Auto-fetched Wikipedia portrait (artistPhotoLookup)
+//   3. Album art of the artist's best song (albumArtLookup)
 export function artistFaceFor(
   a: Artist,
   albumArtLookup: (artist: string, title: string) => string | undefined,
+  artistPhotoLookup?: (name: string) => string | undefined,
 ): string | undefined {
   if (a.photoUrl) return a.photoUrl
+  const wiki = artistPhotoLookup?.(a.name)
+  if (wiki) return wiki
   if (a.songs.length === 0) return undefined
   const sorted = [...a.songs].sort((x, y) => x.tier - y.tier)
   for (const s of sorted) {
