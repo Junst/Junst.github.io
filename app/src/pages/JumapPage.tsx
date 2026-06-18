@@ -74,8 +74,10 @@ function computeTerritories(placed: PlacedArtist[]): Territory[] {
     const primaries = byGenre.get(key) ?? []
     const secondaries = secByGenre.get(key) ?? []
     const blobs = [
-      ...primaries.map((m) => ({ cx: m.cx, cy: m.cy, r: m.r * 2.2 + 22, primary: true })),
-      ...secondaries.map((m) => ({ cx: m.cx, cy: m.cy, r: m.r * 1.5 + 12, primary: false })),
+      // Tight hug around the bubble so distinct genres have visible gaps;
+      // overlap only happens where two genres actually share an artist.
+      ...primaries.map((m) => ({ cx: m.cx, cy: m.cy, r: m.r * 1.45 + 10, primary: true })),
+      ...secondaries.map((m) => ({ cx: m.cx, cy: m.cy, r: m.r * 1.05 + 6, primary: false })),
     ]
     // Label anchor: above the topmost primary bubble (fall back to topmost
     // secondary if there are no primary holders for this genre).
@@ -136,7 +138,10 @@ function place(items: Artist[], width: number, height: number): PlacedArtist[] {
   if (primaryGenres.length === 1) {
     centres[primaryGenres[0].key] = { x: cx, y: cy }
   } else {
-    const ringR = Math.min(width, height) * 0.27
+    // Wider ring so distinct genres have visible breathing room between
+    // their territories; cross-genre overlap still happens via the
+    // secondary-genre pull below.
+    const ringR = Math.min(width, height) * 0.42
     primaryGenres.forEach((g, i) => {
       const angle = (i / primaryGenres.length) * Math.PI * 2 - Math.PI / 2
       centres[g.key] = {
@@ -155,12 +160,27 @@ function place(items: Artist[], width: number, height: number): PlacedArtist[] {
       const seedAngle = sd * Math.PI * 2
       const localRadius = cluster.length === 1
         ? 0
-        : Math.min(width, height) * 0.09 + i * 10
+        : Math.min(width, height) * 0.085 + i * 12
+
+      // Pull toward the average of this artist's *secondary* genre centroids,
+      // so cross-genre artists (e.g. Travis Scott rage+hiphop) sit between
+      // territories instead of fully inside their primary one. The shared
+      // genre's coloured footprint then bridges into the neighbour's blob.
+      let pullX = 0, pullY = 0
+      const secondaries = artistGenres(a).filter((k) => k !== g.key && centres[k])
+      if (secondaries.length > 0) {
+        let sx = 0, sy = 0
+        for (const sk of secondaries) { sx += centres[sk].x; sy += centres[sk].y }
+        sx /= secondaries.length; sy /= secondaries.length
+        pullX = (sx - c.x) * 0.32
+        pullY = (sy - c.y) * 0.32
+      }
+
       const angle = (i / Math.max(1, cluster.length)) * Math.PI * 2 + seedAngle
       out.push({
         ...a,
-        cx: c.x + Math.cos(angle) * localRadius,
-        cy: c.y + Math.sin(angle) * localRadius,
+        cx: c.x + pullX + Math.cos(angle) * localRadius,
+        cy: c.y + pullY + Math.sin(angle) * localRadius,
         r,
         driftDelay: -(sd * 12),                  // 0..-12s offset
         driftDuration: 8 + (sd * 6),             // 8..14s loop
@@ -227,6 +247,8 @@ function ArtistBubble({
   const shapeOpacity = dim ? 0.22 : 1
   const face = artistFaceFor(a, albumArtFor, artistPhotoFor)
   const clipId = `bubble-face-${a.name.replace(/[^a-z0-9]/gi, '_')}`
+  // Face image now sits as a smaller inset in the bubble, not edge-to-edge.
+  const faceR = a.r * 0.6
   return (
     <g
       className={'jumap-bubble' + (focused ? ' focused' : '')}
@@ -243,7 +265,7 @@ function ArtistBubble({
     >
       <defs>
         <clipPath id={clipId}>
-          <circle cx={a.cx} cy={a.cy} r={a.r} />
+          <circle cx={a.cx} cy={a.cy} r={faceR} />
         </clipPath>
       </defs>
       {/* Drop shadow */}
@@ -255,32 +277,45 @@ function ArtistBubble({
         fill="#000"
         opacity={(focused ? 0.18 : 0.08) * shapeOpacity}
       />
-      {/* Artist face — clipped to circle, frosted */}
-      {face && (
-        <image
-          href={face}
-          x={a.cx - a.r}
-          y={a.cy - a.r}
-          width={a.r * 2}
-          height={a.r * 2}
-          preserveAspectRatio="xMidYMid slice"
-          clipPath={`url(#${clipId})`}
-          opacity={(focused ? 0.92 : 0.78) * shapeOpacity}
-          style={{ filter: focused ? 'saturate(1.05)' : 'saturate(0.92) brightness(1.02)' }}
-        />
-      )}
-      {/* Frosted pastel overlay sitting on top of the face */}
+      {/* Frosted pastel bubble — fills the whole circle so the face sits on
+          a tinted backdrop instead of consuming all of it. */}
       <circle
         cx={a.cx}
         cy={a.cy}
         r={a.r}
         fill={`url(#bubble-${primary.key})`}
-        opacity={(focused ? 0.55 : 0.7) * shapeOpacity}
+        opacity={(focused ? 0.85 : 0.78) * shapeOpacity}
         stroke={secondary?.color ?? primary.color}
         strokeOpacity={(secondary ? 0.55 : 0.42) * shapeOpacity}
         strokeWidth={secondary ? 2.5 : 1.4}
         strokeDasharray={secondary ? '5 4' : undefined}
       />
+      {/* Artist face — small inset, clipped to a circle smaller than the bubble */}
+      {face && (
+        <>
+          <image
+            href={face}
+            x={a.cx - faceR}
+            y={a.cy - faceR}
+            width={faceR * 2}
+            height={faceR * 2}
+            preserveAspectRatio="xMidYMid slice"
+            clipPath={`url(#${clipId})`}
+            opacity={(focused ? 0.98 : 0.92) * shapeOpacity}
+            style={{ filter: focused ? 'saturate(1.05)' : 'saturate(0.95) brightness(1.02)' }}
+          />
+          <circle
+            cx={a.cx}
+            cy={a.cy}
+            r={faceR}
+            fill="none"
+            stroke="rgba(255,255,255,0.7)"
+            strokeWidth={1.4}
+            opacity={0.85 * shapeOpacity}
+            pointerEvents="none"
+          />
+        </>
+      )}
       {/* Bottom-right glow */}
       <circle
         cx={a.cx}
@@ -465,7 +500,7 @@ export function JumapPage() {
   const height = 640
   const placed = useMemo(() => {
     const p = place(artists, width, height)
-    relaxOverlaps(p, width, height)
+    relaxOverlaps(p, width, height, 80, 28)
     return p
   }, [])
   const bonds = useMemo(() => computeBonds(placed), [placed])
@@ -778,11 +813,11 @@ export function JumapPage() {
             {/* Metaball goo filter — fuses individual circle footprints inside
                 a single <g> into one organic blob with crisp soft edges. */}
             <filter id="jumap-goo" x="-15%" y="-15%" width="130%" height="130%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="14" result="blur" />
+              <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
               <feColorMatrix
                 in="blur"
                 mode="matrix"
-                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -10"
+                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 24 -11"
                 result="goo"
               />
               <feBlend in="SourceGraphic" in2="goo" />
