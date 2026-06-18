@@ -1,4 +1,12 @@
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import {
   artists,
   GENRES,
@@ -760,23 +768,22 @@ const JumapSvgInner = memo(function JumapSvgInner({
             <stop offset="100%" stopColor={o.color} stopOpacity="0" />
           </radialGradient>
         ))}
-        <filter id="jumap-goo" x="-15%" y="-15%" width="130%" height="130%">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="blur" />
-          <feColorMatrix
-            in="blur"
-            mode="matrix"
-            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 26 -12"
-            result="goo"
-          />
-          <feBlend in="SourceGraphic" in2="goo" />
-        </filter>
+        {/* Per-genre soft territory gradient — replaces the previous SVG
+            goo filter, which was the dominant cost on mobile (every viewBox
+            change re-evaluated a Gaussian blur + color-matrix threshold). */}
+        {GENRES.map((g) => (
+          <radialGradient key={`tt-${g.key}`} id={`tt-${g.key}`} cx="50%" cy="50%" r="50%">
+            <stop offset="0%"   stopColor={g.color} stopOpacity="0.62" />
+            <stop offset="55%"  stopColor={g.color} stopOpacity="0.32" />
+            <stop offset="100%" stopColor={g.color} stopOpacity="0" />
+          </radialGradient>
+        ))}
       </defs>
       <g className="jumap-territories" aria-hidden="true">
         {territories.map((t) => (
           <g
             key={t.key}
             className="jumap-territory"
-            filter="url(#jumap-goo)"
             style={{ ['--genre-tint' as string]: t.color }}
           >
             {t.blobs.map((b, i) => (
@@ -784,9 +791,11 @@ const JumapSvgInner = memo(function JumapSvgInner({
                 key={i}
                 cx={b.cx}
                 cy={b.cy}
-                r={b.r}
-                fill={t.color}
-                fillOpacity={b.primary ? 0.32 : 0.18}
+                // Bigger radius to compensate for the gradient's soft fade
+                // — the visible "stain" is roughly the previous filtered size.
+                r={b.r * 1.55}
+                fill={`url(#tt-${t.key})`}
+                opacity={b.primary ? 0.95 : 0.55}
               />
             ))}
           </g>
@@ -818,7 +827,6 @@ const JumapSvgInner = memo(function JumapSvgInner({
               r={o.r}
               fill={`url(#${o.id})`}
               opacity={dim ? 0.4 : 1}
-              style={{ transition: 'opacity 0.25s' }}
             />
           )
         })}
@@ -950,32 +958,6 @@ export function JumapPage() {
     }, 900)
   }, [])
 
-  // rAF-coalesce setView updates from pointer/wheel events. Pointer move
-  // can fire 120+ Hz on some devices, but the SVG only needs one render
-  // per frame. We compose pending updaters so functional updates chain
-  // correctly when several fire before the next frame.
-  const rafIdRef = useRef<number | null>(null)
-  const pendingViewRef = useRef<
-    | ((v: { x: number; y: number; z: number }) => { x: number; y: number; z: number })
-    | null
-  >(null)
-  const scheduleView = useCallback(
-    (updater: (v: { x: number; y: number; z: number }) => { x: number; y: number; z: number }) => {
-      const prev = pendingViewRef.current
-      pendingViewRef.current = prev ? (v) => updater(prev(v)) : updater
-      if (rafIdRef.current != null) return
-      rafIdRef.current = requestAnimationFrame(() => {
-        rafIdRef.current = null
-        const u = pendingViewRef.current
-        pendingViewRef.current = null
-        if (u) setView(u)
-      })
-    },
-    [],
-  )
-  useEffect(() => () => {
-    if (rafIdRef.current != null) cancelAnimationFrame(rafIdRef.current)
-  }, [])
 
   // --- Pan / zoom on the SVG stage --------------------------------------------
   // The SVG keeps its virtual `width` × `height` canvas. The viewBox window
@@ -1001,12 +983,58 @@ export function JumapPage() {
   const clamp = (n: number, lo: number, hi: number) =>
     n < lo ? lo : n > hi ? hi : n
 
+  // The view (pan + zoom) is held in a ref as the source of truth, and the
+  // SVG viewBox is updated imperatively from refs in the pointer handlers
+  // — bypassing React entirely during drag / wheel / pinch so we get smooth
+  // 60 fps interaction even on mobile, regardless of how many bubbles are
+  // rendered. State is only used for UI bits that need to re-render (the
+  // zoom-percentage label, button disabled states).
   const [view, setView] = useState<{ x: number; y: number; z: number }>({
     x: 0,
     y: 0,
     z: 1,
   })
+  const viewRef = useRef(view)
   const svgRef = useRef<SVGSVGElement | null>(null)
+  const applyViewToDom = useCallback(() => {
+    const svg = svgRef.current
+    if (!svg) return
+    const v = viewRef.current
+    svg.setAttribute(
+      'viewBox',
+      `${v.x} ${v.y} ${width / v.z} ${height / v.z}`,
+    )
+  }, [width, height])
+  // Keep DOM in sync with viewRef after every React render (including any
+  // hover / focus / ripple re-render that happens mid-drag). Layout effect
+  // runs synchronously before paint so there's no flicker.
+  useLayoutEffect(() => {
+    applyViewToDom()
+  })
+  // Coalesce setView calls — happens at most once per frame, only so the
+  // zoom % label updates. The actual viewBox attribute is already being
+  // updated imperatively from viewRef without waiting for React.
+  const stateRafRef = useRef<number | null>(null)
+  const scheduleStateSync = useCallback(() => {
+    if (stateRafRef.current != null) return
+    stateRafRef.current = requestAnimationFrame(() => {
+      stateRafRef.current = null
+      setView({ ...viewRef.current })
+    })
+  }, [])
+  // commitView: the one path every input handler goes through. Updates the
+  // ref + DOM immediately, schedules a state sync for any state-aware UI.
+  const commitView = useCallback(
+    (updater: (v: { x: number; y: number; z: number }) => { x: number; y: number; z: number }) => {
+      viewRef.current = updater(viewRef.current)
+      applyViewToDom()
+      scheduleStateSync()
+    },
+    [applyViewToDom, scheduleStateSync],
+  )
+  useEffect(() => () => {
+    if (stateRafRef.current != null) cancelAnimationFrame(stateRafRef.current)
+  }, [])
   // All active pointers currently down on the SVG. 1 = drag, 2 = pinch.
   const pointersRef = useRef<Map<number, { x: number; y: number }>>(new Map())
   const dragRef = useRef<
@@ -1115,7 +1143,7 @@ export function JumapPage() {
         const dist = Math.hypot(p2.x - p1.x, p2.y - p1.y)
         if (dist < 1) return
         const targetZ = pr.startZoom * (dist / pr.startDist)
-        scheduleView(() => reframeAt(
+        commitView(() => reframeAt(
           { x: pr.baseX, y: pr.baseY, z: pr.startZoom },
           pr.midX,
           pr.midY,
@@ -1134,7 +1162,7 @@ export function JumapPage() {
         d.moved = true
         draggedRef.current = true
       }
-      scheduleView((v) => {
+      commitView((v) => {
         const scaleX = rect.width > 0 ? (width / v.z) / rect.width : 1
         const scaleY = rect.height > 0 ? (height / v.z) / rect.height : 1
         return {
@@ -1144,7 +1172,7 @@ export function JumapPage() {
         }
       })
     },
-    [PAN_MAX_X, PAN_MAX_Y, width, height, reframeAt, scheduleView],
+    [PAN_MAX_X, PAN_MAX_Y, width, height, reframeAt, commitView],
   )
 
   const endPointer = useCallback((e: React.PointerEvent<SVGSVGElement>) => {
@@ -1156,17 +1184,15 @@ export function JumapPage() {
       const remaining = Array.from(pointersRef.current.entries())[0]
       if (remaining) {
         const [pid, pos] = remaining
-        setView((v) => {
-          dragRef.current = {
-            pointerId: pid,
-            startX: pos.x,
-            startY: pos.y,
-            baseX: v.x,
-            baseY: v.y,
-            moved: true,
-          }
-          return v
-        })
+        const v = viewRef.current
+        dragRef.current = {
+          pointerId: pid,
+          startX: pos.x,
+          startY: pos.y,
+          baseX: v.x,
+          baseY: v.y,
+          moved: true,
+        }
         setGrabbing(true)
       }
     } else if (dragRef.current && dragRef.current.pointerId === e.pointerId) {
@@ -1188,11 +1214,11 @@ export function JumapPage() {
         const dy = Math.max(-80, Math.min(80, e.deltaY))
         const factor = Math.exp(-dy * 0.0009)
         const rect = e.currentTarget.getBoundingClientRect()
-        scheduleView((v) => reframeAt(v, e.clientX, e.clientY, rect, v.z * factor))
+        commitView((v) => reframeAt(v, e.clientX, e.clientY, rect, v.z * factor))
         return
       }
       const rect = e.currentTarget.getBoundingClientRect()
-      scheduleView((v) => {
+      commitView((v) => {
         const scaleX = rect.width > 0 ? (width / v.z) / rect.width : 1
         const scaleY = rect.height > 0 ? (height / v.z) / rect.height : 1
         return {
@@ -1202,7 +1228,7 @@ export function JumapPage() {
         }
       })
     },
-    [PAN_MAX_X, PAN_MAX_Y, width, height, reframeAt, scheduleView],
+    [PAN_MAX_X, PAN_MAX_Y, width, height, reframeAt, commitView],
   )
 
   // +/− buttons zoom around the canvas centre.
@@ -1212,12 +1238,12 @@ export function JumapPage() {
     const rect = svg.getBoundingClientRect()
     const cx = rect.left + rect.width / 2
     const cy = rect.top + rect.height / 2
-    setView((v) => reframeAt(v, cx, cy, rect, v.z * factor))
-  }, [reframeAt])
+    commitView((v) => reframeAt(v, cx, cy, rect, v.z * factor))
+  }, [commitView, reframeAt])
 
   const resetView = useCallback(() => {
-    setView({ x: 0, y: 0, z: 1 })
-  }, [])
+    commitView(() => ({ x: 0, y: 0, z: 1 }))
+  }, [commitView])
 
   // Block the synthesized click that follows a drag so bubbles don't open.
   const onClickCapture = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
@@ -1241,7 +1267,6 @@ export function JumapPage() {
       <div className="jumap-stage jumap-stage-full">
         <svg
           ref={svgRef}
-          viewBox={`${view.x} ${view.y} ${width / view.z} ${height / view.z}`}
           className={'jumap-svg jumap-svg-pannable' + (grabbing ? ' is-grabbing' : '')}
           preserveAspectRatio="xMidYMid meet"
           onPointerDown={onPointerDown}

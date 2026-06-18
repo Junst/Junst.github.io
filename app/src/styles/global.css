@@ -769,7 +769,9 @@ html[data-theme="dark"] .jumap-back { background: rgba(20,20,20,0.7); }
   display: block;
   width: 100%;
   height: 100%;
-  animation: jumap-drift 18s ease-in-out infinite alternate;
+  /* Idle drift animation removed — it forced a continuous transform on the
+     whole SVG, repainting every frame even when nothing else changed. The
+     pan/zoom interaction is the focal point now. */
 }
 .jumap-svg-pannable {
   cursor: grab;
@@ -784,21 +786,10 @@ html[data-theme="dark"] .jumap-back { background: rgba(20,20,20,0.7); }
   /* Freeze the idle drift while the user is steering it themselves. */
   animation: none;
 }
-/* Genre territories — the goo filter fuses circles inside one <g>; the blend
-   mode below lets neighbouring genres bleed into each other in shared zones. */
-.jumap-territories { mix-blend-mode: multiply; }
-.jumap-territory { mix-blend-mode: multiply; }
-@media (prefers-color-scheme: dark) {
-  .jumap-territories { mix-blend-mode: screen; }
-  .jumap-territory   { mix-blend-mode: screen; }
-}
-/* Per-artist orbit halos sit between the genre territory blob and the
-   bubbles. Multiply so the soft tint layers cleanly over whatever
-   genre colour the territory laid down. */
-.jumap-orbits { mix-blend-mode: multiply; }
-@media (prefers-color-scheme: dark) {
-  .jumap-orbits { mix-blend-mode: screen; }
-}
+/* Territories + orbits no longer use mix-blend-mode — it forced the browser
+   to allocate offscreen compositing buffers per repaint, which on mobile
+   tanked pan/zoom framerate. Plain alpha blending is fast and the per-
+   genre radial-gradient stains still read cleanly. */
 .jumap-territory-label {
   font-family: var(--font-serif);
   font-weight: 600;
@@ -2228,12 +2219,12 @@ html[data-theme="dark"] .jumap-bg-blob { opacity: 0.28; mix-blend-mode: screen; 
 .jumap-stage-full { z-index: 1; }
 .jumap-legend { z-index: 4; }
 
-/* Bubble — idle drift */
+/* Bubble — drift animation removed. With 100+ bubbles each holding its
+   own infinite CSS animation, the browser was repainting every frame
+   regardless of user input. Mobile especially couldn't keep up. */
 .jumap-bubble {
   --drift-delay: 0s;
   --drift-duration: 10s;
-  animation: jumap-bubble-drift var(--drift-duration) ease-in-out infinite alternate;
-  animation-delay: var(--drift-delay);
   transform-origin: center;
   transform-box: fill-box;
   cursor: pointer;
