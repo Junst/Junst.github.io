@@ -814,12 +814,16 @@ html[data-theme="dark"] .jumap-back { background: rgba(20,20,20,0.7); }
 }
 .jumap-zoom-controls {
   position: absolute;
-  right: 18px;
+  /* Move to the LEFT edge — the right is occupied by the .theme-fab
+     and #dynamic-island FABs (both right: 18px, z-index 1000) which were
+     covering the +/− buttons. */
+  left: 18px;
   bottom: 18px;
   display: flex;
   flex-direction: column;
   gap: 6px;
-  z-index: 4;
+  /* Above the SVG stage / blob menu but still below FABs on the right. */
+  z-index: 5;
 }
 .jumap-zoom-btn {
   appearance: none;

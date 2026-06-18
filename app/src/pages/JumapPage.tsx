@@ -1049,7 +1049,10 @@ export function JumapPage() {
     const ch = bbox.maxY - bbox.minY + 160
     const zX = width / cw
     const zY = height / ch
-    const z = Math.max(MIN_ZOOM, Math.min(1, Math.min(zX, zY)))
+    // Don't auto-fit smaller than 0.55 — past that, song moons become so
+    // tiny on screen that they're hard to click, and the legend / labels
+    // get unreadable. The user can pan to see the rest.
+    const z = Math.max(0.55, Math.min(1, Math.min(zX, zY)))
     const cx = (bbox.minX + bbox.maxX) / 2
     const cy = (bbox.minY + bbox.maxY) / 2
     return {
@@ -1256,7 +1259,11 @@ export function JumapPage() {
       const rect = e.currentTarget.getBoundingClientRect()
       const dxClient = e.clientX - d.startX
       const dyClient = e.clientY - d.startY
-      if (!d.moved && Math.hypot(dxClient, dyClient) > 4) {
+      // Raised threshold (was 4 → 8) so a regular click with tiny mouse
+      // jitter doesn't get mis-classified as a drag and have its click
+      // swallowed by onClickCapture. 8 client-px is still well below
+      // anyone's intended pan motion.
+      if (!d.moved && Math.hypot(dxClient, dyClient) > 8) {
         d.moved = true
         draggedRef.current = true
       }
