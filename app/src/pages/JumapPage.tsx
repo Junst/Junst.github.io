@@ -112,6 +112,43 @@ function place(items: Artist[], width: number, height: number): PlacedArtist[] {
   return out
 }
 
+// Push overlapping bubbles apart with a few quick relaxation passes so the
+// genre clusters breathe instead of stacking on top of each other.
+function relaxOverlaps(
+  items: PlacedArtist[],
+  width: number,
+  height: number,
+  iterations = 80,
+  pad = 10,
+): void {
+  for (let it = 0; it < iterations; it++) {
+    let moved = false
+    for (let i = 0; i < items.length; i++) {
+      for (let j = i + 1; j < items.length; j++) {
+        const a = items[i], b = items[j]
+        const dx = b.cx - a.cx, dy = b.cy - a.cy
+        const dist = Math.sqrt(dx * dx + dy * dy) || 0.01
+        const minDist = a.r + b.r + pad
+        if (dist < minDist) {
+          const push = (minDist - dist) / 2
+          const ux = dx / dist, uy = dy / dist
+          a.cx -= ux * push
+          a.cy -= uy * push
+          b.cx += ux * push
+          b.cy += uy * push
+          moved = true
+        }
+      }
+    }
+    if (!moved) break
+  }
+  // Keep everything inside the viewbox so bubbles don't drift off-canvas.
+  for (const a of items) {
+    a.cx = Math.max(a.r + 6, Math.min(width - a.r - 6, a.cx))
+    a.cy = Math.max(a.r + 6, Math.min(height - a.r - 6, a.cy))
+  }
+}
+
 interface Ripple { id: number; cx: number; cy: number; r: number }
 
 function ArtistBubble({
@@ -238,6 +275,17 @@ function ArtistBubble({
   )
 }
 
+function Stars({ tier }: { tier: number }) {
+  const filled = 6 - tier            // T1 → 5 ★, T5 → 1 ★
+  const empty = 5 - filled
+  return (
+    <span className="jumap-modal-song-stars" aria-label={`Tier ${tier}`}>
+      {'★'.repeat(filled)}
+      <span className="jumap-modal-song-stars-empty">{'★'.repeat(empty)}</span>
+    </span>
+  )
+}
+
 function SongRow({ artist, song }: { artist: string; song: Song }) {
   const { src, color } = useAlbumArt(artist, song.title)
   return (
@@ -245,7 +293,24 @@ function SongRow({ artist, song }: { artist: string; song: Song }) {
       className="jumap-modal-song"
       style={color ? { ['--song-tint' as string]: color } : undefined}
     >
-      <span className="jumap-modal-song-tier">{TIER_LABEL[song.tier]}</span>
+      <div className="jumap-modal-song-body">
+        <h3 className="jumap-modal-song-title">{song.title}</h3>
+        <div className="jumap-modal-song-row">
+          <Stars tier={song.tier} />
+          <span className="jumap-modal-song-tier-chip">{TIER_LABEL[song.tier]}</span>
+          {song.year && <span className="jumap-modal-song-year">{song.year}</span>}
+        </div>
+        {song.note ? (
+          <p
+            className="jumap-modal-song-note"
+            dangerouslySetInnerHTML={{ __html: song.note }}
+          />
+        ) : (
+          <p className="jumap-modal-song-note jumap-modal-song-note-empty">
+            (No review written yet)
+          </p>
+        )}
+      </div>
       {src ? (
         <img
           className="jumap-modal-song-art"
@@ -255,22 +320,8 @@ function SongRow({ artist, song }: { artist: string; song: Song }) {
           referrerPolicy="no-referrer"
         />
       ) : (
-        <span className="jumap-modal-song-art-placeholder" aria-hidden="true">♪</span>
+        <div className="jumap-modal-song-art-placeholder" aria-hidden="true">♪</div>
       )}
-      <div className="jumap-modal-song-body">
-        <div className="jumap-modal-song-title">{song.title}</div>
-        {(song.year || song.note) && (
-          <div className="jumap-modal-song-meta">
-            {song.year && <span className="jumap-modal-song-year">{song.year}</span>}
-            {song.note && (
-              <span
-                className="jumap-modal-song-note"
-                dangerouslySetInnerHTML={{ __html: song.note }}
-              />
-            )}
-          </div>
-        )}
-      </div>
     </li>
   )
 }
@@ -343,7 +394,11 @@ export function JumapPage() {
   const [ripples, setRipples] = useState<Ripple[]>([])
   const width = 960
   const height = 640
-  const placed = useMemo(() => place(artists, width, height), [])
+  const placed = useMemo(() => {
+    const p = place(artists, width, height)
+    relaxOverlaps(p, width, height)
+    return p
+  }, [])
   const bonds = useMemo(() => computeBonds(placed), [placed])
   const focusedBond = (b: Bond) => focus === b.from || focus === b.to
 

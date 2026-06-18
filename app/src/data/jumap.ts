@@ -55,12 +55,14 @@ export function genreFor(key: string): GenreSpec {
 }
 
 // Tier-driven base radius; combined with song-count bonus inside bubbleRadius.
+// Sizes scaled down (~25%) so the cluster doesn't overlap as readily; collision
+// relaxation in JumapPage takes care of any residual overlap.
 const TIER_BASE: Record<Tier, number> = {
-  1: 78,
-  2: 64,
-  3: 54,
-  4: 44,
-  5: 36,
+  1: 58,
+  2: 48,
+  3: 40,
+  4: 34,
+  5: 28,
 }
 
 export const TIER_LABEL: Record<Tier, string> = {
@@ -74,8 +76,7 @@ export function bestTier(a: Artist): Tier {
 
 export function bubbleRadius(a: Artist): number {
   const base = TIER_BASE[bestTier(a)]
-  // Tiny bonus per extra song so prolific artists feel a touch bigger.
-  const bonus = Math.min(20, (a.songs.length - 1) * 4)
+  const bonus = Math.min(12, (a.songs.length - 1) * 3)
   return base + Math.max(0, bonus)
 }
 

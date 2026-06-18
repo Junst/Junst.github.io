@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { JuwardNav } from '../components/JuwardNav'
+import { JuwardAtmosphere } from '../components/JuwardAtmosphere'
 import { arashiAnnual, YOUTUBE_RECAPS } from '../data/juward'
 
 export function JuwardArashiPage() {
@@ -12,14 +13,33 @@ export function JuwardArashiPage() {
 
   return (
     <div className="page-shell juward-arashi-page">
+      <JuwardAtmosphere />
       <header className="page-shell-header">
         <Link to="/" className="back-link">← junst.github.io</Link>
         <JuwardNav />
-        <h1 className="page-shell-title">ARASHI Awards</h1>
-        <p className="page-shell-lead">
-          Per-year ceremony for ARASHI singles, albums, MVs, and the special prizes I invented that year.
-        </p>
       </header>
+
+      <section className="juward-arashi-hero">
+        <span className="juward-arashi-eyebrow">ARASHI Awards</span>
+        <h1 key={year} className="juward-arashi-year">{year}</h1>
+        <div className="juward-arashi-hero-meta">
+          {current && (
+            <span className="juward-arashi-hero-count">
+              {current.entries.length} categor{current.entries.length === 1 ? 'y' : 'ies'}
+            </span>
+          )}
+          {recap && (
+            <a
+              href={recap}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="juward-recap-pill"
+            >
+              🎧 YouTube Recap →
+            </a>
+          )}
+        </div>
+      </section>
 
       <nav className="juward-year-strip" role="tablist" aria-label="Year selector">
         {years.map((y) => (
@@ -36,27 +56,32 @@ export function JuwardArashiPage() {
         ))}
       </nav>
 
-      {recap && (
-        <div className="juward-recap-row">
-          <a href={recap} target="_blank" rel="noopener noreferrer" className="juward-btn juward-btn-recap">
-            🎧 YouTube Music Recap
-          </a>
-        </div>
-      )}
-
       {current && current.entries.length > 0 ? (
-        <ul className="juward-entries-grid">
+        <div key={year} className="juward-arashi-editorial">
           {current.entries.map((e, i) => (
-            <li key={i}>
-              <span className="juward-category">{e.category}</span>
-              {e.winner && <span className="juward-winner">{e.winner}</span>}
-              {e.runnersUp && e.runnersUp.length > 0 && (
-                <span className="juward-runners">{e.runnersUp.join(' · ')}</span>
-              )}
-              {e.note && <span className="juward-note" dangerouslySetInnerHTML={{ __html: e.note }} />}
-            </li>
+            <article
+              className="juward-arashi-row"
+              key={i}
+              style={{ ['--row-i' as string]: i }}
+            >
+              <div className="juward-arashi-cat">{e.category}</div>
+              <div className="juward-arashi-winner-block">
+                <div className="juward-arashi-winner">{e.winner}</div>
+                {e.runnersUp && e.runnersUp.length > 0 && (
+                  <div className="juward-arashi-runners">
+                    {e.runnersUp.map((r, j) => (j === 0 ? r : ' · ' + r))}
+                  </div>
+                )}
+                {e.note && (
+                  <div
+                    className="juward-arashi-note"
+                    dangerouslySetInnerHTML={{ __html: e.note }}
+                  />
+                )}
+              </div>
+            </article>
           ))}
-        </ul>
+        </div>
       ) : (
         <p className="juward-empty">No entries logged for {year}.</p>
       )}

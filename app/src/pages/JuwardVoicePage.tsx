@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { JuwardNav } from '../components/JuwardNav'
+import { JuwardAtmosphere } from '../components/JuwardAtmosphere'
 import { voiceOfTheYear, MEMBER_COLOR } from '../data/juward'
 
 export function JuwardVoicePage() {
@@ -12,13 +13,12 @@ export function JuwardVoicePage() {
 
   return (
     <div className="page-shell juward-voice-page">
+      <JuwardAtmosphere />
       <header className="page-shell-header">
         <Link to="/" className="back-link">← junst.github.io</Link>
         <JuwardNav />
-        <h1 className="page-shell-title">Voice of the Year</h1>
-        <p className="page-shell-lead">
-          The Arashi member of the year — pick a year from the tab strip.
-        </p>
+        <span className="juward-arashi-eyebrow">Voice of the Year</span>
+        <h1 className="page-shell-title juward-voice-title">{pick?.year ?? ''}</h1>
       </header>
 
       <nav className="juward-voice-tabs" role="tablist" aria-label="Year selector">
