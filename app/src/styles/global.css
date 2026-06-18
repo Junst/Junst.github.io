@@ -769,9 +769,15 @@ html[data-theme="dark"] .jumap-back { background: rgba(20,20,20,0.7); }
   display: block;
   width: 100%;
   height: 100%;
-  /* Idle drift animation removed — it forced a continuous transform on the
-     whole SVG, repainting every frame even when nothing else changed. The
-     pan/zoom interaction is the focal point now. */
+  /* Allow the content <g> to be transformed outside the viewBox without
+     getting clipped — we pan/zoom via transform instead of viewBox now. */
+  overflow: visible;
+}
+/* Hint the browser to promote the content group to its own compositing
+   layer, so pan/zoom transform changes ride the GPU instead of triggering
+   a re-rasterisation of every bubble and gradient each frame. */
+.jumap-content {
+  will-change: transform;
 }
 .jumap-svg-pannable {
   cursor: grab;

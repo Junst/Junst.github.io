@@ -305,10 +305,14 @@ function forceLayoutNodes(
         const dist = Math.sqrt(dx * dx + dy * dy) || 0.01
         let minDist: number
         if (a.kind === 'artist' && b.kind === 'artist') {
-          // Each artist's entire orbit must clear the other artist's
-          // orbit, so the smallest possible song-from-other-artist
-          // distance equals its own artist's distance.
+          // Stronger guarantee than "orbits don't overlap": every song on
+          // the edge of the larger orbit must be closer to its OWN artist
+          // than to the neighbour. With dist(A,B) >= 2·max(orbitR) + 60,
+          // an edge song at distance orbitR_max from its artist ends up
+          // at distance >= orbitR_max + 60 from the other artist — so
+          // proximity always identifies the right primary.
           minDist = Math.max(
+            2 * Math.max(a.orbitR, b.orbitR) + 60,
             a.orbitR + b.orbitR + GAP_AA_BUFFER,
             a.r + b.r + GAP_AA_MIN,
           )
@@ -1036,15 +1040,21 @@ export function JumapPage() {
   const [view, setView] = useState<{ x: number; y: number; z: number }>(initialView)
   const viewRef = useRef(view)
   const svgRef = useRef<SVGSVGElement | null>(null)
+  const contentRef = useRef<SVGGElement | null>(null)
+  // Pan/zoom is applied as a transform on a content <g> rather than by
+  // changing the SVG's viewBox. With `will-change: transform` (in CSS)
+  // the browser can promote the group to its own compositing layer and
+  // handle transform changes on the GPU — pinch zoom no longer triggers
+  // a per-frame re-rasterisation of every bubble + gradient.
   const applyViewToDom = useCallback(() => {
-    const svg = svgRef.current
-    if (!svg) return
+    const g = contentRef.current
+    if (!g) return
     const v = viewRef.current
-    svg.setAttribute(
-      'viewBox',
-      `${v.x} ${v.y} ${width / v.z} ${height / v.z}`,
+    g.setAttribute(
+      'transform',
+      `translate(${-v.x * v.z} ${-v.y * v.z}) scale(${v.z})`,
     )
-  }, [width, height])
+  }, [])
   // Keep DOM in sync with viewRef after every React render (including any
   // hover / focus / ripple re-render that happens mid-drag). Layout effect
   // runs synchronously before paint so there's no flicker.
@@ -1132,13 +1142,17 @@ export function JumapPage() {
       pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY })
       try { e.currentTarget.setPointerCapture(e.pointerId) } catch { /* noop */ }
 
+      // Read the live view from the ref — state can lag behind during a
+      // pinch since we rAF-throttle setView. Reading viewRef avoids the
+      // first pinch frame starting from a stale baseZoom / basePan.
+      const liveView = viewRef.current
       if (pointersRef.current.size === 1) {
         dragRef.current = {
           pointerId: e.pointerId,
           startX: e.clientX,
           startY: e.clientY,
-          baseX: view.x,
-          baseY: view.y,
+          baseX: liveView.x,
+          baseY: liveView.y,
           moved: false,
         }
         draggedRef.current = false
@@ -1154,11 +1168,11 @@ export function JumapPage() {
           id1: ids[0],
           id2: ids[1],
           startDist: Math.max(dist, 1),
-          startZoom: view.z,
+          startZoom: liveView.z,
           midX: (p1.x + p2.x) / 2,
           midY: (p1.y + p2.y) / 2,
-          baseX: view.x,
-          baseY: view.y,
+          baseX: liveView.x,
+          baseY: liveView.y,
           rect: e.currentTarget.getBoundingClientRect(),
         }
         dragRef.current = null
@@ -1167,7 +1181,7 @@ export function JumapPage() {
         setGrabbing(false)
       }
     },
-    [view.x, view.y, view.z],
+    [],
   )
 
   const onPointerMove = useCallback(
@@ -1307,6 +1321,8 @@ export function JumapPage() {
       <div className="jumap-stage jumap-stage-full">
         <svg
           ref={svgRef}
+          viewBox={`0 0 ${width} ${height}`}
+          overflow="visible"
           className={'jumap-svg jumap-svg-pannable' + (grabbing ? ' is-grabbing' : '')}
           preserveAspectRatio="xMidYMid meet"
           onPointerDown={onPointerDown}
@@ -1317,19 +1333,21 @@ export function JumapPage() {
           onWheel={onWheel}
           onClickCapture={onClickCapture}
         >
-          <JumapSvgInner
-            artistsPlaced={artistsPlaced}
-            songsPlaced={songsPlaced}
-            territories={territories}
-            orbits={orbits}
-            bonds={bonds}
-            focus={focus}
-            openSong={openSong}
-            ripples={ripples}
-            setFocus={setFocus}
-            setOpenSong={setOpenSong}
-            addRipple={addRipple}
-          />
+          <g ref={contentRef} className="jumap-content">
+            <JumapSvgInner
+              artistsPlaced={artistsPlaced}
+              songsPlaced={songsPlaced}
+              territories={territories}
+              orbits={orbits}
+              bonds={bonds}
+              focus={focus}
+              openSong={openSong}
+              ripples={ripples}
+              setFocus={setFocus}
+              setOpenSong={setOpenSong}
+              addRipple={addRipple}
+            />
+          </g>
         </svg>
 
         <div className="jumap-zoom-controls" aria-label="Zoom controls">
