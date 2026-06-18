@@ -74,10 +74,12 @@ function computeTerritories(placed: PlacedArtist[]): Territory[] {
     const primaries = byGenre.get(key) ?? []
     const secondaries = secByGenre.get(key) ?? []
     const blobs = [
-      // Tight hug around the bubble so distinct genres have visible gaps;
-      // overlap only happens where two genres actually share an artist.
-      ...primaries.map((m) => ({ cx: m.cx, cy: m.cy, r: m.r * 1.45 + 10, primary: true })),
-      ...secondaries.map((m) => ({ cx: m.cx, cy: m.cy, r: m.r * 1.05 + 6, primary: false })),
+      // Even tighter hug — earlier 1.45·r let same-genre bubbles' territories
+      // fuse into one big blob via the goo filter, which read on screen as
+      // "the bubbles are close together". Now each blob barely extends past
+      // its bubble so visual separation between bubbles is preserved.
+      ...primaries.map((m) => ({ cx: m.cx, cy: m.cy, r: m.r * 1.1 + 6, primary: true })),
+      ...secondaries.map((m) => ({ cx: m.cx, cy: m.cy, r: m.r * 0.85 + 4, primary: false })),
     ]
     // Label anchor: above the topmost primary bubble (fall back to topmost
     // secondary if there are no primary holders for this genre).
@@ -515,7 +517,7 @@ export function JumapPage() {
   const height = 640
   const placed = useMemo(() => {
     const p = place(artists, width, height)
-    relaxOverlaps(p, width, height, 220, 120)
+    relaxOverlaps(p, width, height, 300, 170)
     return p
   }, [])
   const bonds = useMemo(() => computeBonds(placed), [placed])
@@ -546,8 +548,8 @@ export function JumapPage() {
   // Wide pan envelope — about ±2× the virtual canvas in either axis so the
   // user can drift far outside the now-larger territory cluster before
   // hitting a wall.
-  const PAN_MAX_X = Math.round(width * 2.5)
-  const PAN_MAX_Y = Math.round(height * 2.5)
+  const PAN_MAX_X = Math.round(width * 3)
+  const PAN_MAX_Y = Math.round(height * 3)
   const MIN_ZOOM = 0.3
   const MAX_ZOOM = 4
   const clamp = (n: number, lo: number, hi: number) =>
@@ -835,11 +837,11 @@ export function JumapPage() {
             {/* Metaball goo filter — fuses individual circle footprints inside
                 a single <g> into one organic blob with crisp soft edges. */}
             <filter id="jumap-goo" x="-15%" y="-15%" width="130%" height="130%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+              <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="blur" />
               <feColorMatrix
                 in="blur"
                 mode="matrix"
-                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 24 -11"
+                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 26 -12"
                 result="goo"
               />
               <feBlend in="SourceGraphic" in2="goo" />
