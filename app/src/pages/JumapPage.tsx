@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
 import {
   artists,
   GENRES,
@@ -18,7 +17,7 @@ import {
   type Song,
 } from '../data/jumap'
 import { useAlbumArt } from '../components/AlbumArt'
-import { TierBadge, TIER_META } from '../components/TierBadge'
+import { TierBadge, TIER_META, CROWN_PATH } from '../components/TierBadge'
 import { albumArtFor } from '../data/album-art'
 import { artistPhotoFor } from '../data/artist-photos'
 
@@ -252,26 +251,38 @@ function ArtistBubble({
         opacity={(focused ? 1 : 0.85) * shapeOpacity}
         pointerEvents="none"
       />
-      {/* Artist name + tier label — always full opacity */}
+      {/* Crown sitting above the artist name; colour encodes the tier */}
+      {(() => {
+        const t = bestTier(a)
+        const meta = TIER_META[t]
+        const crownH = Math.max(12, a.r * 0.22)
+        const crownW = (crownH * 32) / 22
+        return (
+          <g
+            transform={`translate(${a.cx - crownW / 2}, ${a.cy - a.r * 0.55 - crownH / 2})`}
+            opacity="1"
+          >
+            <path
+              d={CROWN_PATH}
+              transform={`scale(${crownW / 32})`}
+              fill={meta.crown}
+              stroke="rgba(0,0,0,0.25)"
+              strokeWidth={0.7 * (32 / crownW)}
+              strokeLinejoin="round"
+            />
+          </g>
+        )
+      })()}
+      {/* Artist name centered, always full opacity */}
       <text
         x={a.cx}
-        y={a.cy + 2}
+        y={a.cy + 4}
         textAnchor="middle"
         dominantBaseline="middle"
         className="jumap-artist"
         opacity="1"
       >
         {a.name}
-      </text>
-      <text
-        x={a.cx}
-        y={a.cy + a.r * 0.55}
-        textAnchor="middle"
-        className="jumap-tier"
-        opacity="1"
-        style={{ fill: TIER_META[bestTier(a)].crown }}
-      >
-        {TIER_META[bestTier(a)].name}
       </text>
     </g>
   )
@@ -295,23 +306,13 @@ function SongRow({ artist, song }: { artist: string; song: Song }) {
       className="jumap-modal-song"
       style={color ? { ['--song-tint' as string]: color } : undefined}
     >
-      <div className="jumap-modal-song-body">
+      <div className="jumap-modal-song-head">
         <h3 className="jumap-modal-song-title">{song.title}</h3>
         <div className="jumap-modal-song-row">
           <TierBadge tier={song.tier} />
           <Stars tier={song.tier} />
           {song.year && <span className="jumap-modal-song-year">{song.year}</span>}
         </div>
-        {song.note ? (
-          <p
-            className="jumap-modal-song-note"
-            dangerouslySetInnerHTML={{ __html: song.note }}
-          />
-        ) : (
-          <p className="jumap-modal-song-note jumap-modal-song-note-empty">
-            (No review written yet)
-          </p>
-        )}
       </div>
       {src ? (
         <img
@@ -323,6 +324,16 @@ function SongRow({ artist, song }: { artist: string; song: Song }) {
         />
       ) : (
         <div className="jumap-modal-song-art-placeholder" aria-hidden="true">♪</div>
+      )}
+      {song.note ? (
+        <p
+          className="jumap-modal-song-note"
+          dangerouslySetInnerHTML={{ __html: song.note }}
+        />
+      ) : (
+        <p className="jumap-modal-song-note jumap-modal-song-note-empty">
+          No review written yet — this is where the wide-form thoughts go.
+        </p>
       )}
     </li>
   )
@@ -420,7 +431,6 @@ export function JumapPage() {
         <span className="jumap-bg-blob blob-3" />
         <span className="jumap-bg-blob blob-4" />
       </div>
-      <Link to="/" className="back-link jumap-back">← back</Link>
 
       <div className="jumap-stage jumap-stage-full">
         <svg viewBox={`0 0 ${width} ${height}`} className="jumap-svg" preserveAspectRatio="xMidYMid meet">

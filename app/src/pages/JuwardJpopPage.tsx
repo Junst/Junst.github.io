@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { JuwardNav } from '../components/JuwardNav'
 import { JuwardAtmosphere } from '../components/JuwardAtmosphere'
 import { Nominees, NotationLegend } from '../components/RankingTable'
@@ -18,7 +17,6 @@ export function JuwardJpopPage() {
     <div className="page-shell juward-track-page">
       <JuwardAtmosphere />
       <header className="page-shell-header">
-        <Link to="/" className="back-link">← junst.github.io</Link>
         <JuwardNav />
         <h1 className="page-shell-title">J-Pop Grand Prize</h1>
         <p className="page-shell-lead">

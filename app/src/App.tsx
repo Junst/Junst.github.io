@@ -6,6 +6,7 @@ import { JuwardVoicePage } from './pages/JuwardVoicePage'
 import { JuwardOtherPage } from './pages/JuwardOtherPage'
 import { JuwardJpopPage } from './pages/JuwardJpopPage'
 import { BlobMenu } from './components/BlobMenu'
+import { SubpageHomeBar } from './components/SubpageHomeBar'
 import { ThemeToggle } from './components/ThemeToggle'
 import { MusicIsland } from './components/MusicIsland'
 
@@ -22,6 +23,7 @@ export function App() {
         <Route path="/juward/jpop"    element={<JuwardJpopPage />} />
         <Route path="*"               element={<HomePage />} />
       </Routes>
+      <SubpageHomeBar />
       <BlobMenu />
       <ThemeToggle />
       <MusicIsland />

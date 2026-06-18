@@ -1,24 +1,35 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { JuwardNav } from '../components/JuwardNav'
 import { JuwardAtmosphere } from '../components/JuwardAtmosphere'
 import { arashiAnnual, YOUTUBE_RECAPS } from '../data/juward'
 import { albumArtFor } from '../data/album-art'
 
-// Pull a likely album-art URL for an ARASHI entry. Most winners are just
-// ARASHI track titles ("Love so sweet"); a few are "Member — Title" or
-// "Member — Title (note)" or a slash list. We try the most-likely song
-// first and fall back to nothing.
+// Strip streak annotations like "(2nd year in a row)" / "(2년 연속)" /
+// "(2 years in a row)" / "(3 in a row)" — return the cleaned winner text
+// plus the streak count to render as a small badge.
+function parseStreak(text: string): { clean: string; streak?: number } {
+  const patterns: RegExp[] = [
+    /\s*\(\s*(\d+)\s*(?:nd|rd|th|st)?\s*years?\s+in\s+a\s+row\s*\)/i,
+    /\s*\(\s*(\d+)\s*in\s+a\s+row\s*\)/i,
+    /\s*\(\s*(\d+)\s*년\s*연속\s*\)/,
+    /\s*\(\s*(\d+)\s*연속\s*\)/,
+  ]
+  for (const re of patterns) {
+    const m = text.match(re)
+    if (m) {
+      return { clean: text.replace(re, '').trim(), streak: parseInt(m[1], 10) }
+    }
+  }
+  return { clean: text }
+}
+
 function pickWinnerArt(winner: string): string | undefined {
-  // Strip trailing parens like " (2 years in a row)"
   const cleaned = winner.replace(/\s*\([^)]*\)\s*/g, '').trim()
-  // Pattern: "Member — Title"
   const m = cleaned.match(/^([^—]+?)\s+—\s+(.+)$/)
   if (m) {
     const art = albumArtFor(m[1].trim(), m[2].trim()) ?? albumArtFor('ARASHI', m[2].trim())
     if (art) return art
   }
-  // Multi-pick: "A / B / C" → try the first
   const first = cleaned.split(/\s*[\/,]\s*/)[0]
   return albumArtFor('ARASHI', first) ?? albumArtFor('ARASHI', cleaned)
 }
@@ -34,7 +45,6 @@ export function JuwardArashiPage() {
     <div className="page-shell juward-arashi-page">
       <JuwardAtmosphere />
       <header className="page-shell-header">
-        <Link to="/" className="back-link">← junst.github.io</Link>
         <JuwardNav />
       </header>
 
@@ -77,30 +87,42 @@ export function JuwardArashiPage() {
 
       {current && current.entries.length > 0 ? (
         <div key={year} className="juward-arashi-editorial">
-          {current.entries.map((e, i) => (
-            <article
-              className="juward-arashi-row"
-              key={i}
-              style={{ ['--row-i' as string]: i }}
-            >
-              <div className="juward-arashi-cat">{e.category}</div>
-              <div className="juward-arashi-winner-block">
-                <div className="juward-arashi-winner">{e.winner}</div>
-                {e.runnersUp && e.runnersUp.length > 0 && (
-                  <div className="juward-arashi-runners">
-                    {e.runnersUp.map((r, j) => (j === 0 ? r : ' · ' + r))}
+          {current.entries.map((e, i) => {
+            const { clean, streak } = parseStreak(e.winner)
+            const art = pickWinnerArt(clean)
+            return (
+              <article
+                className="juward-arashi-row"
+                key={i}
+                style={{ ['--row-i' as string]: i }}
+              >
+                <div className="juward-arashi-cat">{e.category}</div>
+                <div className="juward-arashi-winner-block">
+                  <div className="juward-arashi-winner">
+                    {clean}
+                    {streak && (
+                      <span
+                        className="juward-arashi-streak"
+                        title={`${streak} years in a row`}
+                        aria-label={`${streak} years in a row`}
+                      >
+                        🔥<span className="juward-arashi-streak-n">×{streak}</span>
+                      </span>
+                    )}
                   </div>
-                )}
-                {e.note && (
-                  <div
-                    className="juward-arashi-note"
-                    dangerouslySetInnerHTML={{ __html: e.note }}
-                  />
-                )}
-              </div>
-              {(() => {
-                const art = pickWinnerArt(e.winner)
-                return art ? (
+                  {e.runnersUp && e.runnersUp.length > 0 && (
+                    <div className="juward-arashi-runners">
+                      {e.runnersUp.map((r, j) => (j === 0 ? r : ' · ' + r))}
+                    </div>
+                  )}
+                  {e.note && (
+                    <div
+                      className="juward-arashi-note"
+                      dangerouslySetInnerHTML={{ __html: e.note }}
+                    />
+                  )}
+                </div>
+                {art && (
                   <img
                     className="juward-arashi-art"
                     src={art}
@@ -108,10 +130,10 @@ export function JuwardArashiPage() {
                     loading="lazy"
                     referrerPolicy="no-referrer"
                   />
-                ) : null
-              })()}
-            </article>
-          ))}
+                )}
+              </article>
+            )
+          })}
         </div>
       ) : (
         <p className="juward-empty">No entries logged for {year}.</p>

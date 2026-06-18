@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { JuwardNav } from '../components/JuwardNav'
 import { JuwardAtmosphere } from '../components/JuwardAtmosphere'
 import { voiceOfTheYear, MEMBER_COLOR } from '../data/juward'
@@ -15,7 +14,6 @@ export function JuwardVoicePage() {
     <div className="page-shell juward-voice-page">
       <JuwardAtmosphere />
       <header className="page-shell-header">
-        <Link to="/" className="back-link">← junst.github.io</Link>
         <JuwardNav />
         <span className="juward-arashi-eyebrow">Voice of the Year</span>
         <h1 className="page-shell-title juward-voice-title">{pick?.year ?? ''}</h1>

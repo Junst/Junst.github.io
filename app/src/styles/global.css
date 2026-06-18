@@ -1804,9 +1804,14 @@ html[data-theme="dark"] .jumap-modal {
    colour through --song-tint. */
 .jumap-modal-song {
   --song-tint: rgba(0, 0, 0, 0);
-  display: flex;
-  align-items: center;
-  gap: 18px;
+  display: grid;
+  grid-template-columns: 1fr 96px;
+  grid-template-areas:
+    "head art"
+    "note note";
+  column-gap: 18px;
+  row-gap: 12px;
+  align-items: start;
   padding: 18px 20px;
   background:
     linear-gradient(180deg,
@@ -1835,17 +1840,20 @@ html[data-theme="dark"] .jumap-modal {
   transition: background-color .3s;
 }
 
-.jumap-modal-song-body {
+.jumap-modal-song-head {
+  grid-area: head;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  flex: 1;
   min-width: 0;
 }
 .jumap-modal-song-art,
 .jumap-modal-song-art-placeholder {
-  flex-shrink: 0;
-  margin-left: auto;
+  grid-area: art;
+  align-self: start;
+}
+.jumap-modal-song-note {
+  grid-area: note;
 }
 .jumap-modal-song-title {
   margin: 0;
@@ -1888,12 +1896,20 @@ html[data-theme="dark"] .jumap-modal {
 }
 .jumap-modal-song-note {
   margin: 0;
-  color: var(--text-soft);
+  padding: 10px 14px;
+  background: color-mix(in srgb, var(--song-tint) 8%, var(--bg));
+  border: 1px dashed color-mix(in srgb, var(--song-tint) 30%, var(--rule));
+  border-radius: 10px;
+  color: var(--text);
   font-style: italic;
-  font-size: 0.9rem;
-  line-height: 1.45;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  min-height: 44px;
 }
-.jumap-modal-song-note-empty { color: var(--text-muted); }
+.jumap-modal-song-note-empty {
+  color: var(--text-muted);
+  font-weight: 500;
+}
 
 .jumap-modal-song-art {
   width: 96px;
@@ -2536,4 +2552,61 @@ html[data-theme="dark"] .juward-atmo-blob {
   .juward-editorial-year { font-size: 1.6rem; }
   .juward-editorial-art { width: 44px; height: 44px; }
   .juward-editorial-artist { font-size: 0.92rem; }
+}
+
+/* === Sub-page home bar (replaces inline back-link) === */
+.subpage-home-bar {
+  position: fixed;
+  top: 14px;
+  left: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px 6px 10px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-soft);
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  z-index: 5;
+  transition: transform .15s, color .15s, border-color .15s, background-color .15s;
+}
+html[data-theme="dark"] .subpage-home-bar { background: rgba(20, 20, 20, 0.78); }
+.subpage-home-bar:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+  border-bottom: 1px solid var(--accent);
+}
+.subpage-home-arrow { font-weight: 700; }
+
+/* === ARASHI streak badge (replaces "(2 years in a row)" text) === */
+.juward-arashi-streak {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 14px;
+  padding: 4px 10px 4px 8px;
+  background: linear-gradient(135deg, #ffe9d6, #ffb74d);
+  color: #5a2d00;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+  box-shadow: 0 2px 6px rgba(255, 152, 0, 0.18);
+}
+.juward-arashi-streak-n { font-weight: 800; }
+
+/* Adjust the ARASHI editorial row grid to include album-art column */
+@media (min-width: 641px) {
+  .juward-arashi-row { grid-template-columns: 220px 1fr 96px; }
 }

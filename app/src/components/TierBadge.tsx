@@ -16,7 +16,7 @@ export const TIER_META: Record<Tier, TierMeta> = {
   5: { name: 'Bronze',   short: 'BRZ', bgFrom: '#ffd6b0', bgTo: '#c98a4f', crown: '#8c4a00' },
 }
 
-function Crown({ color, size = 14 }: { color: string; size?: number }) {
+export function Crown({ color, size = 16 }: { color: string; size?: number }) {
   return (
     <svg
       className="tier-crown"
@@ -28,17 +28,23 @@ function Crown({ color, size = 14 }: { color: string; size?: number }) {
       <path
         d="M2 19 L4 5 L11 12 L16 2 L21 12 L28 5 L30 19 Z"
         fill={color}
-        stroke="rgba(0,0,0,0.18)"
-        strokeWidth="0.6"
+        stroke="rgba(0,0,0,0.22)"
+        strokeWidth="0.7"
         strokeLinejoin="round"
       />
-      <circle cx="11" cy="12" r="1.6" fill={color} stroke="rgba(0,0,0,0.18)" strokeWidth="0.4" />
-      <circle cx="21" cy="12" r="1.6" fill={color} stroke="rgba(0,0,0,0.18)" strokeWidth="0.4" />
-      <circle cx="16" cy="3"  r="1.9" fill={color} stroke="rgba(0,0,0,0.18)" strokeWidth="0.4" />
+      <circle cx="11" cy="12" r="1.6" fill={color} stroke="rgba(0,0,0,0.22)" strokeWidth="0.4" />
+      <circle cx="21" cy="12" r="1.6" fill={color} stroke="rgba(0,0,0,0.22)" strokeWidth="0.4" />
+      <circle cx="16" cy="3"  r="1.9" fill={color} stroke="rgba(0,0,0,0.22)" strokeWidth="0.4" />
     </svg>
   )
 }
 
+// Returns the crown SVG path string for inline use in other SVG contexts
+// (e.g. inside the Jumap bubble where rendering React DOM isn't possible).
+export const CROWN_PATH = 'M2 19 L4 5 L11 12 L16 2 L21 12 L28 5 L30 19 Z'
+
+// A minimal "icon" badge — crown only, no material name text. The colour band
+// of the badge background still encodes the tier.
 export function TierBadge({ tier, size = 'sm' }: { tier: Tier; size?: 'sm' | 'lg' }) {
   const m = TIER_META[tier]
   return (
@@ -50,7 +56,6 @@ export function TierBadge({ tier, size = 'sm' }: { tier: Tier; size?: 'sm' | 'lg
       title={`Tier ${tier} — ${m.name}`}
     >
       <Crown color={m.crown} size={size === 'lg' ? 18 : 13} />
-      <span className="tier-badge-name">{m.name}</span>
     </span>
   )
 }
