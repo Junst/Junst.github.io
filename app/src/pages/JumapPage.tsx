@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   artists,
   GENRES,
@@ -343,7 +343,7 @@ function forceLayoutNodes(
 
 interface Ripple { id: number; cx: number; cy: number; r: number }
 
-function ArtistBubble({
+const ArtistBubble = memo(function ArtistBubble({
   a, focus, onFocus,
 }: {
   a: PlacedArtist
@@ -483,13 +483,13 @@ function ArtistBubble({
       </text>
     </g>
   )
-}
+})
 
 // A song moon — small bubble showing the song's album art clipped to a
 // circle. Hovering it lights up the song's primary artist; clicking opens
 // the single-song modal. Songs with `features` show via the feature bonds
 // drawn separately as connecting lines to each featured artist.
-function SongBubble({
+const SongBubble = memo(function SongBubble({
   s, focus, onFocus, onOpen, onRipple,
 }: {
   s: PlacedSong
@@ -570,7 +570,7 @@ function SongBubble({
       <title>{`${s.song.title} — ${s.primaryArtist}`}</title>
     </g>
   )
-}
+})
 
 function Stars({ tier, subTier = 0 }: { tier: number; subTier?: number }) {
   const filled = 6 - tier            // T1 → 5 ★, T5 → 1 ★
@@ -689,6 +689,196 @@ function SongModal({
   )
 }
 
+interface Orbit {
+  cx: number
+  cy: number
+  r: number
+  color: string
+  id: string
+  name: string
+}
+
+// Heavy SVG inner — everything that's expensive to reconcile (territories,
+// orbit halos, feature bonds, all bubble nodes, ripples). Memoised so the
+// pan / zoom re-renders of JumapPage skip this entire subtree as long as
+// the data + focus + ripples haven't changed. Only the <svg> viewBox
+// attribute updates per frame during drag.
+const JumapSvgInner = memo(function JumapSvgInner({
+  artistsPlaced, songsPlaced, territories, orbits, bonds,
+  focus, openSong, ripples,
+  setFocus, setOpenSong, addRipple,
+}: {
+  artistsPlaced: PlacedArtist[]
+  songsPlaced: PlacedSong[]
+  territories: Territory[]
+  orbits: Orbit[]
+  bonds: Bond[]
+  focus: string | null
+  openSong: PlacedSong | null
+  ripples: Ripple[]
+  setFocus: (k: string | null) => void
+  setOpenSong: (s: PlacedSong | null) => void
+  addRipple: (r: Ripple) => void
+}) {
+  const focusedBond = (b: Bond) =>
+    focus === b.from || focus === b.to ||
+    (openSong !== null && (openSong.primaryArtist === b.from || openSong.primaryArtist === b.to))
+  return (
+    <>
+      <defs>
+        {GENRES.map((g) => (
+          <radialGradient
+            key={g.key}
+            id={`bubble-${g.key}`}
+            cx="32%"
+            cy="28%"
+            r="85%"
+          >
+            <stop offset="0%"   stopColor="#ffffff" stopOpacity="0.85" />
+            <stop offset="35%"  stopColor={g.color} stopOpacity="0.5" />
+            <stop offset="75%"  stopColor={g.color} stopOpacity="0.32" />
+            <stop offset="100%" stopColor={g.color} stopOpacity="0.18" />
+          </radialGradient>
+        ))}
+        <radialGradient id="bubble-highlight" cx="32%" cy="22%" r="36%">
+          <stop offset="0%"  stopColor="#ffffff" stopOpacity="0.95" />
+          <stop offset="60%" stopColor="#ffffff" stopOpacity="0.25" />
+          <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+        </radialGradient>
+        <radialGradient id="bubble-glow" cx="70%" cy="80%" r="40%">
+          <stop offset="0%"   stopColor="#ffffff" stopOpacity="0.5" />
+          <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+        </radialGradient>
+        <linearGradient id="bond-grad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stopColor="#b03434" stopOpacity="0.65" />
+          <stop offset="100%" stopColor="#205493" stopOpacity="0.65" />
+        </linearGradient>
+        {orbits.map((o) => (
+          <radialGradient key={o.id} id={o.id} cx="50%" cy="50%" r="50%">
+            <stop offset="0%"  stopColor={o.color} stopOpacity="0.22" />
+            <stop offset="70%" stopColor={o.color} stopOpacity="0.13" />
+            <stop offset="100%" stopColor={o.color} stopOpacity="0" />
+          </radialGradient>
+        ))}
+        <filter id="jumap-goo" x="-15%" y="-15%" width="130%" height="130%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="blur" />
+          <feColorMatrix
+            in="blur"
+            mode="matrix"
+            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 26 -12"
+            result="goo"
+          />
+          <feBlend in="SourceGraphic" in2="goo" />
+        </filter>
+      </defs>
+      <g className="jumap-territories" aria-hidden="true">
+        {territories.map((t) => (
+          <g
+            key={t.key}
+            className="jumap-territory"
+            filter="url(#jumap-goo)"
+            style={{ ['--genre-tint' as string]: t.color }}
+          >
+            {t.blobs.map((b, i) => (
+              <circle
+                key={i}
+                cx={b.cx}
+                cy={b.cy}
+                r={b.r}
+                fill={t.color}
+                fillOpacity={b.primary ? 0.32 : 0.18}
+              />
+            ))}
+          </g>
+        ))}
+      </g>
+      <g className="jumap-territory-labels" aria-hidden="true">
+        {territories.map((t) => (
+          <text
+            key={t.key}
+            className="jumap-territory-label"
+            x={t.labelX}
+            y={t.labelY}
+            fill={t.color}
+            textAnchor="middle"
+          >
+            {t.label}
+          </text>
+        ))}
+      </g>
+      <g className="jumap-orbits" aria-hidden="true">
+        {orbits.map((o) => {
+          const dim = focus !== null && focus !== o.name &&
+            !(focus.startsWith(o.name + '|'))
+          return (
+            <circle
+              key={o.id}
+              cx={o.cx}
+              cy={o.cy}
+              r={o.r}
+              fill={`url(#${o.id})`}
+              opacity={dim ? 0.4 : 1}
+              style={{ transition: 'opacity 0.25s' }}
+            />
+          )
+        })}
+      </g>
+      <g className="jumap-bonds">
+        {bonds.map((b, i) => {
+          const active = focusedBond(b)
+          const dim = focus !== null && !active
+          return (
+            <line
+              key={`${b.from}|${b.to}`}
+              className={'jumap-bond' + (active ? ' jumap-bond-active' : '')}
+              x1={b.x1}
+              y1={b.y1}
+              x2={b.x2}
+              y2={b.y2}
+              stroke={active ? 'url(#bond-grad)' : 'currentColor'}
+              strokeOpacity={dim ? 0.05 : b.intensity * (active ? 1.4 : 1)}
+              strokeWidth={active ? 1.6 : 0.9}
+              style={{
+                ['--bond-i' as string]: i,
+              }}
+            />
+          )
+        })}
+      </g>
+      {artistsPlaced.map((a) => (
+        <ArtistBubble
+          key={a.name}
+          a={a}
+          focus={focus}
+          onFocus={setFocus}
+        />
+      ))}
+      {songsPlaced.map((s) => (
+        <SongBubble
+          key={s.id}
+          s={s}
+          focus={focus}
+          onFocus={setFocus}
+          onOpen={setOpenSong}
+          onRipple={addRipple}
+        />
+      ))}
+      {ripples.map((rp) => (
+        <circle
+          key={rp.id}
+          className="jumap-ripple"
+          cx={rp.cx}
+          cy={rp.cy}
+          r={rp.r}
+          fill="none"
+          stroke="rgba(0,0,0,0.18)"
+          strokeWidth={2}
+        />
+      ))}
+    </>
+  )
+})
+
 export function JumapPage() {
   const [focus, setFocus] = useState<string | null>(null)
   const [openSong, setOpenSong] = useState<PlacedSong | null>(null)
@@ -705,8 +895,7 @@ export function JumapPage() {
     forceLayoutNodes([...a, ...s], 900)
     return { artistsPlaced: a, songsPlaced: s }
   }, [])
-  const placed = artistsPlaced
-  const territories = useMemo(() => computeTerritories(placed), [placed])
+  const territories = useMemo(() => computeTerritories(artistsPlaced), [artistsPlaced])
   // Per-artist orbit halo: a soft tinted disk that contains the artist + all
   // its songs, giving a visual cue that those moons belong to the same
   // planet. Colour is the artist's primary genre tint.
@@ -752,16 +941,41 @@ export function JumapPage() {
     }
     return out
   }, [artistsPlaced, songsPlaced])
-  const focusedBond = (b: Bond) =>
-    focus === b.from || focus === b.to ||
-    (openSong !== null && (openSong.primaryArtist === b.from || openSong.primaryArtist === b.to))
-
-  function addRipple(r: Ripple) {
+  // Stable reference so React.memo on song/artist bubbles can short-circuit
+  // re-renders during pan/zoom (only `view` changes per pointer move).
+  const addRipple = useCallback((r: Ripple) => {
     setRipples((cur) => [...cur, r])
     window.setTimeout(() => {
       setRipples((cur) => cur.filter((x) => x.id !== r.id))
     }, 900)
-  }
+  }, [])
+
+  // rAF-coalesce setView updates from pointer/wheel events. Pointer move
+  // can fire 120+ Hz on some devices, but the SVG only needs one render
+  // per frame. We compose pending updaters so functional updates chain
+  // correctly when several fire before the next frame.
+  const rafIdRef = useRef<number | null>(null)
+  const pendingViewRef = useRef<
+    | ((v: { x: number; y: number; z: number }) => { x: number; y: number; z: number })
+    | null
+  >(null)
+  const scheduleView = useCallback(
+    (updater: (v: { x: number; y: number; z: number }) => { x: number; y: number; z: number }) => {
+      const prev = pendingViewRef.current
+      pendingViewRef.current = prev ? (v) => updater(prev(v)) : updater
+      if (rafIdRef.current != null) return
+      rafIdRef.current = requestAnimationFrame(() => {
+        rafIdRef.current = null
+        const u = pendingViewRef.current
+        pendingViewRef.current = null
+        if (u) setView(u)
+      })
+    },
+    [],
+  )
+  useEffect(() => () => {
+    if (rafIdRef.current != null) cancelAnimationFrame(rafIdRef.current)
+  }, [])
 
   // --- Pan / zoom on the SVG stage --------------------------------------------
   // The SVG keeps its virtual `width` × `height` canvas. The viewBox window
@@ -901,7 +1115,7 @@ export function JumapPage() {
         const dist = Math.hypot(p2.x - p1.x, p2.y - p1.y)
         if (dist < 1) return
         const targetZ = pr.startZoom * (dist / pr.startDist)
-        setView(() => reframeAt(
+        scheduleView(() => reframeAt(
           { x: pr.baseX, y: pr.baseY, z: pr.startZoom },
           pr.midX,
           pr.midY,
@@ -920,7 +1134,7 @@ export function JumapPage() {
         d.moved = true
         draggedRef.current = true
       }
-      setView((v) => {
+      scheduleView((v) => {
         const scaleX = rect.width > 0 ? (width / v.z) / rect.width : 1
         const scaleY = rect.height > 0 ? (height / v.z) / rect.height : 1
         return {
@@ -930,7 +1144,7 @@ export function JumapPage() {
         }
       })
     },
-    [PAN_MAX_X, PAN_MAX_Y, width, height, reframeAt],
+    [PAN_MAX_X, PAN_MAX_Y, width, height, reframeAt, scheduleView],
   )
 
   const endPointer = useCallback((e: React.PointerEvent<SVGSVGElement>) => {
@@ -974,11 +1188,11 @@ export function JumapPage() {
         const dy = Math.max(-80, Math.min(80, e.deltaY))
         const factor = Math.exp(-dy * 0.0009)
         const rect = e.currentTarget.getBoundingClientRect()
-        setView((v) => reframeAt(v, e.clientX, e.clientY, rect, v.z * factor))
+        scheduleView((v) => reframeAt(v, e.clientX, e.clientY, rect, v.z * factor))
         return
       }
       const rect = e.currentTarget.getBoundingClientRect()
-      setView((v) => {
+      scheduleView((v) => {
         const scaleX = rect.width > 0 ? (width / v.z) / rect.width : 1
         const scaleY = rect.height > 0 ? (height / v.z) / rect.height : 1
         return {
@@ -988,7 +1202,7 @@ export function JumapPage() {
         }
       })
     },
-    [PAN_MAX_X, PAN_MAX_Y, width, height, reframeAt],
+    [PAN_MAX_X, PAN_MAX_Y, width, height, reframeAt, scheduleView],
   )
 
   // +/− buttons zoom around the canvas centre.
@@ -1038,168 +1252,19 @@ export function JumapPage() {
           onWheel={onWheel}
           onClickCapture={onClickCapture}
         >
-          <defs>
-            {GENRES.map((g) => (
-              <radialGradient
-                key={g.key}
-                id={`bubble-${g.key}`}
-                cx="32%"
-                cy="28%"
-                r="85%"
-              >
-                <stop offset="0%"   stopColor="#ffffff" stopOpacity="0.85" />
-                <stop offset="35%"  stopColor={g.color} stopOpacity="0.5" />
-                <stop offset="75%"  stopColor={g.color} stopOpacity="0.32" />
-                <stop offset="100%" stopColor={g.color} stopOpacity="0.18" />
-              </radialGradient>
-            ))}
-            <radialGradient id="bubble-highlight" cx="32%" cy="22%" r="36%">
-              <stop offset="0%"  stopColor="#ffffff" stopOpacity="0.95" />
-              <stop offset="60%" stopColor="#ffffff" stopOpacity="0.25" />
-              <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
-            </radialGradient>
-            <radialGradient id="bubble-glow" cx="70%" cy="80%" r="40%">
-              <stop offset="0%"   stopColor="#ffffff" stopOpacity="0.5" />
-              <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
-            </radialGradient>
-            <linearGradient id="bond-grad" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%"   stopColor="#b03434" stopOpacity="0.65" />
-              <stop offset="100%" stopColor="#205493" stopOpacity="0.65" />
-            </linearGradient>
-            {/* Per-artist orbit halo gradients — solid core, soft falloff
-                at the rim so the disk fades into the canvas instead of
-                showing a hard edge against the territory blob below. */}
-            {orbits.map((o) => (
-              <radialGradient key={o.id} id={o.id} cx="50%" cy="50%" r="50%">
-                <stop offset="0%"  stopColor={o.color} stopOpacity="0.22" />
-                <stop offset="70%" stopColor={o.color} stopOpacity="0.13" />
-                <stop offset="100%" stopColor={o.color} stopOpacity="0" />
-              </radialGradient>
-            ))}
-            {/* Metaball goo filter — fuses individual circle footprints inside
-                a single <g> into one organic blob with crisp soft edges. */}
-            <filter id="jumap-goo" x="-15%" y="-15%" width="130%" height="130%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="blur" />
-              <feColorMatrix
-                in="blur"
-                mode="matrix"
-                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 26 -12"
-                result="goo"
-              />
-              <feBlend in="SourceGraphic" in2="goo" />
-            </filter>
-          </defs>
-          {/* Genre territories — drawn first, so bonds + bubbles render on top.
-              Each genre is its own goo group so it fuses internally but blends
-              with neighbouring genres via mix-blend-mode. */}
-          <g className="jumap-territories" aria-hidden="true">
-            {territories.map((t) => (
-              <g
-                key={t.key}
-                className="jumap-territory"
-                filter="url(#jumap-goo)"
-                style={{ ['--genre-tint' as string]: t.color }}
-              >
-                {t.blobs.map((b, i) => (
-                  <circle
-                    key={i}
-                    cx={b.cx}
-                    cy={b.cy}
-                    r={b.r}
-                    fill={t.color}
-                    fillOpacity={b.primary ? 0.32 : 0.18}
-                  />
-                ))}
-              </g>
-            ))}
-          </g>
-          <g className="jumap-territory-labels" aria-hidden="true">
-            {territories.map((t) => (
-              <text
-                key={t.key}
-                className="jumap-territory-label"
-                x={t.labelX}
-                y={t.labelY}
-                fill={t.color}
-                textAnchor="middle"
-              >
-                {t.label}
-              </text>
-            ))}
-          </g>
-          {/* Per-artist orbit halos — soft tinted disk underneath the
-              moons so songs visibly belong to their planet. Sits above
-              the genre territory but below bonds + bubbles. */}
-          <g className="jumap-orbits" aria-hidden="true">
-            {orbits.map((o) => {
-              const dim = focus !== null && focus !== o.name &&
-                !(focus.startsWith(o.name + '|'))
-              return (
-                <circle
-                  key={o.id}
-                  cx={o.cx}
-                  cy={o.cy}
-                  r={o.r}
-                  fill={`url(#${o.id})`}
-                  opacity={dim ? 0.4 : 1}
-                  style={{ transition: 'opacity 0.25s' }}
-                />
-              )
-            })}
-          </g>
-          {/* Connective bonds — drawn first so bubbles sit on top */}
-          <g className="jumap-bonds">
-            {bonds.map((b, i) => {
-              const active = focusedBond(b)
-              const dim = focus !== null && !active
-              return (
-                <line
-                  key={`${b.from}|${b.to}`}
-                  className={'jumap-bond' + (active ? ' jumap-bond-active' : '')}
-                  x1={b.x1}
-                  y1={b.y1}
-                  x2={b.x2}
-                  y2={b.y2}
-                  stroke={active ? 'url(#bond-grad)' : 'currentColor'}
-                  strokeOpacity={dim ? 0.05 : b.intensity * (active ? 1.4 : 1)}
-                  strokeWidth={active ? 1.6 : 0.9}
-                  style={{
-                    ['--bond-i' as string]: i,
-                  }}
-                />
-              )
-            })}
-          </g>
-          {placed.map((a) => (
-            <ArtistBubble
-              key={a.name}
-              a={a}
-              focus={focus}
-              onFocus={setFocus}
-            />
-          ))}
-          {songsPlaced.map((s) => (
-            <SongBubble
-              key={s.id}
-              s={s}
-              focus={focus}
-              onFocus={setFocus}
-              onOpen={setOpenSong}
-              onRipple={addRipple}
-            />
-          ))}
-          {ripples.map((rp) => (
-            <circle
-              key={rp.id}
-              className="jumap-ripple"
-              cx={rp.cx}
-              cy={rp.cy}
-              r={rp.r}
-              fill="none"
-              stroke="rgba(0,0,0,0.18)"
-              strokeWidth={2}
-            />
-          ))}
+          <JumapSvgInner
+            artistsPlaced={artistsPlaced}
+            songsPlaced={songsPlaced}
+            territories={territories}
+            orbits={orbits}
+            bonds={bonds}
+            focus={focus}
+            openSong={openSong}
+            ripples={ripples}
+            setFocus={setFocus}
+            setOpenSong={setOpenSong}
+            addRipple={addRipple}
+          />
         </svg>
 
         <div className="jumap-zoom-controls" aria-label="Zoom controls">
