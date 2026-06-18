@@ -378,13 +378,22 @@ function ArtistBubble({
   )
 }
 
-function Stars({ tier }: { tier: number }) {
+function Stars({ tier, subTier = 0 }: { tier: number; subTier?: number }) {
   const filled = 6 - tier            // T1 → 5 ★, T5 → 1 ★
   const empty = 5 - filled
+  const sub = Math.max(0, Math.min(3, subTier))
   return (
-    <span className="jumap-modal-song-stars" aria-label={`Tier ${tier}`}>
+    <span
+      className="jumap-modal-song-stars"
+      aria-label={`Tier ${tier}${sub > 0 ? `+${sub}` : ''}`}
+    >
       {'★'.repeat(filled)}
       <span className="jumap-modal-song-stars-empty">{'★'.repeat(empty)}</span>
+      {sub > 0 && (
+        <span className="jumap-modal-song-substars" aria-hidden="true">
+          {'★'.repeat(sub)}
+        </span>
+      )}
     </span>
   )
 }
@@ -403,7 +412,7 @@ function SongRow({ artist, song }: { artist: string; song: Song }) {
         )}
         <div className="jumap-modal-song-row">
           <TierBadge tier={song.tier} />
-          <Stars tier={song.tier} />
+          <Stars tier={song.tier} subTier={song.subTier} />
           {song.year && <span className="jumap-modal-song-year">{song.year}</span>}
         </div>
       </div>
@@ -448,7 +457,10 @@ function ArtistModal({ artist, onClose }: { artist: Artist; onClose: () => void 
 
   const primary = genreFor(artistPrimaryGenre(artist))
   const sorted = [...artist.songs].sort(
-    (a, b) => a.tier - b.tier || a.title.localeCompare(b.title),
+    (a, b) =>
+      a.tier - b.tier ||
+      (b.subTier ?? 0) - (a.subTier ?? 0) ||
+      a.title.localeCompare(b.title),
   )
 
   return (

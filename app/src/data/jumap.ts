@@ -6,9 +6,17 @@
 export type Tier = 1 | 2 | 3 | 4 | 5
 export const TIERS: Tier[] = [1, 2, 3, 4, 5]
 
+/** Within a tier, finer 4-step ranking — 0 = tier base, +3 = top of tier.
+ *  Rendered as 0–3 small accent stars trailing the main tier stars. */
+export type SubTier = 0 | 1 | 2 | 3
+export const SUB_TIER_MAX = 3 as const
+
 export interface Song {
   title: string
   tier: Tier
+  /** 0–3, finer position inside the tier (0 = tier base, 3 = top).
+   *  Defaults to 0 when omitted, so existing entries keep their look. */
+  subTier?: SubTier
   // Each song can be tagged with one or more genres. The first one wins for
   // overall artist placement when the artist has no explicit primary genre.
   genres: string[]

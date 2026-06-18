@@ -1970,6 +1970,15 @@ html[data-theme="dark"] .jumap-modal {
   user-select: none;
 }
 .jumap-modal-song-stars-empty { color: color-mix(in srgb, #f6b73c 28%, transparent); }
+/* Sub-tier accent stars — smaller, same warm tone, with a slim left gap
+   so they read as "+ N" rather than continuing the main tier row. */
+.jumap-modal-song-substars {
+  margin-left: 6px;
+  font-size: 0.68em;
+  letter-spacing: 1.4px;
+  color: #f6b73c;
+  vertical-align: 0.18em;
+}
 .jumap-modal-song-tier-chip {
   font-family: var(--font-sans);
   font-size: 0.7rem;
