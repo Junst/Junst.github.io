@@ -139,6 +139,18 @@ function computeTerritories(placed: PlacedArtist[]): Territory[] {
   return out
 }
 
+// Predict the orbit reach an artist will need given just its tier and song
+// count — used by `place` to set orbitR BEFORE songs are laid out, so the
+// artist-only force pass has a real radius to enforce gaps against.
+function estimateOrbitR(a: Artist): number {
+  if (a.songs.length === 0) return bubbleRadius(a)
+  const r = bubbleRadius(a)
+  const lastI = a.songs.length - 1
+  const orbitR = r + 32 + Math.sqrt(lastI + 0.5) * 40
+  // The biggest song moon is a T1 = 22 viewBox px.
+  return orbitR + 22 + 18
+}
+
 function place(items: Artist[], width: number, height: number): PlacedArtist[] {
   const groups = groupArtistsByGenre(items)
   const primaryGenres = GENRES.filter((g) => groups.has(g.key))
@@ -200,8 +212,9 @@ function place(items: Artist[], width: number, height: number): PlacedArtist[] {
         cx: c.x + pullX + Math.cos(angle) * localRadius,
         cy: c.y + pullY + Math.sin(angle) * localRadius,
         r,
-        // Initial estimate — refined by placeSongsAround once songs land.
-        orbitR: r,
+        // Predicted orbit reach so the artist-only force pass has something
+        // to enforce against. placeSongsAround refines this later.
+        orbitR: estimateOrbitR(a),
         driftDelay: -(sd * 12),                  // 0..-12s offset
         driftDuration: 8 + (sd * 6),             // 8..14s loop
       })
@@ -267,7 +280,9 @@ function placeSongsAround(artists: PlacedArtist[]): PlacedSong[] {
 function forceLayoutNodes(
   nodes: PlacedNode[],
   iterations: number = 800,
+  options: { freezeArtists?: boolean } = {},
 ): void {
+  const { freezeArtists = false } = options
   const n = nodes.length
   if (n < 2) return
   const anchorX = nodes.map((it) => it.cx)
@@ -346,6 +361,9 @@ function forceLayoutNodes(
       if (s > maxSpeed) maxSpeed = s
     }
     for (let i = 0; i < n; i++) {
+      // When the second pass is settling songs around fixed artists, skip
+      // updating artist positions so they stay where pass 1 put them.
+      if (freezeArtists && nodes[i].kind === 'artist') continue
       nodes[i].cx += vx[i]
       nodes[i].cy += vy[i]
     }
@@ -902,9 +920,19 @@ export function JumapPage() {
   // bubbles together so song moons drift to the orbit boundary between
   // featured artists, and no two bubbles overlap.
   const { artistsPlaced, songsPlaced } = useMemo(() => {
+    // Two-pass layout:
+    //   (1) Place artists from genre rings + phyllotaxis, then run the force
+    //       sim on just the artists with their *predicted* orbit radii so
+    //       gaps are enforced before any songs are committed to positions.
+    //   (2) Lay songs out around the now-settled artists, then run the sim
+    //       again with artists frozen — songs anchor to their primary
+    //       planet's actual final position, so a small-orbit artist (e.g.
+    //       ILLIT) doesn't end up with its songs marooned next to a bigger
+    //       neighbour like NewJeans.
     const a = place(artists, width, height)
+    forceLayoutNodes(a, 700)
     const s = placeSongsAround(a)
-    forceLayoutNodes([...a, ...s], 900)
+    forceLayoutNodes([...a, ...s], 500, { freezeArtists: true })
     return { artistsPlaced: a, songsPlaced: s }
   }, [])
   const territories = useMemo(() => computeTerritories(artistsPlaced), [artistsPlaced])
@@ -1196,14 +1224,30 @@ export function JumapPage() {
         if (!p1 || !p2) return
         const dist = Math.hypot(p2.x - p1.x, p2.y - p1.y)
         if (dist < 1) return
-        const targetZ = pr.startZoom * (dist / pr.startDist)
-        commitView(() => reframeAt(
-          { x: pr.baseX, y: pr.baseY, z: pr.startZoom },
-          pr.midX,
-          pr.midY,
-          pr.rect,
-          targetZ,
-        ))
+        const targetZ = clamp(
+          pr.startZoom * (dist / pr.startDist),
+          MIN_ZOOM,
+          MAX_ZOOM,
+        )
+        // Find the content point that was under the start midpoint, and
+        // re-pan so that point lands under the CURRENT midpoint at the
+        // new zoom. So the canvas tracks the fingers naturally — moving
+        // the midpoint pans, spreading/pinching scales. Both at once.
+        const startRx = (pr.midX - pr.rect.left) / pr.rect.width
+        const startRy = (pr.midY - pr.rect.top) / pr.rect.height
+        const anchorX = pr.baseX + startRx * (width / pr.startZoom)
+        const anchorY = pr.baseY + startRy * (height / pr.startZoom)
+        const curMidX = (p1.x + p2.x) / 2
+        const curMidY = (p1.y + p2.y) / 2
+        const curRx = (curMidX - pr.rect.left) / pr.rect.width
+        const curRy = (curMidY - pr.rect.top) / pr.rect.height
+        const nx = anchorX - curRx * (width / targetZ)
+        const ny = anchorY - curRy * (height / targetZ)
+        commitView(() => ({
+          x: clamp(nx, -PAN_MAX_X, PAN_MAX_X),
+          y: clamp(ny, -PAN_MAX_Y, PAN_MAX_Y),
+          z: targetZ,
+        }))
         return
       }
 
