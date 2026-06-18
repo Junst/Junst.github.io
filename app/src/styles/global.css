@@ -2610,3 +2610,52 @@ html[data-theme="dark"] .subpage-home-bar { background: rgba(20, 20, 20, 0.78); 
 @media (min-width: 641px) {
   .juward-arashi-row { grid-template-columns: 220px 1fr 96px; }
 }
+
+/* === Route loading dots fallback === */
+.route-fallback {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  z-index: 1500;
+}
+.route-fallback-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: route-bounce 0.9s ease-in-out infinite;
+}
+.route-fallback-dot:nth-child(2) { animation-delay: 0.12s; }
+.route-fallback-dot:nth-child(3) { animation-delay: 0.24s; }
+@keyframes route-bounce {
+  0%, 100% { transform: translateY(0); opacity: 0.55; }
+  50%      { transform: translateY(-8px); opacity: 1; }
+}
+
+/* === Mobile perf: fewer blobs, lighter blur, fewer effects === */
+@media (max-width: 640px) {
+  .jumap-bg-blob.blob-3, .jumap-bg-blob.blob-4,
+  .juward-atmo-blob.blob-3 { display: none; }
+  .jumap-bg-blob, .juward-atmo-blob {
+    filter: blur(60px);     /* lighter than 80-95 */
+    opacity: 0.4;
+  }
+  .jumap-bubble {
+    animation: none;        /* skip per-bubble drift on phones */
+  }
+  .jumap-bubble > circle:nth-of-type(1) {
+    animation: none;        /* skip pulse */
+  }
+  .jumap-bond {
+    animation-duration: 0.6s;  /* faster draw-in so users don't wait */
+  }
+  .subpage-home-bar { backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--bg); }
+  .jumap-back, .jumap-legend, .jumap-detail {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .jumap-legend, .jumap-detail { background: var(--bg); }
+}
