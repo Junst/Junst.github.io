@@ -7,7 +7,6 @@ import {
   bestTier,
   genreFor,
   groupArtistsByGenre,
-  presentGenres,
   artistPrimaryGenre,
   artistGenres,
   sortArtists,
@@ -36,6 +35,67 @@ function seed(name: string): number {
 }
 
 interface Bond { from: string; to: string; x1: number; y1: number; x2: number; y2: number; intensity: number }
+
+interface Territory {
+  key: string
+  color: string
+  label: string
+  // Per-bubble footprints — the SVG goo filter will fuse them into one
+  // organic blob per genre.
+  blobs: { cx: number; cy: number; r: number; primary: boolean }[]
+  // Floating label position (above the cluster, x at centroid).
+  labelX: number
+  labelY: number
+}
+
+// Each genre gets a soft territory drawn behind the bubbles. Footprints for
+// the secondary genres are added at a smaller radius, so when an artist
+// spans two genres the two coloured blobs cross each other freely instead
+// of being walled off — that's the "shapes break out of genre" feel.
+function computeTerritories(placed: PlacedArtist[]): Territory[] {
+  const byGenre = new Map<string, PlacedArtist[]>()
+  const secByGenre = new Map<string, PlacedArtist[]>()
+  for (const a of placed) {
+    const primary = artistPrimaryGenre(a)
+    if (!byGenre.has(primary)) byGenre.set(primary, [])
+    byGenre.get(primary)!.push(a)
+    const secondaries = artistGenres(a).filter((g) => g !== primary)
+    for (const s of secondaries) {
+      if (!secByGenre.has(s)) secByGenre.set(s, [])
+      secByGenre.get(s)!.push(a)
+    }
+  }
+
+  const out: Territory[] = []
+  const allKeys = new Set<string>([...byGenre.keys(), ...secByGenre.keys()])
+  for (const key of allKeys) {
+    const spec = genreFor(key)
+    if (!spec) continue
+    const primaries = byGenre.get(key) ?? []
+    const secondaries = secByGenre.get(key) ?? []
+    const blobs = [
+      ...primaries.map((m) => ({ cx: m.cx, cy: m.cy, r: m.r * 2.2 + 22, primary: true })),
+      ...secondaries.map((m) => ({ cx: m.cx, cy: m.cy, r: m.r * 1.5 + 12, primary: false })),
+    ]
+    // Label anchor: above the topmost primary bubble (fall back to topmost
+    // secondary if there are no primary holders for this genre).
+    const anchorPool = primaries.length > 0 ? primaries : secondaries
+    let topY = Infinity
+    let topX = 0
+    for (const m of anchorPool) {
+      if (m.cy - m.r < topY) { topY = m.cy - m.r; topX = m.cx }
+    }
+    out.push({
+      key,
+      color: spec.color,
+      label: spec.label,
+      blobs,
+      labelX: topX,
+      labelY: Math.max(28, topY - 16),
+    })
+  }
+  return out
+}
 
 function computeBonds(placed: PlacedArtist[]): Bond[] {
   const bonds: Bond[] = []
@@ -409,6 +469,7 @@ export function JumapPage() {
     return p
   }, [])
   const bonds = useMemo(() => computeBonds(placed), [placed])
+  const territories = useMemo(() => computeTerritories(placed), [placed])
   const focusedBond = (b: Bond) => focus === b.from || focus === b.to
 
   function addRipple(r: Ripple) {
@@ -418,102 +479,240 @@ export function JumapPage() {
     }, 900)
   }
 
-  // --- Pan / drag / wheel on the SVG stage ------------------------------------
-  // The SVG keeps its fixed virtual canvas (`width` × `height`) but we slide
-  // it underneath the viewport via the viewBox origin (`vx`, `vy`). We also
-  // suppress an in-progress drag from registering as a bubble click so users
-  // can pan over a bubble without accidentally opening its modal.
+  // --- Pan / zoom on the SVG stage --------------------------------------------
+  // The SVG keeps its virtual `width` × `height` canvas. The viewBox window
+  // into it is shifted by (`view.x`, `view.y`) and shrunk/grown by `view.z`
+  // (z>1 = zoomed in, z<1 = zoomed out). We support:
+  //   • Mouse drag / single-finger touch  → pan
+  //   • Plain mouse wheel / two-finger scroll → pan
+  //   • Ctrl|⌘ + wheel  (also the synthetic ctrl-wheel browsers emit for
+  //     trackpad pinch)                  → zoom around cursor
+  //   • Two-finger pinch on touch        → zoom around mid-point
+  //   • +/− buttons                      → zoom around canvas centre
+  //
+  // Drag-vs-click is disambiguated with a small movement threshold; a
+  // pan that crosses it suppresses the synthesised click on pointerup
+  // so bubbles don't open when you were just sliding the canvas.
   const PAN_MAX_X = Math.round(width * 0.55)
   const PAN_MAX_Y = Math.round(height * 0.55)
+  const MIN_ZOOM = 0.5
+  const MAX_ZOOM = 3
   const clamp = (n: number, lo: number, hi: number) =>
     n < lo ? lo : n > hi ? hi : n
-  const [pan, setPan] = useState({ x: 0, y: 0 })
+
+  const [view, setView] = useState<{ x: number; y: number; z: number }>({
+    x: 0,
+    y: 0,
+    z: 1,
+  })
   const svgRef = useRef<SVGSVGElement | null>(null)
+  // All active pointers currently down on the SVG. 1 = drag, 2 = pinch.
+  const pointersRef = useRef<Map<number, { x: number; y: number }>>(new Map())
   const dragRef = useRef<
+    | { pointerId: number; startX: number; startY: number; baseX: number; baseY: number; moved: boolean }
+    | null
+  >(null)
+  const pinchRef = useRef<
     | {
-        pointerId: number
-        startX: number
-        startY: number
+        id1: number
+        id2: number
+        startDist: number
+        startZoom: number
+        // Midpoint of the two fingers when the pinch started (client px).
+        midX: number
+        midY: number
         baseX: number
         baseY: number
-        moved: boolean
-        // Maps a client-pixel delta back into viewBox units.
-        scale: number
+        rect: DOMRect
       }
     | null
   >(null)
   const [grabbing, setGrabbing] = useState(false)
-  // Latches true once the pointer moves beyond a small threshold during a
-  // drag, and stays true until the next pointerdown — so the click event
-  // that fires on pointerup can be swallowed.
+  // Latches true once movement crosses the click/drag threshold so the
+  // subsequent click event can be swallowed.
   const draggedRef = useRef(false)
+
+  // Reframe the viewBox so a given client-space point keeps mapping to the
+  // same content point as zoom changes. Pure function over a `view` value.
+  const reframeAt = useCallback(
+    (
+      prev: { x: number; y: number; z: number },
+      clientX: number,
+      clientY: number,
+      rect: { left: number; top: number; width: number; height: number },
+      targetZ: number,
+    ) => {
+      if (rect.width === 0 || rect.height === 0) return prev
+      const z = clamp(targetZ, MIN_ZOOM, MAX_ZOOM)
+      const rx = (clientX - rect.left) / rect.width
+      const ry = (clientY - rect.top) / rect.height
+      const vbX = prev.x + rx * (width / prev.z)
+      const vbY = prev.y + ry * (height / prev.z)
+      return {
+        x: clamp(vbX - rx * (width / z), -PAN_MAX_X, PAN_MAX_X),
+        y: clamp(vbY - ry * (height / z), -PAN_MAX_Y, PAN_MAX_Y),
+        z,
+      }
+    },
+    [PAN_MAX_X, PAN_MAX_Y, width, height],
+  )
 
   const onPointerDown = useCallback(
     (e: React.PointerEvent<SVGSVGElement>) => {
-      // Only react to primary button / touch / pen contacts.
       if (e.button !== 0 && e.pointerType === 'mouse') return
-      const rect = e.currentTarget.getBoundingClientRect()
-      // 1 client pixel == (width / rect.width) viewBox units.
-      const scale = rect.width > 0 ? width / rect.width : 1
-      dragRef.current = {
-        pointerId: e.pointerId,
-        startX: e.clientX,
-        startY: e.clientY,
-        baseX: pan.x,
-        baseY: pan.y,
-        moved: false,
-        scale,
+      pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY })
+      try { e.currentTarget.setPointerCapture(e.pointerId) } catch { /* noop */ }
+
+      if (pointersRef.current.size === 1) {
+        dragRef.current = {
+          pointerId: e.pointerId,
+          startX: e.clientX,
+          startY: e.clientY,
+          baseX: view.x,
+          baseY: view.y,
+          moved: false,
+        }
+        draggedRef.current = false
+        setGrabbing(true)
+      } else if (pointersRef.current.size === 2) {
+        // Promote to pinch. Drop the drag so the same finger can't
+        // pan-then-jump when pinch ends.
+        const ids = Array.from(pointersRef.current.keys())
+        const p1 = pointersRef.current.get(ids[0])!
+        const p2 = pointersRef.current.get(ids[1])!
+        const dist = Math.hypot(p2.x - p1.x, p2.y - p1.y)
+        pinchRef.current = {
+          id1: ids[0],
+          id2: ids[1],
+          startDist: Math.max(dist, 1),
+          startZoom: view.z,
+          midX: (p1.x + p2.x) / 2,
+          midY: (p1.y + p2.y) / 2,
+          baseX: view.x,
+          baseY: view.y,
+          rect: e.currentTarget.getBoundingClientRect(),
+        }
+        dragRef.current = null
+        // Any tap after a pinch should not open a bubble.
+        draggedRef.current = true
+        setGrabbing(false)
       }
-      draggedRef.current = false
-      try {
-        e.currentTarget.setPointerCapture(e.pointerId)
-      } catch { /* old browsers */ }
-      setGrabbing(true)
     },
-    [pan.x, pan.y, width],
+    [view.x, view.y, view.z],
   )
 
-  const onPointerMove = useCallback((e: React.PointerEvent<SVGSVGElement>) => {
-    const d = dragRef.current
-    if (!d || d.pointerId !== e.pointerId) return
-    const dx = (e.clientX - d.startX) * d.scale
-    const dy = (e.clientY - d.startY) * d.scale
-    if (!d.moved && Math.hypot(dx, dy) > 4) {
-      d.moved = true
-      draggedRef.current = true
-    }
-    // Drag direction: pulling the canvas to the right (dx > 0) reveals
-    // content on the left, i.e. viewBox origin shifts left (vx decreases).
-    setPan({
-      x: clamp(d.baseX - dx, -PAN_MAX_X, PAN_MAX_X),
-      y: clamp(d.baseY - dy, -PAN_MAX_Y, PAN_MAX_Y),
-    })
-  }, [PAN_MAX_X, PAN_MAX_Y])
+  const onPointerMove = useCallback(
+    (e: React.PointerEvent<SVGSVGElement>) => {
+      if (!pointersRef.current.has(e.pointerId)) return
+      pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY })
 
-  const endDrag = useCallback((e: React.PointerEvent<SVGSVGElement>) => {
-    const d = dragRef.current
-    if (!d || d.pointerId !== e.pointerId) return
-    dragRef.current = null
-    setGrabbing(false)
-    try {
-      e.currentTarget.releasePointerCapture(e.pointerId)
-    } catch { /* noop */ }
+      const pr = pinchRef.current
+      if (pr) {
+        const p1 = pointersRef.current.get(pr.id1)
+        const p2 = pointersRef.current.get(pr.id2)
+        if (!p1 || !p2) return
+        const dist = Math.hypot(p2.x - p1.x, p2.y - p1.y)
+        if (dist < 1) return
+        const targetZ = pr.startZoom * (dist / pr.startDist)
+        setView(() => reframeAt(
+          { x: pr.baseX, y: pr.baseY, z: pr.startZoom },
+          pr.midX,
+          pr.midY,
+          pr.rect,
+          targetZ,
+        ))
+        return
+      }
+
+      const d = dragRef.current
+      if (!d || d.pointerId !== e.pointerId) return
+      const rect = e.currentTarget.getBoundingClientRect()
+      const dxClient = e.clientX - d.startX
+      const dyClient = e.clientY - d.startY
+      if (!d.moved && Math.hypot(dxClient, dyClient) > 4) {
+        d.moved = true
+        draggedRef.current = true
+      }
+      setView((v) => {
+        const scaleX = rect.width > 0 ? (width / v.z) / rect.width : 1
+        const scaleY = rect.height > 0 ? (height / v.z) / rect.height : 1
+        return {
+          x: clamp(d.baseX - dxClient * scaleX, -PAN_MAX_X, PAN_MAX_X),
+          y: clamp(d.baseY - dyClient * scaleY, -PAN_MAX_Y, PAN_MAX_Y),
+          z: v.z,
+        }
+      })
+    },
+    [PAN_MAX_X, PAN_MAX_Y, width, height, reframeAt],
+  )
+
+  const endPointer = useCallback((e: React.PointerEvent<SVGSVGElement>) => {
+    pointersRef.current.delete(e.pointerId)
+    const pr = pinchRef.current
+    if (pr && (pr.id1 === e.pointerId || pr.id2 === e.pointerId)) {
+      pinchRef.current = null
+      // Handoff back to single-finger pan with whoever is left.
+      const remaining = Array.from(pointersRef.current.entries())[0]
+      if (remaining) {
+        const [pid, pos] = remaining
+        setView((v) => {
+          dragRef.current = {
+            pointerId: pid,
+            startX: pos.x,
+            startY: pos.y,
+            baseX: v.x,
+            baseY: v.y,
+            moved: true,
+          }
+          return v
+        })
+        setGrabbing(true)
+      }
+    } else if (dragRef.current && dragRef.current.pointerId === e.pointerId) {
+      dragRef.current = null
+      setGrabbing(false)
+    }
+    try { e.currentTarget.releasePointerCapture(e.pointerId) } catch { /* noop */ }
   }, [])
 
   const onWheel = useCallback(
     (e: React.WheelEvent<SVGSVGElement>) => {
-      // Trackpad horizontal scroll → pan X; vertical wheel → pan Y.
       if (e.deltaX === 0 && e.deltaY === 0) return
       e.preventDefault()
+      // Browsers surface trackpad pinch as a wheel event with ctrlKey set.
+      if (e.ctrlKey || e.metaKey) {
+        const factor = Math.exp(-e.deltaY * 0.0015)
+        const rect = e.currentTarget.getBoundingClientRect()
+        setView((v) => reframeAt(v, e.clientX, e.clientY, rect, v.z * factor))
+        return
+      }
       const rect = e.currentTarget.getBoundingClientRect()
-      const scale = rect.width > 0 ? width / rect.width : 1
-      setPan((p) => ({
-        x: clamp(p.x + e.deltaX * scale, -PAN_MAX_X, PAN_MAX_X),
-        y: clamp(p.y + e.deltaY * scale, -PAN_MAX_Y, PAN_MAX_Y),
-      }))
+      setView((v) => {
+        const scaleX = rect.width > 0 ? (width / v.z) / rect.width : 1
+        const scaleY = rect.height > 0 ? (height / v.z) / rect.height : 1
+        return {
+          x: clamp(v.x + e.deltaX * scaleX, -PAN_MAX_X, PAN_MAX_X),
+          y: clamp(v.y + e.deltaY * scaleY, -PAN_MAX_Y, PAN_MAX_Y),
+          z: v.z,
+        }
+      })
     },
-    [PAN_MAX_X, PAN_MAX_Y, width],
+    [PAN_MAX_X, PAN_MAX_Y, width, height, reframeAt],
   )
+
+  // +/− buttons zoom around the canvas centre.
+  const zoomBy = useCallback((factor: number) => {
+    const svg = svgRef.current
+    if (!svg) return
+    const rect = svg.getBoundingClientRect()
+    const cx = rect.left + rect.width / 2
+    const cy = rect.top + rect.height / 2
+    setView((v) => reframeAt(v, cx, cy, rect, v.z * factor))
+  }, [reframeAt])
+
+  const resetView = useCallback(() => {
+    setView({ x: 0, y: 0, z: 1 })
+  }, [])
 
   // Block the synthesized click that follows a drag so bubbles don't open.
   const onClickCapture = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
@@ -537,14 +736,14 @@ export function JumapPage() {
       <div className="jumap-stage jumap-stage-full">
         <svg
           ref={svgRef}
-          viewBox={`${pan.x} ${pan.y} ${width} ${height}`}
+          viewBox={`${view.x} ${view.y} ${width / view.z} ${height / view.z}`}
           className={'jumap-svg jumap-svg-pannable' + (grabbing ? ' is-grabbing' : '')}
           preserveAspectRatio="xMidYMid meet"
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
-          onPointerUp={endDrag}
-          onPointerCancel={endDrag}
-          onPointerLeave={endDrag}
+          onPointerUp={endPointer}
+          onPointerCancel={endPointer}
+          onPointerLeave={endPointer}
           onWheel={onWheel}
           onClickCapture={onClickCapture}
         >
@@ -576,7 +775,57 @@ export function JumapPage() {
               <stop offset="0%"   stopColor="#b03434" stopOpacity="0.65" />
               <stop offset="100%" stopColor="#205493" stopOpacity="0.65" />
             </linearGradient>
+            {/* Metaball goo filter — fuses individual circle footprints inside
+                a single <g> into one organic blob with crisp soft edges. */}
+            <filter id="jumap-goo" x="-15%" y="-15%" width="130%" height="130%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="14" result="blur" />
+              <feColorMatrix
+                in="blur"
+                mode="matrix"
+                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -10"
+                result="goo"
+              />
+              <feBlend in="SourceGraphic" in2="goo" />
+            </filter>
           </defs>
+          {/* Genre territories — drawn first, so bonds + bubbles render on top.
+              Each genre is its own goo group so it fuses internally but blends
+              with neighbouring genres via mix-blend-mode. */}
+          <g className="jumap-territories" aria-hidden="true">
+            {territories.map((t) => (
+              <g
+                key={t.key}
+                className="jumap-territory"
+                filter="url(#jumap-goo)"
+                style={{ ['--genre-tint' as string]: t.color }}
+              >
+                {t.blobs.map((b, i) => (
+                  <circle
+                    key={i}
+                    cx={b.cx}
+                    cy={b.cy}
+                    r={b.r}
+                    fill={t.color}
+                    fillOpacity={b.primary ? 0.32 : 0.18}
+                  />
+                ))}
+              </g>
+            ))}
+          </g>
+          <g className="jumap-territory-labels" aria-hidden="true">
+            {territories.map((t) => (
+              <text
+                key={t.key}
+                className="jumap-territory-label"
+                x={t.labelX}
+                y={t.labelY}
+                fill={t.color}
+                textAnchor="middle"
+              >
+                {t.label}
+              </text>
+            ))}
+          </g>
           {/* Connective bonds — drawn first so bubbles sit on top */}
           <g className="jumap-bonds">
             {bonds.map((b, i) => {
@@ -624,16 +873,33 @@ export function JumapPage() {
           ))}
         </svg>
 
-        <aside className="jumap-legend" aria-label="Genre legend">
-          <div className="jumap-legend-section">
-            <div className="jumap-legend-head">Genres</div>
-            {presentGenres(artists).map((g) => (
-              <div key={g.key} className="jumap-legend-row">
-                <span className="jumap-swatch" style={{ background: g.color }} />
-                <span className="jumap-legend-label">{g.label}</span>
-              </div>
-            ))}
-          </div>
+        <div className="jumap-zoom-controls" aria-label="Zoom controls">
+          <button
+            type="button"
+            className="jumap-zoom-btn"
+            onClick={() => zoomBy(1.25)}
+            disabled={view.z >= MAX_ZOOM - 1e-3}
+            aria-label="Zoom in"
+            title="Zoom in"
+          >+</button>
+          <button
+            type="button"
+            className="jumap-zoom-btn jumap-zoom-reset"
+            onClick={resetView}
+            aria-label="Reset view"
+            title="Reset view"
+          >{Math.round(view.z * 100)}%</button>
+          <button
+            type="button"
+            className="jumap-zoom-btn"
+            onClick={() => zoomBy(1 / 1.25)}
+            disabled={view.z <= MIN_ZOOM + 1e-3}
+            aria-label="Zoom out"
+            title="Zoom out"
+          >−</button>
+        </div>
+
+        <aside className="jumap-legend" aria-label="Tier legend">
           <div className="jumap-legend-section">
             <div className="jumap-legend-head">Tiers</div>
             {TIERS.map((t) => (
