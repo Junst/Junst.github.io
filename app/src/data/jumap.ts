@@ -53,6 +53,7 @@ export const GENRES: GenreSpec[] = [
   { key: 'jpop',    label: 'J-Pop',    color: '#ffd6e7' },
   { key: 'kpop',    label: 'K-Pop',    color: '#d6ecff' },
   { key: 'hiphop',  label: 'Hip-Hop',  color: '#ffe8c4' },
+  { key: 'khiphop', label: 'K-Hip-Hop', color: '#ffd9a8' },
   { key: 'rage',    label: 'Rage',     color: '#ffc4b8' },
   { key: 'anime',   label: 'Anime',    color: '#dcf5dc' },
   { key: 'rock',    label: 'Rock',     color: '#dcdcff' },
@@ -154,6 +155,10 @@ export const artists: Artist[] = [
       { title: 'Only Love',        tier: 1, subTier: 1, genres: ['jpop'] },
       { title: 'Turning Up',       tier: 1, subTier: 1, genres: ['jpop'] },
       { title: 'JAM',              tier: 1, subTier: 0, genres: ['jpop'] },
+      { title: 'Yes? No?',         tier: 1, subTier: 0, genres: ['jpop'] },
+      { title: '身長差のない恋人',  tier: 1, subTier: 2, genres: ['jpop'] },
+      { title: 'Crazy Moon~キミ・ハ・ムテキ~', tier: 2, subTier: 3, genres: ['jpop'] },
+      { title: 'BRAVE',            tier: 2, subTier: 2, genres: ['jpop'] },
       { title: 'Believe',          tier: 2, subTier: 0, genres: ['jpop'] },
       // year / album: please confirm
       { title: 'WISH',             tier: 3, subTier: 0, genres: ['jpop'] },
@@ -240,6 +245,7 @@ export const artists: Artist[] = [
     primaryGenre: 'hiphop',
     songs: [
       { title: 'Not Like Us', tier: 2, subTier: 0, genres: ['hiphop'], year: 2024 },
+      { title: 'HUMBLE.',     tier: 2, subTier: 0, genres: ['hiphop'], year: 2017, album: 'DAMN.' },
     ],
   },
   {
@@ -282,7 +288,29 @@ export const artists: Artist[] = [
     name: 'Sik-K',
     primaryGenre: 'hiphop',
     songs: [
-      { title: 'LOV3', tier: 1, subTier: 2, genres: ['hiphop'] },
+      { title: 'LOV3',        tier: 1, subTier: 2, genres: ['hiphop'] },
+      { title: 'OUTTA SPACE', tier: 3, subTier: 1, genres: ['hiphop'] },
+    ],
+  },
+  {
+    name: 'Ariana Grande',
+    primaryGenre: 'pop',
+    songs: [
+      { title: 'thank u, next', tier: 4, subTier: 2, genres: ['pop'], year: 2018, album: 'thank u, next' },
+    ],
+  },
+  {
+    name: 'Mrs. GREEN APPLE',
+    primaryGenre: 'jpop',
+    songs: [
+      { title: 'ライラック', tier: 3, subTier: 2, genres: ['jpop', 'rock'], year: 2024 },
+    ],
+  },
+  {
+    name: 'Beenzino',
+    primaryGenre: 'khiphop',
+    songs: [
+      { title: '990', tier: 2, subTier: 1, genres: ['khiphop'] },
     ],
   },
 ]
