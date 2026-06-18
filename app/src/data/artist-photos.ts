@@ -4,6 +4,8 @@
 
 export const ARTIST_PHOTOS: Record<string, string> = {
   "ARASHI": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/ARASHI_mengguncang_Jakarta%21_1m_5s.jpg/330px-ARASHI_mengguncang_Jakarta%21_1m_5s.jpg",
+  "aespa": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/241005_aespa_K-Link_Festival_%28cropped%29.jpg/330px-241005_aespa_K-Link_Festival_%28cropped%29.jpg",
+  "ILLIT": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Illit_in_January_2026.png/330px-Illit_in_January_2026.png",
   "Drake": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Drake_at_The_Carter_Effect_2017_%2836818935200%29_%28cropped%29.jpg/330px-Drake_at_The_Carter_Effect_2017_%2836818935200%29_%28cropped%29.jpg",
   "Travis Scott": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/2025-0120_Cole_Gahagan_Michael_Rubin_Travis_Scott_%28cropped%29.jpg/330px-2025-0120_Cole_Gahagan_Michael_Rubin_Travis_Scott_%28cropped%29.jpg",
   "Post Malone": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Post_Malone_July_2021_%28cropped%29.jpg/330px-Post_Malone_July_2021_%28cropped%29.jpg",
@@ -15,7 +17,6 @@ export const ARTIST_PHOTOS: Record<string, string> = {
   "Billie Eilish": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/BillieEilishO2140725-39_-_54665577407_%28cropped%29.jpg/330px-BillieEilishO2140725-39_-_54665577407_%28cropped%29.jpg",
   "Red Velvet": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/%EB%A0%88%EB%93%9C%EB%B2%A8%EB%B2%B3%28Red_Velvet%29_%EC%BC%80%EC%9D%B4%EC%BD%98_%EC%9E%AC%ED%8C%AC_2024_%EB%A0%88%EB%93%9C%EC%B9%B4%ED%8E%AB_KCON_JAPAN_2024_%281%29.jpg/330px-%EB%A0%88%EB%93%9C%EB%B2%A8%EB%B2%B3%28Red_Velvet%29_%EC%BC%80%EC%9D%B4%EC%BD%98_%EC%9E%AC%ED%8C%AC_2024_%EB%A0%88%EB%93%9C%EC%B9%B4%ED%8E%AB_KCON_JAPAN_2024_%281%29.jpg",
   "NewJeans": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/NewJeans_2023_MelonMusicAwards_composite.jpg/330px-NewJeans_2023_MelonMusicAwards_composite.jpg",
-  "ILLIT": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Illit_in_January_2026.png/330px-Illit_in_January_2026.png",
   "Buono!": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Buono%21_performing_at_Japan_Expo_2014.jpg/330px-Buono%21_performing_at_Japan_Expo_2014.jpg",
   "TVXQ": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/TVXQ_December_2023.jpg/330px-TVXQ_December_2023.jpg",
   "Perfume": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/A-chan%2C_Nocchi_%26_Kashiyuka_%28Perfume%29_%22We_Are_Perfume%22_at_Opening_Ceremony_of_the_28th_Tokyo_International_Film_Festival_%2822415969052%29.jpg/330px-A-chan%2C_Nocchi_%26_Kashiyuka_%28Perfume%29_%22We_Are_Perfume%22_at_Opening_Ceremony_of_the_28th_Tokyo_International_Film_Festival_%2822415969052%29.jpg",
@@ -26,7 +27,6 @@ export const ARTIST_PHOTOS: Record<string, string> = {
   "Naniwa Danshi": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Naniwa_Danshi.jpg/330px-Naniwa_Danshi.jpg",
   "Zico & Lilas": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/ZICO_Damiani_May_2024.jpg/330px-ZICO_Damiani_May_2024.jpg",
   "BOYNEXTDOOR": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/2026-01-16_BOYNEXTDOOR_at_Golden_Disc_Awards_05_%28cropped%29.png/330px-2026-01-16_BOYNEXTDOOR_at_Golden_Disc_Awards_05_%28cropped%29.png",
-  "aespa": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/241005_aespa_K-Link_Festival_%28cropped%29.jpg/330px-241005_aespa_K-Link_Festival_%28cropped%29.jpg",
   "Hearts2Hearts": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/260221_HEARTS2HEARTS_%40_2026_Fanmeeting_HEARTS2HOUSE.jpg/330px-260221_HEARTS2HEARTS_%40_2026_Fanmeeting_HEARTS2HOUSE.jpg",
   "Sik-K & Lil Moshpit": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Sik-K_2020.png/330px-Sik-K_2020.png",
   "Snow Man": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Snow_Man.jpg/330px-Snow_Man.jpg",

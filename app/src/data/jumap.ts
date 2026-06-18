@@ -12,7 +12,11 @@ export interface Song {
   // Each song can be tagged with one or more genres. The first one wins for
   // overall artist placement when the artist has no explicit primary genre.
   genres: string[]
+  /** Release year (single, EP, or album drop) — shown in the Jumap modal. */
   year?: number
+  /** Album / EP / single bundle this song was packaged in. Optional — a
+   *  song released only as a stand-alone digital single can omit it. */
+  album?: string
   note?: string  // optional review fragment
 }
 
@@ -134,16 +138,52 @@ export const artists: Artist[] = [
     name: 'ARASHI',
     primaryGenre: 'jpop',
     songs: [
-      { title: 'Love so sweet', tier: 1, genres: ['jpop'] },
-      { title: 'Five',          tier: 1, genres: ['jpop'] },
-      { title: 'JAM',           tier: 1, genres: ['jpop'] },
+      { title: 'Love so sweet',   tier: 1, genres: ['jpop'] },
+      { title: 'Five',            tier: 1, genres: ['jpop'] },
+      { title: 'JAM',             tier: 1, genres: ['jpop'] },
+      // year / album: please confirm
+      { title: 'Summer Splash!',  tier: 3, genres: ['jpop'] },
+      // year / album: please confirm
+      { title: 'Raise Your Hands', tier: 4, genres: ['jpop'] },
     ],
   },
   {
     name: 'King & Prince',
     primaryGenre: 'jpop',
     songs: [
-      { title: 'TraceTrace', tier: 1, genres: ['jpop'] },
+      { title: 'TraceTrace',  tier: 1, genres: ['jpop'] },
+      { title: 'HEART',       tier: 2, genres: ['jpop'], year: 2025 },
+      { title: 'koi-wazurai', tier: 3, genres: ['jpop'], year: 2020, album: 'L&' },
+    ],
+  },
+  {
+    name: 'Hey! Say! JUMP',
+    primaryGenre: 'jpop',
+    songs: [
+      // year / album: please confirm
+      { title: 'Muah Muah', tier: 2, genres: ['jpop'] },
+    ],
+  },
+  {
+    name: 'KAT-TUN',
+    primaryGenre: 'jpop',
+    songs: [
+      { title: 'Real Face', tier: 3, genres: ['jpop'], year: 2006, album: 'Best of KAT-TUN' },
+    ],
+  },
+  {
+    name: 'aespa',
+    primaryGenre: 'kpop',
+    songs: [
+      // 'WDA': please confirm the full title + year + album
+      { title: 'WDA', tier: 3, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: 'ILLIT',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: 'Magnetic', tier: 1, genres: ['kpop'], year: 2024, album: 'SUPER REAL ME' },
     ],
   },
   {

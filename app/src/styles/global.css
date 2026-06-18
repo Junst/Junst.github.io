@@ -1862,6 +1862,14 @@ html[data-theme="dark"] .jumap-modal {
   color: var(--text-soft);
 }
 .jumap-modal-song-year { color: var(--text-muted); }
+.jumap-modal-song-album {
+  font-family: var(--font-serif);
+  font-size: 0.82rem;
+  font-style: italic;
+  color: var(--text-soft);
+  margin-top: 2px;
+  letter-spacing: 0.01em;
+}
 .jumap-modal-song-note { font-style: italic; }
 
 @keyframes jumap-fade-in {

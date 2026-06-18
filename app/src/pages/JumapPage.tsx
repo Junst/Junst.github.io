@@ -398,6 +398,9 @@ function SongRow({ artist, song }: { artist: string; song: Song }) {
     >
       <div className="jumap-modal-song-head">
         <h3 className="jumap-modal-song-title">{song.title}</h3>
+        {song.album && (
+          <div className="jumap-modal-song-album">{song.album}</div>
+        )}
         <div className="jumap-modal-song-row">
           <TierBadge tier={song.tier} />
           <Stars tier={song.tier} />
