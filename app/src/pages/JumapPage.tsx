@@ -973,15 +973,59 @@ export function JumapPage() {
   // Drag-vs-click is disambiguated with a small movement threshold; a
   // pan that crosses it suppresses the synthesised click on pointerup
   // so bubbles don't open when you were just sliding the canvas.
-  // Wide pan envelope — about ±2× the virtual canvas in either axis so the
-  // user can drift far outside the now-larger territory cluster before
-  // hitting a wall.
-  const PAN_MAX_X = Math.round(width * 4)
-  const PAN_MAX_Y = Math.round(height * 4)
-  const MIN_ZOOM = 0.3
+  const MIN_ZOOM = 0.25
   const MAX_ZOOM = 4
   const clamp = (n: number, lo: number, hi: number) =>
     n < lo ? lo : n > hi ? hi : n
+
+  // Cluster bounding box (in viewBox coords) — used to set both the
+  // initial zoom (fit-to-content) and the pan envelope (no empty space).
+  const bbox = useMemo(() => {
+    let minX = Infinity, maxX = -Infinity
+    let minY = Infinity, maxY = -Infinity
+    for (const a of artistsPlaced) {
+      const r = a.orbitR
+      if (a.cx - r < minX) minX = a.cx - r
+      if (a.cx + r > maxX) maxX = a.cx + r
+      if (a.cy - r < minY) minY = a.cy - r
+      if (a.cy + r > maxY) maxY = a.cy + r
+    }
+    if (!isFinite(minX)) return { minX: 0, maxX: width, minY: 0, maxY: height }
+    return { minX, maxX, minY, maxY }
+  }, [artistsPlaced])
+
+  // Tight pan envelope hugged to the actual cluster (plus a small buffer)
+  // — so users don't end up dragging into empty space and thinking the
+  // map "barely moves". Each axis is symmetric around 0 (the canvas
+  // centre), since both edges need to reach the cluster.
+  const PAN_BUFFER = 140
+  const PAN_MAX_X = Math.max(
+    Math.abs(bbox.minX) + PAN_BUFFER,
+    bbox.maxX - width + PAN_BUFFER,
+    width * 0.3,
+  )
+  const PAN_MAX_Y = Math.max(
+    Math.abs(bbox.minY) + PAN_BUFFER,
+    bbox.maxY - height + PAN_BUFFER,
+    height * 0.3,
+  )
+
+  // Initial view auto-fits the whole cluster, so users land seeing every
+  // planet at once and only need to drag/zoom for detail.
+  const initialView = useMemo(() => {
+    const cw = bbox.maxX - bbox.minX + 160
+    const ch = bbox.maxY - bbox.minY + 160
+    const zX = width / cw
+    const zY = height / ch
+    const z = Math.max(MIN_ZOOM, Math.min(1, Math.min(zX, zY)))
+    const cx = (bbox.minX + bbox.maxX) / 2
+    const cy = (bbox.minY + bbox.maxY) / 2
+    return {
+      x: cx - (width / z) / 2,
+      y: cy - (height / z) / 2,
+      z,
+    }
+  }, [bbox])
 
   // The view (pan + zoom) is held in a ref as the source of truth, and the
   // SVG viewBox is updated imperatively from refs in the pointer handlers
@@ -989,11 +1033,7 @@ export function JumapPage() {
   // 60 fps interaction even on mobile, regardless of how many bubbles are
   // rendered. State is only used for UI bits that need to re-render (the
   // zoom-percentage label, button disabled states).
-  const [view, setView] = useState<{ x: number; y: number; z: number }>({
-    x: 0,
-    y: 0,
-    z: 1,
-  })
+  const [view, setView] = useState<{ x: number; y: number; z: number }>(initialView)
   const viewRef = useRef(view)
   const svgRef = useRef<SVGSVGElement | null>(null)
   const applyViewToDom = useCallback(() => {
@@ -1242,8 +1282,8 @@ export function JumapPage() {
   }, [commitView, reframeAt])
 
   const resetView = useCallback(() => {
-    commitView(() => ({ x: 0, y: 0, z: 1 }))
-  }, [commitView])
+    commitView(() => initialView)
+  }, [commitView, initialView])
 
   // Block the synthesized click that follows a drag so bubbles don't open.
   const onClickCapture = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
