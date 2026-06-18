@@ -2270,6 +2270,28 @@ html[data-theme="dark"] .jumap-tier {
   .jumap-bg-blob, .jumap-bubble { animation: none; }
 }
 
+/* --- Mobile / touch perf budget -------------------------------------------
+   Mobile GPUs choke on the decorative background (4 blurred blobs at
+   filter: blur(80px) all running an infinite drift), continuous bubble
+   pulses, and per-hover drop-shadow filters. Strip them all on small or
+   touch-primary devices — Jumap on a phone should be quiet and fast,
+   pan/zoom is the whole point. The desktop look stays untouched. */
+@media (max-width: 640px), (hover: none) and (pointer: coarse) {
+  /* The atmospheric background blobs are the single biggest paint cost
+     on mobile (huge Gaussian blur, repainted by their drift animation).
+     Drop them entirely — the page bg colour reads fine on its own. */
+  .jumap-bg { display: none; }
+  /* Kill every remaining continuous animation */
+  .jumap-bg-blob,
+  .jumap-bond,
+  .jumap-bond-active { animation: none; }
+  /* And the heavy hover effects — touch devices don't trigger them
+     reliably anyway, and the filter is expensive. */
+  .jumap-bubble:hover,
+  .jumap-bubble-song:hover circle,
+  .jumap-bubble-artist:hover circle { filter: none; }
+}
+
 /* === Jumap connective bonds (cell/chemistry vibe) === */
 .jumap-bonds { color: #5a5a5a; }
 html[data-theme="dark"] .jumap-bonds { color: #d6d6d6; }
@@ -2295,18 +2317,9 @@ html[data-theme="dark"] .jumap-bonds { color: #d6d6d6; }
   to   { stroke-dasharray: 6 8; stroke-dashoffset: -28; }
 }
 
-/* Bubble idle pulse — subtle scale (separate from drift) */
-.jumap-bubble > circle:nth-of-type(1) {
-  animation: bubble-pulse calc(var(--drift-duration, 10s) * 0.7) ease-in-out infinite alternate;
-  animation-delay: var(--drift-delay, 0s);
-  transform-box: fill-box;
-  transform-origin: center;
-}
-.jumap-bubble.focused > circle:nth-of-type(1) { animation: none; }
-@keyframes bubble-pulse {
-  0%   { filter: brightness(1) saturate(1); }
-  100% { filter: brightness(1.04) saturate(1.08); }
-}
+/* Bubble idle pulse removed — it ran a `filter: brightness/saturate`
+   animation on every single bubble, forcing the browser to repaint each
+   one every frame. Mobile (especially) couldn't keep up. */
 
 /* Modal entrance refinement */
 .jumap-modal {
