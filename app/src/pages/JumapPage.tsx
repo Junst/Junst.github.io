@@ -143,7 +143,7 @@ function place(items: Artist[], width: number, height: number): PlacedArtist[] {
     // Wider ring so distinct genres have visible breathing room between
     // their territories; cross-genre overlap still happens via the
     // secondary-genre pull below.
-    const ringR = Math.min(width, height) * 0.95
+    const ringR = Math.min(width, height) * 0.72
     primaryGenres.forEach((g, i) => {
       const angle = (i / primaryGenres.length) * Math.PI * 2 - Math.PI / 2
       centres[g.key] = {
@@ -153,16 +153,23 @@ function place(items: Artist[], width: number, height: number): PlacedArtist[] {
     })
   }
 
+  // Phyllotaxis (sunflower spiral): angle_i = i · golden_angle, radius
+  // grows with sqrt(i). Naturally produces a near-uniform packing for any
+  // cluster size without paired bubbles ever landing on top of each other.
+  const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5))
   for (const g of primaryGenres) {
     const c = centres[g.key]
     const cluster = sortArtists(groups.get(g.key) ?? [])
     cluster.forEach((a, i) => {
       const r = bubbleRadius(a)
       const sd = seed(a.name)
-      const seedAngle = sd * Math.PI * 2
+      // Per-cluster phase rotation derived from the first artist's seed so
+      // the spirals don't all point the same way.
+      const phase = seed(cluster[0].name) * Math.PI * 2
+      const angle = i * GOLDEN_ANGLE + phase
       const localRadius = cluster.length === 1
         ? 0
-        : Math.min(width, height) * 0.22 + i * 34
+        : Math.sqrt(i + 0.6) * 120
 
       // Pull toward the average of this artist's *secondary* genre centroids,
       // so cross-genre artists (e.g. Travis Scott rage+hiphop) sit between
@@ -174,11 +181,10 @@ function place(items: Artist[], width: number, height: number): PlacedArtist[] {
         let sx = 0, sy = 0
         for (const sk of secondaries) { sx += centres[sk].x; sy += centres[sk].y }
         sx /= secondaries.length; sy /= secondaries.length
-        pullX = (sx - c.x) * 0.32
-        pullY = (sy - c.y) * 0.32
+        pullX = (sx - c.x) * 0.30
+        pullY = (sy - c.y) * 0.30
       }
 
-      const angle = (i / Math.max(1, cluster.length)) * Math.PI * 2 + seedAngle
       out.push({
         ...a,
         cx: c.x + pullX + Math.cos(angle) * localRadius,
@@ -193,40 +199,64 @@ function place(items: Artist[], width: number, height: number): PlacedArtist[] {
   return out
 }
 
-// Push overlapping bubbles apart with a few quick relaxation passes so the
-// genre clusters breathe instead of stacking on top of each other.
-function relaxOverlaps(
+// Anchored force-directed layout: each bubble feels (1) a strong pairwise
+// repulsion from any neighbour that's too close, and (2) a gentle spring
+// pulling it back toward its initial spot. Iterating this to a steady state
+// gives an even spread that converges instead of leaving "stuck" pairs the
+// way pure pair-pushing can.
+function forceLayout(
   items: PlacedArtist[],
-  width: number,
-  height: number,
-  iterations = 80,
-  pad = 10,
+  iterations: number = 600,
 ): void {
-  for (let it = 0; it < iterations; it++) {
-    let moved = false
-    for (let i = 0; i < items.length; i++) {
-      for (let j = i + 1; j < items.length; j++) {
-        const a = items[i], b = items[j]
-        const dx = b.cx - a.cx, dy = b.cy - a.cy
+  const n = items.length
+  if (n < 2) return
+  const anchorX = items.map((it) => it.cx)
+  const anchorY = items.map((it) => it.cy)
+  const vx = new Array(n).fill(0)
+  const vy = new Array(n).fill(0)
+
+  // Minimum edge-to-edge gap between any two bubbles. Bigger = more breathing.
+  const MIN_GAP = 130
+  // How strongly each bubble wants to stay near its placed anchor (genre).
+  const ANCHOR_PULL = 0.022
+  // Velocity scaling — high enough to escape local crowding, low enough to
+  // not oscillate.
+  const STEP = 0.85
+  const DAMPING = 0.78
+
+  for (let k = 0; k < iterations; k++) {
+    let maxSpeed = 0
+    for (let i = 0; i < n; i++) {
+      let fx = 0
+      let fy = 0
+      const a = items[i]
+      for (let j = 0; j < n; j++) {
+        if (i === j) continue
+        const b = items[j]
+        const dx = a.cx - b.cx
+        const dy = a.cy - b.cy
         const dist = Math.sqrt(dx * dx + dy * dy) || 0.01
-        const minDist = a.r + b.r + pad
+        const minDist = a.r + b.r + MIN_GAP
         if (dist < minDist) {
-          const push = (minDist - dist) / 2
-          const ux = dx / dist, uy = dy / dist
-          a.cx -= ux * push
-          a.cy -= uy * push
-          b.cx += ux * push
-          b.cy += uy * push
-          moved = true
+          // Spring-like push proportional to overlap.
+          const push = (minDist - dist) * 0.55
+          fx += (dx / dist) * push
+          fy += (dy / dist) * push
         }
       }
+      fx += (anchorX[i] - a.cx) * ANCHOR_PULL
+      fy += (anchorY[i] - a.cy) * ANCHOR_PULL
+      vx[i] = (vx[i] + fx * STEP) * DAMPING
+      vy[i] = (vy[i] + fy * STEP) * DAMPING
+      const s = Math.abs(vx[i]) + Math.abs(vy[i])
+      if (s > maxSpeed) maxSpeed = s
     }
-    if (!moved) break
-  }
-  // Keep everything inside the viewbox so bubbles don't drift off-canvas.
-  for (const a of items) {
-    a.cx = Math.max(a.r + 6, Math.min(width - a.r - 6, a.cx))
-    a.cy = Math.max(a.r + 6, Math.min(height - a.r - 6, a.cy))
+    for (let i = 0; i < n; i++) {
+      items[i].cx += vx[i]
+      items[i].cy += vy[i]
+    }
+    // Early exit once everything has settled.
+    if (k > 80 && maxSpeed < 0.05) break
   }
 }
 
@@ -517,7 +547,7 @@ export function JumapPage() {
   const height = 640
   const placed = useMemo(() => {
     const p = place(artists, width, height)
-    relaxOverlaps(p, width, height, 300, 170)
+    forceLayout(p, 700)
     return p
   }, [])
   const bonds = useMemo(() => computeBonds(placed), [placed])
