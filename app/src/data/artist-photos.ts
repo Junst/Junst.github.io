@@ -11,6 +11,7 @@ export const ARTIST_PHOTOS: Record<string, string> = {
   "Kendrick Lamar": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/KendrickSZASPurs230725-144_%28cropped%29_desaturated.jpg/330px-KendrickSZASPurs230725-144_%28cropped%29_desaturated.jpg",
   "Masked Wolf": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/2022_Rock_im_Park_-_Masked_Wolf_-_by_2eight_-_9SC5331.jpg/330px-2022_Rock_im_Park_-_Masked_Wolf_-_by_2eight_-_9SC5331.jpg",
   "Travis Scott": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/2025-0120_Cole_Gahagan_Michael_Rubin_Travis_Scott_%28cropped%29.jpg/330px-2025-0120_Cole_Gahagan_Michael_Rubin_Travis_Scott_%28cropped%29.jpg",
+  "Lil Uzi Vert": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Lil_Uzi_Vert_%282018%29.png/330px-Lil_Uzi_Vert_%282018%29.png",
   "Post Malone": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Post_Malone_July_2021_%28cropped%29.jpg/330px-Post_Malone_July_2021_%28cropped%29.jpg",
   "Doja Cat": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Doja_Cat_x_Amazon1.1_%28cropped%29.jpg/330px-Doja_Cat_x_Amazon1.1_%28cropped%29.jpg",
   "Sik-K": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Sik-K_2020.png/330px-Sik-K_2020.png",

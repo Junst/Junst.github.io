@@ -253,7 +253,15 @@ export const artists: Artist[] = [
     name: 'Travis Scott',
     primaryGenre: 'rage',
     songs: [
-      { title: 'FE!N', tier: 2, genres: ['rage', 'hiphop'] },
+      { title: 'FE!N',       tier: 1, subTier: 1, genres: ['rage', 'hiphop'] },
+      { title: 'SICKO MODE', tier: 1, subTier: 0, genres: ['hiphop', 'rage'], year: 2018, album: 'Astroworld' },
+    ],
+  },
+  {
+    name: 'Lil Uzi Vert',
+    primaryGenre: 'hiphop',
+    songs: [
+      { title: '20 Min', tier: 2, subTier: 0, genres: ['hiphop'], year: 2017, album: 'Luv Is Rage 2' },
     ],
   },
   {
