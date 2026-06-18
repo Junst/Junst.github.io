@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   artists,
   GENRES,
@@ -418,6 +418,112 @@ export function JumapPage() {
     }, 900)
   }
 
+  // --- Pan / drag / wheel on the SVG stage ------------------------------------
+  // The SVG keeps its fixed virtual canvas (`width` × `height`) but we slide
+  // it underneath the viewport via the viewBox origin (`vx`, `vy`). We also
+  // suppress an in-progress drag from registering as a bubble click so users
+  // can pan over a bubble without accidentally opening its modal.
+  const PAN_MAX_X = Math.round(width * 0.55)
+  const PAN_MAX_Y = Math.round(height * 0.55)
+  const clamp = (n: number, lo: number, hi: number) =>
+    n < lo ? lo : n > hi ? hi : n
+  const [pan, setPan] = useState({ x: 0, y: 0 })
+  const svgRef = useRef<SVGSVGElement | null>(null)
+  const dragRef = useRef<
+    | {
+        pointerId: number
+        startX: number
+        startY: number
+        baseX: number
+        baseY: number
+        moved: boolean
+        // Maps a client-pixel delta back into viewBox units.
+        scale: number
+      }
+    | null
+  >(null)
+  const [grabbing, setGrabbing] = useState(false)
+  // Latches true once the pointer moves beyond a small threshold during a
+  // drag, and stays true until the next pointerdown — so the click event
+  // that fires on pointerup can be swallowed.
+  const draggedRef = useRef(false)
+
+  const onPointerDown = useCallback(
+    (e: React.PointerEvent<SVGSVGElement>) => {
+      // Only react to primary button / touch / pen contacts.
+      if (e.button !== 0 && e.pointerType === 'mouse') return
+      const rect = e.currentTarget.getBoundingClientRect()
+      // 1 client pixel == (width / rect.width) viewBox units.
+      const scale = rect.width > 0 ? width / rect.width : 1
+      dragRef.current = {
+        pointerId: e.pointerId,
+        startX: e.clientX,
+        startY: e.clientY,
+        baseX: pan.x,
+        baseY: pan.y,
+        moved: false,
+        scale,
+      }
+      draggedRef.current = false
+      try {
+        e.currentTarget.setPointerCapture(e.pointerId)
+      } catch { /* old browsers */ }
+      setGrabbing(true)
+    },
+    [pan.x, pan.y, width],
+  )
+
+  const onPointerMove = useCallback((e: React.PointerEvent<SVGSVGElement>) => {
+    const d = dragRef.current
+    if (!d || d.pointerId !== e.pointerId) return
+    const dx = (e.clientX - d.startX) * d.scale
+    const dy = (e.clientY - d.startY) * d.scale
+    if (!d.moved && Math.hypot(dx, dy) > 4) {
+      d.moved = true
+      draggedRef.current = true
+    }
+    // Drag direction: pulling the canvas to the right (dx > 0) reveals
+    // content on the left, i.e. viewBox origin shifts left (vx decreases).
+    setPan({
+      x: clamp(d.baseX - dx, -PAN_MAX_X, PAN_MAX_X),
+      y: clamp(d.baseY - dy, -PAN_MAX_Y, PAN_MAX_Y),
+    })
+  }, [PAN_MAX_X, PAN_MAX_Y])
+
+  const endDrag = useCallback((e: React.PointerEvent<SVGSVGElement>) => {
+    const d = dragRef.current
+    if (!d || d.pointerId !== e.pointerId) return
+    dragRef.current = null
+    setGrabbing(false)
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId)
+    } catch { /* noop */ }
+  }, [])
+
+  const onWheel = useCallback(
+    (e: React.WheelEvent<SVGSVGElement>) => {
+      // Trackpad horizontal scroll → pan X; vertical wheel → pan Y.
+      if (e.deltaX === 0 && e.deltaY === 0) return
+      e.preventDefault()
+      const rect = e.currentTarget.getBoundingClientRect()
+      const scale = rect.width > 0 ? width / rect.width : 1
+      setPan((p) => ({
+        x: clamp(p.x + e.deltaX * scale, -PAN_MAX_X, PAN_MAX_X),
+        y: clamp(p.y + e.deltaY * scale, -PAN_MAX_Y, PAN_MAX_Y),
+      }))
+    },
+    [PAN_MAX_X, PAN_MAX_Y, width],
+  )
+
+  // Block the synthesized click that follows a drag so bubbles don't open.
+  const onClickCapture = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
+    if (draggedRef.current) {
+      e.stopPropagation()
+      e.preventDefault()
+      draggedRef.current = false
+    }
+  }, [])
+
   return (
     <div className="jumap-page">
       {/* Soft drifting background blobs */}
@@ -429,7 +535,19 @@ export function JumapPage() {
       </div>
 
       <div className="jumap-stage jumap-stage-full">
-        <svg viewBox={`0 0 ${width} ${height}`} className="jumap-svg" preserveAspectRatio="xMidYMid meet">
+        <svg
+          ref={svgRef}
+          viewBox={`${pan.x} ${pan.y} ${width} ${height}`}
+          className={'jumap-svg jumap-svg-pannable' + (grabbing ? ' is-grabbing' : '')}
+          preserveAspectRatio="xMidYMid meet"
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={endDrag}
+          onPointerCancel={endDrag}
+          onPointerLeave={endDrag}
+          onWheel={onWheel}
+          onClickCapture={onClickCapture}
+        >
           <defs>
             {GENRES.map((g) => (
               <radialGradient

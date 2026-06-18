@@ -771,6 +771,19 @@ html[data-theme="dark"] .jumap-back { background: rgba(20,20,20,0.7); }
   height: 100%;
   animation: jumap-drift 18s ease-in-out infinite alternate;
 }
+.jumap-svg-pannable {
+  cursor: grab;
+  /* Take over touch — browsers must NOT scroll the page when a finger
+     drags inside the canvas. */
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.jumap-svg-pannable.is-grabbing {
+  cursor: grabbing;
+  /* Freeze the idle drift while the user is steering it themselves. */
+  animation: none;
+}
 @keyframes jumap-drift {
   0%   { transform: translate(-4px, -2px) rotate(-0.3deg); }
   50%  { transform: translate(3px, 4px) rotate(0.4deg); }
