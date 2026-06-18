@@ -146,7 +146,7 @@ export const artists: Artist[] = [
     name: 'ARASHI',
     primaryGenre: 'jpop',
     songs: [
-      { title: 'Love so sweet',   tier: 1, genres: ['jpop'] },
+      { title: 'Love so sweet',   tier: 1, subTier: 3, genres: ['jpop'] },
       { title: 'Five',            tier: 1, genres: ['jpop'] },
       { title: 'JAM',             tier: 1, genres: ['jpop'] },
       // year / album: please confirm
@@ -159,7 +159,7 @@ export const artists: Artist[] = [
     name: 'King & Prince',
     primaryGenre: 'jpop',
     songs: [
-      { title: 'TraceTrace',  tier: 1, genres: ['jpop'] },
+      { title: 'TraceTrace',  tier: 1, subTier: 1, genres: ['jpop'] },
       { title: 'HEART',       tier: 2, genres: ['jpop'], year: 2025 },
       { title: 'koi-wazurai', tier: 3, genres: ['jpop'], year: 2020, album: 'L&' },
     ],
@@ -184,7 +184,8 @@ export const artists: Artist[] = [
     primaryGenre: 'kpop',
     songs: [
       // 'WDA': please confirm the full title + year + album
-      { title: 'WDA', tier: 3, genres: ['kpop'] },
+      { title: 'WDA',   tier: 3, genres: ['kpop'] },
+      { title: 'Girls', tier: 3, subTier: 1, genres: ['kpop'], year: 2022, album: 'Girls' },
     ],
   },
   {
@@ -192,6 +193,24 @@ export const artists: Artist[] = [
     primaryGenre: 'kpop',
     songs: [
       { title: 'Magnetic', tier: 1, genres: ['kpop'], year: 2024, album: 'SUPER REAL ME' },
+    ],
+  },
+  {
+    name: 'IVE',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: 'HEYA',     tier: 3, subTier: 3, genres: ['kpop'], year: 2024, album: 'IVE SWITCH' },
+      { title: 'Bang Bang', tier: 2, subTier: 2, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: 'NewJeans',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: 'OMG',       tier: 1, subTier: 1, genres: ['kpop'], year: 2023, album: 'NewJeans ‘OMG’' },
+      { title: 'Attention', tier: 2, subTier: 3, genres: ['kpop'], year: 2022, album: 'New Jeans' },
+      { title: 'Hype Boy',  tier: 2, subTier: 2, genres: ['kpop'], year: 2022, album: 'New Jeans' },
+      { title: 'How Sweet', tier: 2, subTier: 1, genres: ['kpop'], year: 2024, album: 'How Sweet' },
     ],
   },
   {
@@ -207,6 +226,13 @@ export const artists: Artist[] = [
     songs: [
       { title: 'Nokia',      tier: 2, genres: ['hiphop'] },
       { title: "God's Plan", tier: 3, genres: ['hiphop'] },
+    ],
+  },
+  {
+    name: 'Kendrick Lamar',
+    primaryGenre: 'hiphop',
+    songs: [
+      { title: 'Not Like Us', tier: 2, subTier: 0, genres: ['hiphop'], year: 2024 },
     ],
   },
   {

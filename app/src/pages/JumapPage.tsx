@@ -543,8 +543,10 @@ export function JumapPage() {
   // Drag-vs-click is disambiguated with a small movement threshold; a
   // pan that crosses it suppresses the synthesised click on pointerup
   // so bubbles don't open when you were just sliding the canvas.
-  const PAN_MAX_X = Math.round(width * 0.55)
-  const PAN_MAX_Y = Math.round(height * 0.55)
+  // Wide pan envelope — about ±1.2× the virtual canvas in either axis so the
+  // user can drift well outside the territory cluster before hitting a wall.
+  const PAN_MAX_X = Math.round(width * 1.2)
+  const PAN_MAX_Y = Math.round(height * 1.2)
   const MIN_ZOOM = 0.5
   const MAX_ZOOM = 3
   const clamp = (n: number, lo: number, hi: number) =>
