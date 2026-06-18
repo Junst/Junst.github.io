@@ -1950,11 +1950,17 @@ html[data-theme="dark"] .jumap-modal {
 .jumap-modal-song-title {
   margin: 0;
   font-family: var(--font-serif);
-  font-size: 1.2rem;
+  /* Fluid title — shrinks as the modal narrows so longer titles still
+     occupy a single line on most phones before wrapping. */
+  font-size: clamp(0.95rem, 3.4vw, 1.2rem);
   font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--text);
   line-height: 1.25;
+  /* Lets the title use as much grid-area as it can; falls back to wrapping
+     by word, then breaks long single words rather than overflowing. */
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 .jumap-modal-song-row {
   display: flex;
@@ -2106,9 +2112,28 @@ html[data-theme="dark"] .jumap-modal {
 .nominee-songs { display: none; }
 
 @media (max-width: 640px) {
-  .jumap-modal-song { grid-template-columns: 36px 44px 1fr; gap: 8px; padding: 10px 12px; }
-  .jumap-modal-song-art, .jumap-modal-song-art-placeholder { width: 44px; height: 44px; }
+  /* Match desktop's [head | art] / [note note] shape but with a smaller
+     fixed art column on the right, so the title gets as much horizontal
+     room as the modal can give it. */
+  .jumap-modal-song {
+    grid-template-columns: 1fr 72px;
+    column-gap: 12px;
+    row-gap: 10px;
+    padding: 12px 14px;
+  }
+  .jumap-modal-song-art, .jumap-modal-song-art-placeholder {
+    width: 72px; height: 72px;
+    justify-self: end;
+  }
   .juward-ranking-art { width: 22px; height: 22px; }
+}
+@media (max-width: 380px) {
+  /* Very narrow phones — shrink art a little more so the title has
+     extra breathing room for one-line layout. */
+  .jumap-modal-song { grid-template-columns: 1fr 60px; column-gap: 10px; }
+  .jumap-modal-song-art, .jumap-modal-song-art-placeholder {
+    width: 60px; height: 60px;
+  }
 }
 
 /* === Jumap atmosphere & polish === */
