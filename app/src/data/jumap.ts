@@ -243,6 +243,13 @@ export const artists: Artist[] = [
     ],
   },
   {
+    name: 'Masked Wolf',
+    primaryGenre: 'hiphop',
+    songs: [
+      { title: 'Astronaut In The Ocean', tier: 2, subTier: 0, genres: ['hiphop'], year: 2019, album: 'Astronomical' },
+    ],
+  },
+  {
     name: 'Travis Scott',
     primaryGenre: 'rage',
     songs: [

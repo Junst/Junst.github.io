@@ -9,6 +9,7 @@ export const ARTIST_PHOTOS: Record<string, string> = {
   "NewJeans": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/NewJeans_2023_MelonMusicAwards_composite.jpg/330px-NewJeans_2023_MelonMusicAwards_composite.jpg",
   "Drake": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Drake_at_The_Carter_Effect_2017_%2836818935200%29_%28cropped%29.jpg/330px-Drake_at_The_Carter_Effect_2017_%2836818935200%29_%28cropped%29.jpg",
   "Kendrick Lamar": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/KendrickSZASPurs230725-144_%28cropped%29_desaturated.jpg/330px-KendrickSZASPurs230725-144_%28cropped%29_desaturated.jpg",
+  "Masked Wolf": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/2022_Rock_im_Park_-_Masked_Wolf_-_by_2eight_-_9SC5331.jpg/330px-2022_Rock_im_Park_-_Masked_Wolf_-_by_2eight_-_9SC5331.jpg",
   "Travis Scott": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/2025-0120_Cole_Gahagan_Michael_Rubin_Travis_Scott_%28cropped%29.jpg/330px-2025-0120_Cole_Gahagan_Michael_Rubin_Travis_Scott_%28cropped%29.jpg",
   "Post Malone": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Post_Malone_July_2021_%28cropped%29.jpg/330px-Post_Malone_July_2021_%28cropped%29.jpg",
   "BIGBANG": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/BIGBANG_2011_%28current_members_since_2023%29.jpg/330px-BIGBANG_2011_%28current_members_since_2023%29.jpg",

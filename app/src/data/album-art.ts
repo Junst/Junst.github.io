@@ -34,6 +34,7 @@ export const ALBUM_ART: Record<string, string> = {
   "Drake|Nokia": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/23/7c/a2/237ca270-9926-4b78-be81-410b6fc85f47/50291.jpg/600x600bb.jpg",
   "Drake|God's Plan": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/bb/6d/8f/bb6d8f67-6d04-10b5-dd62-eb5809ac54fc/00602567879152.rgb.jpg/600x600bb.jpg",
   "Kendrick Lamar|Not Like Us": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/31/3a/3f/313a3fbc-bb8f-80c7-b5a2-e226869a38cd/24UMGIM51924.rgb.jpg/600x600bb.jpg",
+  "Masked Wolf|Astronaut In The Ocean": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/96/1e/99/961e997d-de14-6e80-3e68-4c4a94c716ee/075679780263.jpg/600x600bb.jpg",
   "Travis Scott|FE!N": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/98/b5/5e/98b55efe-7310-e3cb-0f9f-27abb1a2b182/20a1306b-6cf6-4194-a492-a402d3dee879.jpg/600x600bb.jpg",
   "Post Malone|I Like You (A Happier Song)": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/a1/4b/50/a14b5021-1167-41bd-0944-7461357e0c43/22UMGIM49145.rgb.jpg/600x600bb.jpg",
   "BIGBANG|BANG BANG BANG": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/5b/9b/8e/5b9b8ef2-998e-1210-8454-dfebfbf6271c/BB_COVER_IMAGE_4000.jpg/600x600bb.jpg",
