@@ -4,9 +4,17 @@
 
 export const ALBUM_ART: Record<string, string> = {
   "ARASHI|Love so sweet": "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/8e/10/2a/8e102abd-d981-e370-82db-2ae5c98baac3/194491537920.jpg/600x600bb.jpg",
+  "ARASHI|Monster": "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/4d/63/a4/4d63a421-3c4b-5fb2-d5e8-f8fa0bee1b5f/194491538262.jpg/600x600bb.jpg",
+  "ARASHI|One Love": "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/27/77/a3/2777a329-fa77-decd-4f03-ecebfd6c8302/194491542436.jpg/600x600bb.jpg",
   "ARASHI|Five": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/05/77/28/05772817-1d81-ee8e-8224-a225f74a310b/820200234377.jpg/600x600bb.jpg",
+  "ARASHI|Happiness": "https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/d1/82/74/d182744a-16fd-820b-f593-ae86f91eea02/194491538019.jpg/600x600bb.jpg",
+  "ARASHI|Only Love": "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/de/e3/19/dee319ee-824e-1036-d5dc-a66507467903/194491945213.jpg/600x600bb.jpg",
+  "ARASHI|Turning Up": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/91/cb/d0/91cbd025-b742-2ae2-4d9e-d5201bf3240a/195497631773.jpg/600x600bb.jpg",
   "ARASHI|JAM": "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/4e/57/f3/4e57f3c1-3527-9413-0c60-474d51493bba/194491945237.jpg/600x600bb.jpg",
+  "ARASHI|Believe": "https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/29/7c/63/297c637a-1c6a-a976-d0d0-bf903e9c0b94/dj.cinjyjir.jpg/600x600bb.jpg",
+  "ARASHI|WISH": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/b5/4f/c7/b54fc7c8-36f9-fe86-79f2-d61e6e38d60b/194491542146.jpg/600x600bb.jpg",
   "ARASHI|Summer Splash!": "https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/5f/34/a8/5f34a867-e7a0-533f-9bfd-a8ee94f46994/194491945282.jpg/600x600bb.jpg",
+  "ARASHI|Whenever you call": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/8a/94/95/8a94954a-8f12-f38b-96db-13690affb991/195497127290.jpg/600x600bb.jpg",
   "ARASHI|Raise Your Hands": "https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/06/0f/90/060f907e-a5dc-42dc-6097-91c4f4bf58a3/194491945251.jpg/600x600bb.jpg",
   "King & Prince|TraceTrace": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/17/c0/ef/17c0ef60-8685-dee6-1f21-2d9cbf78c5ce/24UMGIM53509.rgb.jpg/600x600bb.jpg",
   "King & Prince|HEART": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/27/76/98/277698be-7fda-7896-d712-8883630c2a08/25UMGIM06862.rgb.jpg/600x600bb.jpg",

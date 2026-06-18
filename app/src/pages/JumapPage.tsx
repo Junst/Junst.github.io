@@ -141,7 +141,7 @@ function place(items: Artist[], width: number, height: number): PlacedArtist[] {
     // Wider ring so distinct genres have visible breathing room between
     // their territories; cross-genre overlap still happens via the
     // secondary-genre pull below.
-    const ringR = Math.min(width, height) * 0.42
+    const ringR = Math.min(width, height) * 0.58
     primaryGenres.forEach((g, i) => {
       const angle = (i / primaryGenres.length) * Math.PI * 2 - Math.PI / 2
       centres[g.key] = {
@@ -160,7 +160,7 @@ function place(items: Artist[], width: number, height: number): PlacedArtist[] {
       const seedAngle = sd * Math.PI * 2
       const localRadius = cluster.length === 1
         ? 0
-        : Math.min(width, height) * 0.085 + i * 12
+        : Math.min(width, height) * 0.11 + i * 16
 
       // Pull toward the average of this artist's *secondary* genre centroids,
       // so cross-genre artists (e.g. Travis Scott rage+hiphop) sit between
@@ -515,7 +515,7 @@ export function JumapPage() {
   const height = 640
   const placed = useMemo(() => {
     const p = place(artists, width, height)
-    relaxOverlaps(p, width, height, 80, 28)
+    relaxOverlaps(p, width, height, 120, 46)
     return p
   }, [])
   const bonds = useMemo(() => computeBonds(placed), [placed])
@@ -543,10 +543,10 @@ export function JumapPage() {
   // Drag-vs-click is disambiguated with a small movement threshold; a
   // pan that crosses it suppresses the synthesised click on pointerup
   // so bubbles don't open when you were just sliding the canvas.
-  // Wide pan envelope — about ±1.2× the virtual canvas in either axis so the
+  // Wide pan envelope — about ±1.4× the virtual canvas in either axis so the
   // user can drift well outside the territory cluster before hitting a wall.
-  const PAN_MAX_X = Math.round(width * 1.2)
-  const PAN_MAX_Y = Math.round(height * 1.2)
+  const PAN_MAX_X = Math.round(width * 1.4)
+  const PAN_MAX_Y = Math.round(height * 1.4)
   const MIN_ZOOM = 0.5
   const MAX_ZOOM = 3
   const clamp = (n: number, lo: number, hi: number) =>
