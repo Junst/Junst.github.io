@@ -25,6 +25,10 @@ export interface Song {
   /** Album / EP / single bundle this song was packaged in. Optional — a
    *  song released only as a stand-alone digital single can omit it. */
   album?: string
+  /** Names of artists featured on the track. Must match an Artist.name in
+   *  the roster so the Jumap layout can pull the song bubble toward each
+   *  featured artist's planet (the "shared orbit" effect). */
+  features?: string[]
   note?: string  // optional review fragment
 }
 
@@ -147,6 +151,7 @@ export const artists: Artist[] = [
     name: 'ARASHI',
     primaryGenre: 'jpop',
     songs: [
+      { title: 'A·RA·SHI',         tier: 1, subTier: 3, genres: ['jpop'] },
       { title: 'Love so sweet',    tier: 1, subTier: 3, genres: ['jpop'] },
       { title: 'Monster',          tier: 1, subTier: 3, genres: ['jpop'] },
       { title: 'One Love',         tier: 1, subTier: 3, genres: ['jpop'] },
@@ -162,6 +167,7 @@ export const artists: Artist[] = [
       { title: 'Believe',          tier: 2, subTier: 0, genres: ['jpop'] },
       // year / album: please confirm
       { title: 'WISH',             tier: 3, subTier: 0, genres: ['jpop'] },
+      { title: 'Troublemaker',     tier: 3, subTier: 0, genres: ['jpop'] },
       { title: 'Summer Splash!',   tier: 3, genres: ['jpop'] },
       { title: 'Whenever you call', tier: 4, subTier: 2, genres: ['jpop'] },
       { title: 'Raise Your Hands', tier: 4, genres: ['jpop'] },
@@ -219,10 +225,12 @@ export const artists: Artist[] = [
     name: 'NewJeans',
     primaryGenre: 'kpop',
     songs: [
-      { title: 'OMG',       tier: 1, subTier: 1, genres: ['kpop'], year: 2023, album: 'NewJeans ‘OMG’' },
-      { title: 'Attention', tier: 2, subTier: 3, genres: ['kpop'], year: 2022, album: 'New Jeans' },
-      { title: 'Hype Boy',  tier: 2, subTier: 2, genres: ['kpop'], year: 2022, album: 'New Jeans' },
-      { title: 'How Sweet', tier: 2, subTier: 1, genres: ['kpop'], year: 2024, album: 'How Sweet' },
+      { title: 'OMG',        tier: 1, subTier: 1, genres: ['kpop'], year: 2023, album: 'NewJeans ‘OMG’' },
+      { title: 'New Jeans',  tier: 1, subTier: 2, genres: ['kpop'], year: 2024, album: 'How Sweet' },
+      { title: 'Get Up',     tier: 1, subTier: 2, genres: ['kpop'], year: 2023, album: 'Get Up' },
+      { title: 'Attention',  tier: 2, subTier: 3, genres: ['kpop'], year: 2022, album: 'New Jeans' },
+      { title: 'Hype Boy',   tier: 2, subTier: 2, genres: ['kpop'], year: 2022, album: 'New Jeans' },
+      { title: 'How Sweet',  tier: 2, subTier: 1, genres: ['kpop'], year: 2024, album: 'How Sweet' },
     ],
   },
   {

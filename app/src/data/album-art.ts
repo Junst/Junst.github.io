@@ -3,6 +3,7 @@
 // Keys are `<artist>|<title>`.
 
 export const ALBUM_ART: Record<string, string> = {
+  "ARASHI|A·RA·SHI": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/9d/26/46/9d264623-49d2-bb21-48e2-c6b133525617/194491535735.jpg/600x600bb.jpg",
   "ARASHI|Love so sweet": "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/8e/10/2a/8e102abd-d981-e370-82db-2ae5c98baac3/194491537920.jpg/600x600bb.jpg",
   "ARASHI|Monster": "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/4d/63/a4/4d63a421-3c4b-5fb2-d5e8-f8fa0bee1b5f/194491538262.jpg/600x600bb.jpg",
   "ARASHI|One Love": "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/27/77/a3/2777a329-fa77-decd-4f03-ecebfd6c8302/194491542436.jpg/600x600bb.jpg",
@@ -17,6 +18,7 @@ export const ALBUM_ART: Record<string, string> = {
   "ARASHI|BRAVE": "https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/a6/1b/bd/a61bbd98-b92e-c9da-5e06-92dacbdcf051/194491522407.jpg/600x600bb.jpg",
   "ARASHI|Believe": "https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/29/7c/63/297c637a-1c6a-a976-d0d0-bf903e9c0b94/dj.cinjyjir.jpg/600x600bb.jpg",
   "ARASHI|WISH": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/b5/4f/c7/b54fc7c8-36f9-fe86-79f2-d61e6e38d60b/194491542146.jpg/600x600bb.jpg",
+  "ARASHI|Troublemaker": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/f5/5b/e5/f55be5f9-01e4-2cf2-7dd9-840de9b1d32b/194491543099.jpg/600x600bb.jpg",
   "ARASHI|Summer Splash!": "https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/5f/34/a8/5f34a867-e7a0-533f-9bfd-a8ee94f46994/194491945282.jpg/600x600bb.jpg",
   "ARASHI|Whenever you call": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/8a/94/95/8a94954a-8f12-f38b-96db-13690affb991/195497127290.jpg/600x600bb.jpg",
   "ARASHI|Raise Your Hands": "https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/06/0f/90/060f907e-a5dc-42dc-6097-91c4f4bf58a3/194491945251.jpg/600x600bb.jpg",
@@ -31,6 +33,8 @@ export const ALBUM_ART: Record<string, string> = {
   "IVE|HEYA": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/33/6d/b4/336db418-00ea-9570-1aa5-2541c07e582e/198391557965.jpg/600x600bb.jpg",
   "IVE|Bang Bang": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/cd/8b/c2/cd8bc294-4ff3-d952-1bc1-4fb03ed9c4bc/199806248171.jpg/600x600bb.jpg",
   "NewJeans|OMG": "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/48/96/08/4896085e-b550-cb0a-3e5b-1f203521cb82/196922265464_Cover.jpg/600x600bb.jpg",
+  "NewJeans|New Jeans": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/63/e5/e2/63e5e2e4-829b-924d-a1dc-8058a1d69bd4/196922462702_Cover.jpg/600x600bb.jpg",
+  "NewJeans|Get Up": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/d3/4b/7e/d34b7e1e-af3b-43b6-2949-7a8c652a1bc9/196922462726_Cover.jpg/600x600bb.jpg",
   "NewJeans|Attention": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/4e/64/34/4e64344b-3ac6-c503-2c41-257a15401416/192641873096_Cover.jpg/600x600bb.jpg",
   "NewJeans|Hype Boy": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/4e/64/34/4e64344b-3ac6-c503-2c41-257a15401416/192641873096_Cover.jpg/600x600bb.jpg",
   "NewJeans|How Sweet": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/bf/68/ca/bf68ca64-4acd-543f-bc78-455f11f06105/196922889738_Cover.jpg/600x600bb.jpg",

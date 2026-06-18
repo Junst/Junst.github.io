@@ -1976,6 +1976,33 @@ html[data-theme="dark"] .jumap-modal {
   user-select: none;
 }
 .jumap-modal-song-stars-empty { color: color-mix(in srgb, #f6b73c 28%, transparent); }
+.jumap-modal-head-song {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+}
+.jumap-modal-song-artist {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+.jumap-modal-song-feat {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+.jumap-modal-single { max-width: 560px; }
+/* Song moons — small, no idle drift CSS so the layout we computed
+   doesn't shift under the user's pointer when they hover them. */
+.jumap-bubble-song { cursor: pointer; }
+.jumap-bubble-song:hover circle { filter: drop-shadow(0 4px 10px rgba(0,0,0,0.18)); }
+.jumap-bubble-artist { cursor: default; }
+.jumap-bubble-artist:hover circle { filter: drop-shadow(0 6px 14px rgba(0,0,0,0.18)); }
 /* Sub-tier accent stars — smaller, same warm tone, with a slim left gap
    so they read as "+ N" rather than continuing the main tier row. */
 .jumap-modal-song-substars {

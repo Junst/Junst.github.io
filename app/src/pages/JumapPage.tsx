@@ -19,13 +19,38 @@ import { TierBadge, tierCrownSrc } from '../components/TierBadge'
 import { albumArtFor } from '../data/album-art'
 import { artistPhotoFor } from '../data/artist-photos'
 
+// Phyllotaxis (Vogel's model) constant — sunflower seed spacing.
+const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5))
+
 interface PlacedArtist extends Artist {
+  kind: 'artist'
   cx: number
   cy: number
   r: number
   // Idle drift seeds (deterministic so the motion is stable per artist)
   driftDelay: number
   driftDuration: number
+}
+
+interface PlacedSong {
+  kind: 'song'
+  /** Owning artist name — used for album-art lookup and feature bond anchors. */
+  primaryArtist: string
+  song: Song
+  /** Stable id of the form `${artist}|${title}` for keys and focus targets. */
+  id: string
+  cx: number
+  cy: number
+  r: number
+  driftDelay: number
+  driftDuration: number
+}
+
+type PlacedNode = PlacedArtist | PlacedSong
+
+// Tier-driven small radius for song moons.
+function songBubbleRadius(s: Song): number {
+  return ({ 1: 22, 2: 18, 3: 15, 4: 13, 5: 11 } as const)[s.tier]
 }
 
 function seed(name: string): number {
@@ -101,34 +126,6 @@ function computeTerritories(placed: PlacedArtist[]): Territory[] {
   return out
 }
 
-function computeBonds(placed: PlacedArtist[]): Bond[] {
-  const bonds: Bond[] = []
-  // Intra-cluster bonds: connect artists who share a primary genre, weight by
-  // proximity so close pairs draw a brighter line.
-  for (let i = 0; i < placed.length; i++) {
-    for (let j = i + 1; j < placed.length; j++) {
-      const a = placed[i], b = placed[j]
-      const samePrimary = artistPrimaryGenre(a) === artistPrimaryGenre(b)
-      const aSet = new Set(artistGenres(a))
-      const sharedSecondary = artistGenres(b).some((g) => aSet.has(g))
-      if (!samePrimary && !sharedSecondary) continue
-      const dx = a.cx - b.cx, dy = a.cy - b.cy
-      const dist = Math.sqrt(dx * dx + dy * dy)
-      // Skip ultra-far cross-cluster bonds to keep the graph readable
-      if (!samePrimary && dist > 320) continue
-      const intensity = samePrimary
-        ? Math.max(0.18, Math.min(0.5, 1 - dist / 320))
-        : Math.max(0.08, Math.min(0.22, 1 - dist / 360))
-      bonds.push({
-        from: a.name, to: b.name,
-        x1: a.cx, y1: a.cy, x2: b.cx, y2: b.cy,
-        intensity,
-      })
-    }
-  }
-  return bonds
-}
-
 function place(items: Artist[], width: number, height: number): PlacedArtist[] {
   const groups = groupArtistsByGenre(items)
   const primaryGenres = GENRES.filter((g) => groups.has(g.key))
@@ -156,7 +153,6 @@ function place(items: Artist[], width: number, height: number): PlacedArtist[] {
   // Phyllotaxis (sunflower spiral): angle_i = i · golden_angle, radius
   // grows with sqrt(i). Naturally produces a near-uniform packing for any
   // cluster size without paired bubbles ever landing on top of each other.
-  const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5))
   for (const g of primaryGenres) {
     const c = centres[g.key]
     const cluster = sortArtists(groups.get(g.key) ?? [])
@@ -187,6 +183,7 @@ function place(items: Artist[], width: number, height: number): PlacedArtist[] {
 
       out.push({
         ...a,
+        kind: 'artist',
         cx: c.x + pullX + Math.cos(angle) * localRadius,
         cy: c.y + pullY + Math.sin(angle) * localRadius,
         r,
@@ -199,28 +196,76 @@ function place(items: Artist[], width: number, height: number): PlacedArtist[] {
   return out
 }
 
-// Anchored force-directed layout: each bubble feels (1) a strong pairwise
-// repulsion from any neighbour that's too close, and (2) a gentle spring
-// pulling it back toward its initial spot. Iterating this to a steady state
-// gives an even spread that converges instead of leaving "stuck" pairs the
-// way pure pair-pushing can.
-function forceLayout(
-  items: PlacedArtist[],
-  iterations: number = 600,
+// Place each artist's songs in an orbit around the artist using
+// phyllotaxis — tier-1 songs land closest, lower-tier songs spiral outward.
+// The force pass below then settles overlaps and pulls featured songs
+// toward their featured artist's planet.
+function placeSongsAround(artists: PlacedArtist[]): PlacedSong[] {
+  const out: PlacedSong[] = []
+  for (const artist of artists) {
+    const songs = [...artist.songs].sort(
+      (a, b) =>
+        a.tier - b.tier ||
+        (b.subTier ?? 0) - (a.subTier ?? 0) ||
+        a.title.localeCompare(b.title),
+    )
+    const phase = seed(artist.name) * Math.PI * 2
+    songs.forEach((song, i) => {
+      const sd = seed(`${artist.name}|${song.title}`)
+      const angle = i * GOLDEN_ANGLE + phase
+      const r = songBubbleRadius(song)
+      // Orbit radius grows with sqrt(i) so density stays roughly even
+      // even for artists with lots of songs (ARASHI has the most).
+      const orbitR = artist.r + 26 + Math.sqrt(i + 0.5) * 36
+      out.push({
+        kind: 'song',
+        primaryArtist: artist.name,
+        song,
+        id: `${artist.name}|${song.title}`,
+        cx: artist.cx + Math.cos(angle) * orbitR,
+        cy: artist.cy + Math.sin(angle) * orbitR,
+        r,
+        driftDelay: -(sd * 8),
+        driftDuration: 5 + (sd * 4),
+      })
+    })
+  }
+  return out
+}
+
+// Force-directed layout that handles a mixed list of artist-planets and
+// song-moons. Forces felt by each node:
+//   (1) Pairwise repulsion proportional to overlap. Min-gap depends on the
+//       pair's kind: artist↔artist gets the widest gap, song↔song the
+//       smallest, mixed pairs sit in the middle so songs can stay close to
+//       their primary artist without being pushed across the canvas.
+//   (2) Anchor spring back to the initial spot (preserves the genre /
+//       orbit topology even after the simulation settles).
+//   (3) Songs feel an extra gentle pull toward each featured artist's
+//       planet, so collaboration tracks drift to the orbit boundary
+//       between the two artists.
+function forceLayoutNodes(
+  nodes: PlacedNode[],
+  iterations: number = 800,
 ): void {
-  const n = items.length
+  const n = nodes.length
   if (n < 2) return
-  const anchorX = items.map((it) => it.cx)
-  const anchorY = items.map((it) => it.cy)
+  const anchorX = nodes.map((it) => it.cx)
+  const anchorY = nodes.map((it) => it.cy)
   const vx = new Array(n).fill(0)
   const vy = new Array(n).fill(0)
 
-  // Minimum edge-to-edge gap between any two bubbles. Bigger = more breathing.
-  const MIN_GAP = 130
-  // How strongly each bubble wants to stay near its placed anchor (genre).
+  const artistIdx = new Map<string, number>()
+  for (let i = 0; i < n; i++) {
+    const nd = nodes[i]
+    if (nd.kind === 'artist') artistIdx.set(nd.name, i)
+  }
+
+  const GAP_AA = 140
+  const GAP_AS = 12
+  const GAP_SS = 6
   const ANCHOR_PULL = 0.022
-  // Velocity scaling — high enough to escape local crowding, low enough to
-  // not oscillate.
+  const FEATURE_PULL = 0.018
   const STEP = 0.85
   const DAMPING = 0.78
 
@@ -229,16 +274,21 @@ function forceLayout(
     for (let i = 0; i < n; i++) {
       let fx = 0
       let fy = 0
-      const a = items[i]
+      const a = nodes[i]
       for (let j = 0; j < n; j++) {
         if (i === j) continue
-        const b = items[j]
+        const b = nodes[j]
         const dx = a.cx - b.cx
         const dy = a.cy - b.cy
         const dist = Math.sqrt(dx * dx + dy * dy) || 0.01
-        const minDist = a.r + b.r + MIN_GAP
+        const gap =
+          a.kind === 'artist' && b.kind === 'artist'
+            ? GAP_AA
+            : a.kind !== b.kind
+              ? GAP_AS
+              : GAP_SS
+        const minDist = a.r + b.r + gap
         if (dist < minDist) {
-          // Spring-like push proportional to overlap.
           const push = (minDist - dist) * 0.55
           fx += (dx / dist) * push
           fy += (dy / dist) * push
@@ -246,30 +296,39 @@ function forceLayout(
       }
       fx += (anchorX[i] - a.cx) * ANCHOR_PULL
       fy += (anchorY[i] - a.cy) * ANCHOR_PULL
+
+      // Featuring pull — only songs with explicit features feel this.
+      if (a.kind === 'song' && a.song.features) {
+        for (const featName of a.song.features) {
+          const fi = artistIdx.get(featName)
+          if (fi == null) continue
+          const fa = nodes[fi]
+          fx += (fa.cx - a.cx) * FEATURE_PULL
+          fy += (fa.cy - a.cy) * FEATURE_PULL
+        }
+      }
+
       vx[i] = (vx[i] + fx * STEP) * DAMPING
       vy[i] = (vy[i] + fy * STEP) * DAMPING
       const s = Math.abs(vx[i]) + Math.abs(vy[i])
       if (s > maxSpeed) maxSpeed = s
     }
     for (let i = 0; i < n; i++) {
-      items[i].cx += vx[i]
-      items[i].cy += vy[i]
+      nodes[i].cx += vx[i]
+      nodes[i].cy += vy[i]
     }
-    // Early exit once everything has settled.
-    if (k > 80 && maxSpeed < 0.05) break
+    if (k > 120 && maxSpeed < 0.05) break
   }
 }
 
 interface Ripple { id: number; cx: number; cy: number; r: number }
 
 function ArtistBubble({
-  a, focus, onFocus, onOpen, onRipple,
+  a, focus, onFocus,
 }: {
   a: PlacedArtist
   focus: string | null
   onFocus: (key: string | null) => void
-  onOpen: (a: Artist) => void
-  onRipple: (r: Ripple) => void
 }) {
   const primary = genreFor(artistPrimaryGenre(a))
   const genres = artistGenres(a)
@@ -283,17 +342,13 @@ function ArtistBubble({
   const faceR = a.r * 0.6
   return (
     <g
-      className={'jumap-bubble' + (focused ? ' focused' : '')}
+      className={'jumap-bubble jumap-bubble-artist' + (focused ? ' focused' : '')}
       style={{
         ['--drift-delay' as string]: `${a.driftDelay}s`,
         ['--drift-duration' as string]: `${a.driftDuration}s`,
       }}
       onMouseEnter={() => onFocus(a.name)}
       onMouseLeave={() => onFocus(null)}
-      onClick={() => {
-        onRipple({ id: Date.now() + Math.random(), cx: a.cx, cy: a.cy, r: a.r })
-        onOpen(a)
-      }}
     >
       <defs>
         <clipPath id={clipId}>
@@ -410,6 +465,93 @@ function ArtistBubble({
   )
 }
 
+// A song moon — small bubble showing the song's album art clipped to a
+// circle. Hovering it lights up the song's primary artist; clicking opens
+// the single-song modal. Songs with `features` show via the feature bonds
+// drawn separately as connecting lines to each featured artist.
+function SongBubble({
+  s, focus, onFocus, onOpen, onRipple,
+}: {
+  s: PlacedSong
+  focus: string | null
+  onFocus: (key: string | null) => void
+  onOpen: (s: PlacedSong) => void
+  onRipple: (r: Ripple) => void
+}) {
+  const focused = focus === s.id || focus === s.primaryArtist
+  const dim = focus != null && !focused
+  const opacity = dim ? 0.32 : 1
+  const art = albumArtFor(s.primaryArtist, s.song.title)
+  const clipId = `song-clip-${s.id.replace(/[^a-z0-9]/gi, '_')}`
+  return (
+    <g
+      className={'jumap-bubble jumap-bubble-song' + (focused ? ' focused' : '')}
+      style={{
+        ['--drift-delay' as string]: `${s.driftDelay}s`,
+        ['--drift-duration' as string]: `${s.driftDuration}s`,
+      }}
+      onMouseEnter={() => onFocus(s.id)}
+      onMouseLeave={() => onFocus(null)}
+      onClick={() => {
+        onRipple({ id: Date.now() + Math.random(), cx: s.cx, cy: s.cy, r: s.r })
+        onOpen(s)
+      }}
+    >
+      <defs>
+        <clipPath id={clipId}>
+          <circle cx={s.cx} cy={s.cy} r={s.r} />
+        </clipPath>
+      </defs>
+      {/* Soft shadow */}
+      <ellipse
+        cx={s.cx}
+        cy={s.cy + s.r * 1.1}
+        rx={s.r * 0.55}
+        ry={s.r * 0.12}
+        fill="#000"
+        opacity={(focused ? 0.2 : 0.12) * opacity}
+      />
+      {/* Album art clipped to circle, or a tinted placeholder. */}
+      {art ? (
+        <image
+          href={art}
+          x={s.cx - s.r}
+          y={s.cy - s.r}
+          width={s.r * 2}
+          height={s.r * 2}
+          preserveAspectRatio="xMidYMid slice"
+          clipPath={`url(#${clipId})`}
+          opacity={opacity}
+        />
+      ) : (
+        <circle cx={s.cx} cy={s.cy} r={s.r} fill="#dcdcdc" opacity={opacity} />
+      )}
+      {/* Crisp ring + tier-coloured stroke. */}
+      <circle
+        cx={s.cx}
+        cy={s.cy}
+        r={s.r}
+        fill="none"
+        stroke="rgba(255,255,255,0.9)"
+        strokeWidth={1.2}
+        opacity={0.85 * opacity}
+        pointerEvents="none"
+      />
+      <circle
+        cx={s.cx}
+        cy={s.cy}
+        r={s.r + 1.4}
+        fill="none"
+        stroke="#1a1a1a"
+        strokeOpacity={(focused ? 0.55 : 0.22) * opacity}
+        strokeWidth={focused ? 1.4 : 0.9}
+        pointerEvents="none"
+      />
+      <title>{`${s.song.title} — ${s.primaryArtist}`}</title>
+    </g>
+  )
+}
+
 function Stars({ tier, subTier = 0 }: { tier: number; subTier?: number }) {
   const filled = 6 - tier            // T1 → 5 ★, T5 → 1 ★
   const empty = 5 - filled
@@ -473,12 +615,19 @@ function SongRow({ artist, song }: { artist: string; song: Song }) {
   )
 }
 
-function ArtistModal({ artist, onClose }: { artist: Artist; onClose: () => void }) {
-  // Close on Esc
+
+// Single-song detail dialog opened by clicking a song moon. Reuses SongRow
+// so the layout matches the existing per-song card.
+function SongModal({
+  primaryArtist, song, onClose,
+}: {
+  primaryArtist: string
+  song: Song
+  onClose: () => void
+}) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
     window.addEventListener('keydown', onKey)
-    // Lock body scroll while modal open
     const prev = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     return () => {
@@ -486,21 +635,13 @@ function ArtistModal({ artist, onClose }: { artist: Artist; onClose: () => void 
       document.body.style.overflow = prev
     }
   }, [onClose])
-
-  const primary = genreFor(artistPrimaryGenre(artist))
-  const sorted = [...artist.songs].sort(
-    (a, b) =>
-      a.tier - b.tier ||
-      (b.subTier ?? 0) - (a.subTier ?? 0) ||
-      a.title.localeCompare(b.title),
-  )
-
+  const primary = genreFor((song.genres[0] ?? 'other').toLowerCase())
   return (
     <div className="jumap-modal-backdrop" onClick={onClose}>
       <div
-        className="jumap-modal"
+        className="jumap-modal jumap-modal-single"
         role="dialog"
-        aria-label={artist.name}
+        aria-label={song.title}
         onClick={(e) => e.stopPropagation()}
         style={{ ['--modal-tint' as string]: primary.color }}
       >
@@ -512,28 +653,17 @@ function ArtistModal({ artist, onClose }: { artist: Artist; onClose: () => void 
         >
           ×
         </button>
-        <header className="jumap-modal-head">
-          <img
-            className="jumap-modal-tier-crown"
-            src={tierCrownSrc(bestTier(artist))}
-            alt=""
-            width={32}
-            height={Math.round((32 * 232) / 354)}
-          />
-          <h2 className="jumap-modal-name">{artist.name}</h2>
-          <div className="jumap-modal-genres">
-            {artistGenres(artist).map((k) => genreFor(k).label).join(' · ')}
-          </div>
+        <header className="jumap-modal-head jumap-modal-head-song">
+          <div className="jumap-modal-song-artist">{primaryArtist}</div>
+          {song.features && song.features.length > 0 && (
+            <div className="jumap-modal-song-feat">
+              feat. {song.features.join(', ')}
+            </div>
+          )}
         </header>
-        {sorted.length === 0 ? (
-          <p className="jumap-modal-empty">No songs logged yet.</p>
-        ) : (
-          <ol className="jumap-modal-songs">
-            {sorted.map((s, i) => (
-              <SongRow key={i} artist={artist.name} song={s} />
-            ))}
-          </ol>
-        )}
+        <ol className="jumap-modal-songs">
+          <SongRow artist={primaryArtist} song={song} />
+        </ol>
       </div>
     </div>
   )
@@ -541,18 +671,48 @@ function ArtistModal({ artist, onClose }: { artist: Artist; onClose: () => void 
 
 export function JumapPage() {
   const [focus, setFocus] = useState<string | null>(null)
-  const [open, setOpen] = useState<Artist | null>(null)
+  const [openSong, setOpenSong] = useState<PlacedSong | null>(null)
   const [ripples, setRipples] = useState<Ripple[]>([])
   const width = 960
   const height = 640
-  const placed = useMemo(() => {
-    const p = place(artists, width, height)
-    forceLayout(p, 700)
-    return p
+  // Two-step placement: artists first via genre rings + phyllotaxis, then
+  // songs in orbit around each artist. A single force pass then settles all
+  // bubbles together so song moons drift to the orbit boundary between
+  // featured artists, and no two bubbles overlap.
+  const { artistsPlaced, songsPlaced } = useMemo(() => {
+    const a = place(artists, width, height)
+    const s = placeSongsAround(a)
+    forceLayoutNodes([...a, ...s], 900)
+    return { artistsPlaced: a, songsPlaced: s }
   }, [])
-  const bonds = useMemo(() => computeBonds(placed), [placed])
+  const placed = artistsPlaced
   const territories = useMemo(() => computeTerritories(placed), [placed])
-  const focusedBond = (b: Bond) => focus === b.from || focus === b.to
+  // Replace the old intra-genre bonds with featuring bonds: lines from each
+  // song with `features` to every named featured artist that's in the
+  // roster. Falls back to the (artist-name) being missing silently.
+  const bonds = useMemo<Bond[]>(() => {
+    const aMap = new Map(artistsPlaced.map((a) => [a.name, a]))
+    const out: Bond[] = []
+    for (const s of songsPlaced) {
+      const feats = s.song.features
+      if (!feats || feats.length === 0) continue
+      for (const f of feats) {
+        const fa = aMap.get(f)
+        if (!fa) continue
+        out.push({
+          from: s.primaryArtist,
+          to: f,
+          x1: s.cx, y1: s.cy,
+          x2: fa.cx, y2: fa.cy,
+          intensity: 0.5,
+        })
+      }
+    }
+    return out
+  }, [artistsPlaced, songsPlaced])
+  const focusedBond = (b: Bond) =>
+    focus === b.from || focus === b.to ||
+    (openSong !== null && (openSong.primaryArtist === b.from || openSong.primaryArtist === b.to))
 
   function addRipple(r: Ripple) {
     setRipples((cur) => [...cur, r])
@@ -944,7 +1104,15 @@ export function JumapPage() {
               a={a}
               focus={focus}
               onFocus={setFocus}
-              onOpen={setOpen}
+            />
+          ))}
+          {songsPlaced.map((s) => (
+            <SongBubble
+              key={s.id}
+              s={s}
+              focus={focus}
+              onFocus={setFocus}
+              onOpen={setOpenSong}
               onRipple={addRipple}
             />
           ))}
@@ -1007,7 +1175,13 @@ export function JumapPage() {
         </aside>
       </div>
 
-      {open && <ArtistModal artist={open} onClose={() => setOpen(null)} />}
+      {openSong && (
+        <SongModal
+          primaryArtist={openSong.primaryArtist}
+          song={openSong.song}
+          onClose={() => setOpenSong(null)}
+        />
+      )}
     </div>
   )
 }
