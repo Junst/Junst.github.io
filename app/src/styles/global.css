@@ -2129,28 +2129,28 @@ html[data-theme="dark"] .jumap-modal {
   animation: jumap-bg-drift 28s ease-in-out infinite alternate;
 }
 .jumap-bg-blob.blob-1 {
-  width: 520px; height: 520px;
-  left: -120px; top: -100px;
+  width: 820px; height: 820px;
+  left: -220px; top: -200px;
   background: radial-gradient(circle, #ffd6e7, transparent 65%);
   animation-delay: 0s;
 }
 .jumap-bg-blob.blob-2 {
-  width: 480px; height: 480px;
-  right: -80px; top: 5%;
+  width: 760px; height: 760px;
+  right: -180px; top: -40px;
   background: radial-gradient(circle, #cfeff7, transparent 65%);
   animation-delay: -7s;
   animation-duration: 32s;
 }
 .jumap-bg-blob.blob-3 {
-  width: 420px; height: 420px;
-  left: 20%; bottom: -100px;
+  width: 700px; height: 700px;
+  left: 12%; bottom: -260px;
   background: radial-gradient(circle, #fff5b8, transparent 65%);
   animation-delay: -14s;
   animation-duration: 36s;
 }
 .jumap-bg-blob.blob-4 {
-  width: 380px; height: 380px;
-  right: 18%; bottom: 5%;
+  width: 640px; height: 640px;
+  right: 12%; bottom: -120px;
   background: radial-gradient(circle, #d6f5d6, transparent 65%);
   animation-delay: -21s;
   animation-duration: 40s;

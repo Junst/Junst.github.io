@@ -141,7 +141,7 @@ function place(items: Artist[], width: number, height: number): PlacedArtist[] {
     // Wider ring so distinct genres have visible breathing room between
     // their territories; cross-genre overlap still happens via the
     // secondary-genre pull below.
-    const ringR = Math.min(width, height) * 0.58
+    const ringR = Math.min(width, height) * 0.78
     primaryGenres.forEach((g, i) => {
       const angle = (i / primaryGenres.length) * Math.PI * 2 - Math.PI / 2
       centres[g.key] = {
@@ -160,7 +160,7 @@ function place(items: Artist[], width: number, height: number): PlacedArtist[] {
       const seedAngle = sd * Math.PI * 2
       const localRadius = cluster.length === 1
         ? 0
-        : Math.min(width, height) * 0.11 + i * 16
+        : Math.min(width, height) * 0.15 + i * 22
 
       // Pull toward the average of this artist's *secondary* genre centroids,
       // so cross-genre artists (e.g. Travis Scott rage+hiphop) sit between
@@ -515,7 +515,7 @@ export function JumapPage() {
   const height = 640
   const placed = useMemo(() => {
     const p = place(artists, width, height)
-    relaxOverlaps(p, width, height, 120, 46)
+    relaxOverlaps(p, width, height, 160, 70)
     return p
   }, [])
   const bonds = useMemo(() => computeBonds(placed), [placed])
@@ -543,12 +543,13 @@ export function JumapPage() {
   // Drag-vs-click is disambiguated with a small movement threshold; a
   // pan that crosses it suppresses the synthesised click on pointerup
   // so bubbles don't open when you were just sliding the canvas.
-  // Wide pan envelope — about ±1.4× the virtual canvas in either axis so the
-  // user can drift well outside the territory cluster before hitting a wall.
-  const PAN_MAX_X = Math.round(width * 1.4)
-  const PAN_MAX_Y = Math.round(height * 1.4)
-  const MIN_ZOOM = 0.5
-  const MAX_ZOOM = 3
+  // Wide pan envelope — about ±2× the virtual canvas in either axis so the
+  // user can drift far outside the now-larger territory cluster before
+  // hitting a wall.
+  const PAN_MAX_X = Math.round(width * 2)
+  const PAN_MAX_Y = Math.round(height * 2)
+  const MIN_ZOOM = 0.3
+  const MAX_ZOOM = 4
   const clamp = (n: number, lo: number, hi: number) =>
     n < lo ? lo : n > hi ? hi : n
 
@@ -733,7 +734,11 @@ export function JumapPage() {
       e.preventDefault()
       // Browsers surface trackpad pinch as a wheel event with ctrlKey set.
       if (e.ctrlKey || e.metaKey) {
-        const factor = Math.exp(-e.deltaY * 0.0015)
+        // Clamp single-event delta to keep chunky mouse wheels from
+        // teleporting; a smaller per-event step (0.0009) makes both
+        // mouse wheels and trackpads feel like fine-grained zoom.
+        const dy = Math.max(-80, Math.min(80, e.deltaY))
+        const factor = Math.exp(-dy * 0.0009)
         const rect = e.currentTarget.getBoundingClientRect()
         setView((v) => reframeAt(v, e.clientX, e.clientY, rect, v.z * factor))
         return
@@ -929,7 +934,7 @@ export function JumapPage() {
           <button
             type="button"
             className="jumap-zoom-btn"
-            onClick={() => zoomBy(1.25)}
+            onClick={() => zoomBy(1.2)}
             disabled={view.z >= MAX_ZOOM - 1e-3}
             aria-label="Zoom in"
             title="Zoom in"
@@ -944,7 +949,7 @@ export function JumapPage() {
           <button
             type="button"
             className="jumap-zoom-btn"
-            onClick={() => zoomBy(1 / 1.25)}
+            onClick={() => zoomBy(1 / 1.2)}
             disabled={view.z <= MIN_ZOOM + 1e-3}
             aria-label="Zoom out"
             title="Zoom out"

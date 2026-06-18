@@ -37,6 +37,8 @@ export const ALBUM_ART: Record<string, string> = {
   "Masked Wolf|Astronaut In The Ocean": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/96/1e/99/961e997d-de14-6e80-3e68-4c4a94c716ee/075679780263.jpg/600x600bb.jpg",
   "Travis Scott|FE!N": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/98/b5/5e/98b55efe-7310-e3cb-0f9f-27abb1a2b182/20a1306b-6cf6-4194-a492-a402d3dee879.jpg/600x600bb.jpg",
   "Post Malone|I Like You (A Happier Song)": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/a1/4b/50/a14b5021-1167-41bd-0944-7461357e0c43/22UMGIM49145.rgb.jpg/600x600bb.jpg",
+  "Doja Cat|Paint The Town Red": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/05/a1/62/05a162ca-d0f8-462a-a033-474a019e506f/196871274111.jpg/600x600bb.jpg",
+  "Sik-K|LOV3": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/45/0a/e3/450ae3b6-bd90-9c94-5e9e-ff7be7814ac4/8809484116847_Cover.jpg/600x600bb.jpg",
   "BIGBANG|BANG BANG BANG": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/5b/9b/8e/5b9b8ef2-998e-1210-8454-dfebfbf6271c/BB_COVER_IMAGE_4000.jpg/600x600bb.jpg",
   "Girls’ Generation|PARTY": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/87/c5/3a/87c53ab1-f1fa-bc19-3e6d-eb1565bdd3eb/COVER.jpg/600x600bb.jpg",
   "Beenzino|Time Travel": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/d2/a6/84/d2a68415-a4df-77b8-4c66-7292bc8816e1/8809534465994_Cover.jpg/600x600bb.jpg",

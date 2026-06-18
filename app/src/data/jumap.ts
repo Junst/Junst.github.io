@@ -263,6 +263,20 @@ export const artists: Artist[] = [
       { title: 'I Like You (A Happier Song)', tier: 3, genres: ['pop', 'hiphop'] },
     ],
   },
+  {
+    name: 'Doja Cat',
+    primaryGenre: 'pop',
+    songs: [
+      { title: 'Paint The Town Red', tier: 3, subTier: 1, genres: ['pop', 'hiphop'], year: 2023, album: 'Scarlet' },
+    ],
+  },
+  {
+    name: 'Sik-K',
+    primaryGenre: 'hiphop',
+    songs: [
+      { title: 'LOV3', tier: 1, subTier: 2, genres: ['hiphop'] },
+    ],
+  },
 ]
 
 // Pick a face for the bubble. Order of preference:
