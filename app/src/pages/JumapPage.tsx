@@ -27,6 +27,11 @@ interface PlacedArtist extends Artist {
   cx: number
   cy: number
   r: number
+  /** Effective radius of the artist's full orbit (artist edge + furthest song
+   *  edge + small buffer). Used by forceLayoutNodes to keep two artists
+   *  from getting closer than their combined orbits — so songs of artist A
+   *  can never be closer to artist B than to A. */
+  orbitR: number
   // Idle drift seeds (deterministic so the motion is stable per artist)
   driftDelay: number
   driftDuration: number
@@ -140,7 +145,7 @@ function place(items: Artist[], width: number, height: number): PlacedArtist[] {
     // Wider ring so distinct genres have visible breathing room between
     // their territories; cross-genre overlap still happens via the
     // secondary-genre pull below.
-    const ringR = Math.min(width, height) * 0.72
+    const ringR = Math.min(width, height) * 1.05
     primaryGenres.forEach((g, i) => {
       const angle = (i / primaryGenres.length) * Math.PI * 2 - Math.PI / 2
       centres[g.key] = {
@@ -187,6 +192,8 @@ function place(items: Artist[], width: number, height: number): PlacedArtist[] {
         cx: c.x + pullX + Math.cos(angle) * localRadius,
         cy: c.y + pullY + Math.sin(angle) * localRadius,
         r,
+        // Initial estimate — refined by placeSongsAround once songs land.
+        orbitR: r,
         driftDelay: -(sd * 12),                  // 0..-12s offset
         driftDuration: 8 + (sd * 6),             // 8..14s loop
       })
@@ -210,13 +217,16 @@ function placeSongsAround(artists: PlacedArtist[]): PlacedSong[] {
         a.title.localeCompare(b.title),
     )
     const phase = seed(artist.name) * Math.PI * 2
+    let maxOrbitEdge = artist.r
     songs.forEach((song, i) => {
       const sd = seed(`${artist.name}|${song.title}`)
       const angle = i * GOLDEN_ANGLE + phase
       const r = songBubbleRadius(song)
       // Orbit radius grows with sqrt(i) so density stays roughly even
       // even for artists with lots of songs (ARASHI has the most).
-      const orbitR = artist.r + 26 + Math.sqrt(i + 0.5) * 36
+      const orbitR = artist.r + 32 + Math.sqrt(i + 0.5) * 40
+      const edge = orbitR + r
+      if (edge > maxOrbitEdge) maxOrbitEdge = edge
       out.push({
         kind: 'song',
         primaryArtist: artist.name,
@@ -229,6 +239,8 @@ function placeSongsAround(artists: PlacedArtist[]): PlacedSong[] {
         driftDuration: 5 + (sd * 4),
       })
     })
+    // Tell the force pass how much space this artist's orbit really needs.
+    artist.orbitR = maxOrbitEdge + 18
   }
   return out
 }
@@ -261,7 +273,9 @@ function forceLayoutNodes(
     if (nd.kind === 'artist') artistIdx.set(nd.name, i)
   }
 
-  const GAP_AA = 140
+  // Extra padding once the two orbits clear each other.
+  const GAP_AA_BUFFER = 90
+  const GAP_AA_MIN = 220
   const GAP_AS = 12
   const GAP_SS = 6
   const ANCHOR_PULL = 0.022
@@ -281,13 +295,19 @@ function forceLayoutNodes(
         const dx = a.cx - b.cx
         const dy = a.cy - b.cy
         const dist = Math.sqrt(dx * dx + dy * dy) || 0.01
-        const gap =
-          a.kind === 'artist' && b.kind === 'artist'
-            ? GAP_AA
-            : a.kind !== b.kind
-              ? GAP_AS
-              : GAP_SS
-        const minDist = a.r + b.r + gap
+        let minDist: number
+        if (a.kind === 'artist' && b.kind === 'artist') {
+          // Each artist's entire orbit must clear the other artist's
+          // orbit, so the smallest possible song-from-other-artist
+          // distance equals its own artist's distance.
+          minDist = Math.max(
+            a.orbitR + b.orbitR + GAP_AA_BUFFER,
+            a.r + b.r + GAP_AA_MIN,
+          )
+        } else {
+          const gap = a.kind !== b.kind ? GAP_AS : GAP_SS
+          minDist = a.r + b.r + gap
+        }
         if (dist < minDist) {
           const push = (minDist - dist) * 0.55
           fx += (dx / dist) * push
@@ -760,8 +780,8 @@ export function JumapPage() {
   // Wide pan envelope — about ±2× the virtual canvas in either axis so the
   // user can drift far outside the now-larger territory cluster before
   // hitting a wall.
-  const PAN_MAX_X = Math.round(width * 3)
-  const PAN_MAX_Y = Math.round(height * 3)
+  const PAN_MAX_X = Math.round(width * 4)
+  const PAN_MAX_Y = Math.round(height * 4)
   const MIN_ZOOM = 0.3
   const MAX_ZOOM = 4
   const clamp = (n: number, lo: number, hi: number) =>
