@@ -247,7 +247,7 @@ export const artists: Artist[] = [
     primaryGenre: 'kpop',
     songs: [
       // 'WDA': please confirm the full title + year + album
-      { title: 'WDA',   tier: 3, genres: ['kpop'] },
+      { title: 'WDA',   tier: 3, genres: ['kpop'], features: ['G-DRAGON'] },
       { title: 'Spicy', tier: 2, subTier: 3, genres: ['kpop'], year: 2023, album: 'MY WORLD' },
       { title: 'Girls', tier: 3, subTier: 1, genres: ['kpop'], year: 2022, album: 'Girls' },
     ],
@@ -760,6 +760,35 @@ export const artists: Artist[] = [
     primaryGenre: 'rnb',
     // No song entries yet — exists in the roster so the Silk Sonic
     // collaboration draws a feature bond from "Skate" to this planet.
+    songs: [],
+  },
+
+  // ===== Empty-roster artists — exist as bond targets for songs that
+  // feature them so the force layout pulls collab tracks toward their
+  // planet and a feature line is drawn. Songs can be added later. =====
+  {
+    name: 'G-DRAGON',
+    primaryGenre: 'kpop',
+    songs: [],
+  },
+  {
+    name: '박재범',
+    primaryGenre: 'khiphop',
+    songs: [],
+  },
+  {
+    name: 'Bryn',
+    primaryGenre: 'khiphop',
+    songs: [],
+  },
+  {
+    name: '백예린',
+    primaryGenre: 'rnb',
+    songs: [],
+  },
+  {
+    name: 'Snoop Dogg',
+    primaryGenre: 'hiphop',
     songs: [],
   },
 

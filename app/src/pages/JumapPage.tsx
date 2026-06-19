@@ -76,7 +76,17 @@ function seed(name: string): number {
   return (h >>> 0) / 0xffffffff
 }
 
-interface Bond { from: string; to: string; x1: number; y1: number; x2: number; y2: number; intensity: number }
+interface Bond {
+  from: string
+  to: string
+  x1: number
+  y1: number
+  x2: number
+  y2: number
+  intensity: number
+  /** 'own' = artist→its own song tether; 'feature' = song→featured artist */
+  kind: 'own' | 'feature'
+}
 
 interface Territory {
   key: string
@@ -935,22 +945,48 @@ const JumapSvgInner = memo(function JumapSvgInner({
             change re-evaluated a Gaussian blur + color-matrix threshold). */}
         {GENRES.map((g) => (
           <radialGradient key={`tt-${g.key}`} id={`tt-${g.key}`} cx="50%" cy="50%" r="50%">
-            <stop offset="0%"   stopColor={g.color} stopOpacity="0.62" />
-            <stop offset="55%"  stopColor={g.color} stopOpacity="0.32" />
+            <stop offset="0%"   stopColor={g.color} stopOpacity="0.85" />
+            <stop offset="50%"  stopColor={g.color} stopOpacity="0.48" />
             <stop offset="100%" stopColor={g.color} stopOpacity="0" />
           </radialGradient>
         ))}
-        {/* Country / region territory gradient — wider + softer than the
-            genre tint, so it reads as an atlas region underneath the
-            per-genre stains. */}
         {COUNTRIES.map((c) => (
           <radialGradient key={`ct-${c.key}`} id={`ct-${c.key}`} cx="50%" cy="50%" r="50%">
-            <stop offset="0%"   stopColor={c.color} stopOpacity="0.55" />
-            <stop offset="65%"  stopColor={c.color} stopOpacity="0.28" />
+            <stop offset="0%"   stopColor={c.color} stopOpacity="0.78" />
+            <stop offset="55%"  stopColor={c.color} stopOpacity="0.42" />
             <stop offset="100%" stopColor={c.color} stopOpacity="0" />
           </radialGradient>
         ))}
+        {/* Country ring stroke — darker shade of the country tint, used
+            as a thin dashed outline around each region for an atlas-y
+            ink-line feel. */}
+        {COUNTRIES.map((c) => (
+          <linearGradient key={`cr-${c.key}`} id={`cr-${c.key}`} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%"   stopColor={c.color} stopOpacity="0.6" />
+            <stop offset="100%" stopColor={c.color} stopOpacity="0.3" />
+          </linearGradient>
+        ))}
+        {/* Sub-pixel dot pattern under everything for a paper-grain feel
+            so the background doesn't read as a featureless wash. */}
+        <pattern id="jumap-grain" x="0" y="0" width="48" height="48" patternUnits="userSpaceOnUse">
+          <circle cx="2" cy="2" r="0.8" fill="rgba(0,0,0,0.10)" />
+          <circle cx="26" cy="14" r="0.6" fill="rgba(0,0,0,0.07)" />
+          <circle cx="14" cy="34" r="0.5" fill="rgba(0,0,0,0.06)" />
+          <circle cx="38" cy="40" r="0.7" fill="rgba(0,0,0,0.09)" />
+        </pattern>
       </defs>
+      {/* Paper-grain wash behind everything else — much wider than the
+          cluster, so even when fully zoomed out the canvas reads as a
+          textured surface rather than a flat fog. */}
+      <rect
+        x={-8000}
+        y={-8000}
+        width={16000}
+        height={16000}
+        fill="url(#jumap-grain)"
+        opacity={0.6}
+        pointerEvents="none"
+      />
       {/* Country regions — drawn BEFORE genre territories so they sit at
           the back as a large atlas backdrop. */}
       <g className="jumap-country-territories" aria-hidden="true">
@@ -961,6 +997,17 @@ const JumapSvgInner = memo(function JumapSvgInner({
               cy={c.cy}
               r={c.r}
               fill={`url(#ct-${c.key})`}
+            />
+            {/* Atlas-style dashed boundary ring around the country */}
+            <circle
+              cx={c.cx}
+              cy={c.cy}
+              r={c.r - 18}
+              fill="none"
+              stroke={`url(#cr-${c.key})`}
+              strokeWidth={1.4}
+              strokeDasharray="6 10"
+              opacity={0.6}
             />
             <text
               x={c.cx}
@@ -1030,17 +1077,24 @@ const JumapSvgInner = memo(function JumapSvgInner({
         {bonds.map((b, i) => {
           const active = focusedBond(b)
           const dim = focus !== null && !active
+          const isOwn = b.kind === 'own'
           return (
             <line
-              key={`${b.from}|${b.to}`}
-              className={'jumap-bond' + (active ? ' jumap-bond-active' : '')}
+              key={`${b.kind}|${b.from}|${b.to}`}
+              className={
+                'jumap-bond ' + (isOwn ? 'jumap-bond-own' : 'jumap-bond-feature') +
+                (active ? ' jumap-bond-active' : '')
+              }
               x1={b.x1}
               y1={b.y1}
               x2={b.x2}
               y2={b.y2}
-              stroke={active ? 'url(#bond-grad)' : 'currentColor'}
-              strokeOpacity={dim ? 0.05 : b.intensity * (active ? 1.4 : 1)}
-              strokeWidth={active ? 1.6 : 0.9}
+              stroke={active && !isOwn ? 'url(#bond-grad)' : 'currentColor'}
+              strokeOpacity={dim ? 0.04 : b.intensity * (active ? 1.4 : 1)}
+              strokeWidth={
+                active ? 1.7 : isOwn ? 0.5 : 1.1
+              }
+              strokeDasharray={isOwn ? '2 3' : undefined}
               style={{
                 ['--bond-i' as string]: i,
               }}
@@ -1172,6 +1226,22 @@ export function JumapPage() {
   const bonds = useMemo<Bond[]>(() => {
     const aMap = new Map(artistsPlaced.map((a) => [a.name, a]))
     const out: Bond[] = []
+    // Ownership tethers: each song to its primary planet. Soft thin
+    // lines so the user can always trace which planet a moon belongs to.
+    for (const s of songsPlaced) {
+      const owner = aMap.get(s.primaryArtist)
+      if (!owner) continue
+      out.push({
+        from: s.primaryArtist,
+        to: s.id,
+        x1: owner.cx, y1: owner.cy,
+        x2: s.cx, y2: s.cy,
+        intensity: 0.28,
+        kind: 'own',
+      })
+    }
+    // Featuring bonds: drawn on top, brighter, only for songs whose
+    // featured artist is in the roster.
     for (const s of songsPlaced) {
       const feats = s.song.features
       if (!feats || feats.length === 0) continue
@@ -1183,7 +1253,8 @@ export function JumapPage() {
           to: f,
           x1: s.cx, y1: s.cy,
           x2: fa.cx, y2: fa.cy,
-          intensity: 0.5,
+          intensity: 0.55,
+          kind: 'feature',
         })
       }
     }
