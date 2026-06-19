@@ -1078,6 +1078,10 @@ const JumapSvgInner = memo(function JumapSvgInner({
           const active = focusedBond(b)
           const dim = focus !== null && !active
           const isOwn = b.kind === 'own'
+          // data-* attributes let the drag loop find each line and update
+          // its endpoints as artists move. For 'own' bonds both ends are
+          // tied to the primary artist; for 'feature' bonds x1y1 also
+          // moves with the primary artist, x2y2 with the featured one.
           return (
             <line
               key={`${b.kind}|${b.from}|${b.to}`}
@@ -1085,6 +1089,12 @@ const JumapSvgInner = memo(function JumapSvgInner({
                 'jumap-bond ' + (isOwn ? 'jumap-bond-own' : 'jumap-bond-feature') +
                 (active ? ' jumap-bond-active' : '')
               }
+              data-bond-from-artist={b.from}
+              data-bond-to-artist={isOwn ? b.from : b.to}
+              data-bond-x1={b.x1}
+              data-bond-y1={b.y1}
+              data-bond-x2={b.x2}
+              data-bond-y2={b.y2}
               x1={b.x1}
               y1={b.y1}
               x2={b.x2}
@@ -1707,6 +1717,12 @@ export function JumapPage() {
     moved: boolean
   } | null>(null)
   const dragRafRef = useRef<number | null>(null)
+  const bondSnapsRef = useRef<Array<{
+    el: SVGLineElement
+    from: string
+    to: string
+    x1: number; y1: number; x2: number; y2: number
+  }> | null>(null)
   // Persistent per-artist offsets that survive re-renders. After a drag
   // ends, the artist keeps the dx/dy we last applied. A layout effect
   // re-applies them after every React render so a view-mode switch or
@@ -1778,6 +1794,28 @@ export function JumapPage() {
         if (!songEls.has(n)) songEls.set(n, [])
         songEls.get(n)!.push(el)
       })
+      // Bond snapshot — used so the connecting lines re-anchor as the
+      // planets they tether to move.
+      const bondSnaps: Array<{
+        el: SVGLineElement
+        from: string
+        to: string
+        x1: number; y1: number; x2: number; y2: number
+      }> = []
+      svg.querySelectorAll<SVGLineElement>('line.jumap-bond').forEach((el) => {
+        const from = el.getAttribute('data-bond-from-artist')
+        const to = el.getAttribute('data-bond-to-artist')
+        if (!from || !to) return
+        bondSnaps.push({
+          el,
+          from,
+          to,
+          x1: parseFloat(el.getAttribute('data-bond-x1') || '0'),
+          y1: parseFloat(el.getAttribute('data-bond-y1') || '0'),
+          x2: parseFloat(el.getAttribute('data-bond-x2') || '0'),
+          y2: parseFloat(el.getAttribute('data-bond-y2') || '0'),
+        })
+      })
 
       // Live positions per artist (start at last-known = orig + persisted offset).
       const livePos = new Map<string, { cx: number; cy: number; vx: number; vy: number }>()
@@ -1801,6 +1839,7 @@ export function JumapPage() {
         origPos,
         moved: false,
       }
+      bondSnapsRef.current = bondSnaps
       // Latch grab so a click immediately after a drag doesn't open the
       // accidentally-clicked song behind the planet.
       draggedRef.current = false  // start fresh; will set true once moved
@@ -1809,6 +1848,11 @@ export function JumapPage() {
       function onMove(ev: PointerEvent) {
         const drag = artistDragRef.current
         if (!drag || drag.pointerId !== ev.pointerId) return
+        // Block default touch panning so the gesture is exclusively the
+        // artist drag — on mobile, without this the browser will absorb
+        // most of the motion as a scroll attempt and only a fraction of
+        // the finger's travel reaches us.
+        ev.preventDefault()
         const w = clientToWorld(ev.clientX, ev.clientY)
         drag.targetCx = w.x - drag.grabDx
         drag.targetCy = w.y - drag.grabDy
@@ -1838,7 +1882,8 @@ export function JumapPage() {
         setGrabbing(false)
         // Let the loop wind down gracefully (it'll see no drag and exit).
       }
-      document.addEventListener('pointermove', onMove)
+      // passive: false so preventDefault works on touch.
+      document.addEventListener('pointermove', onMove, { passive: false })
       document.addEventListener('pointerup', onUp)
       document.addEventListener('pointercancel', onUp)
 
@@ -1895,16 +1940,33 @@ export function JumapPage() {
               if (Math.abs(p.vx) + Math.abs(p.vy) > 0.05) stillBusy = true
             }
             // 2) Imperative DOM update — transform each bubble by (cx - orig).
+            const deltas = new Map<string, { dx: number; dy: number }>()
             for (const n of names) {
               const p = live.get(n)!
               const o = drag!.origPos.get(n)!
               const dx = p.cx - o.cx
               const dy = p.cy - o.cy
+              deltas.set(n, { dx, dy })
               const aEl = drag!.artistEls.get(n)
               if (aEl) aEl.setAttribute('transform', `translate(${dx} ${dy})`)
               const sEls = drag!.songEls.get(n)
               if (sEls) for (const el of sEls) {
                 el.setAttribute('transform', `translate(${dx} ${dy})`)
+              }
+            }
+            // 3) Re-anchor every bond so the connecting lines follow the
+            // planets they tether. Own-bonds' both endpoints get the
+            // primary artist's delta; feature-bonds get from-artist's
+            // delta on x1y1 and featured-artist's delta on x2y2.
+            const bondSnaps = bondSnapsRef.current
+            if (bondSnaps) {
+              for (const bs of bondSnaps) {
+                const df = deltas.get(bs.from) ?? { dx: 0, dy: 0 }
+                const dt = deltas.get(bs.to) ?? { dx: 0, dy: 0 }
+                bs.el.setAttribute('x1', String(bs.x1 + df.dx))
+                bs.el.setAttribute('y1', String(bs.y1 + df.dy))
+                bs.el.setAttribute('x2', String(bs.x2 + dt.dx))
+                bs.el.setAttribute('y2', String(bs.y2 + dt.dy))
               }
             }
           }
