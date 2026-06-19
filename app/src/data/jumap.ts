@@ -161,6 +161,11 @@ export const artists: Artist[] = [
       { title: 'Turning Up',       tier: 1, subTier: 1, genres: ['jpop'] },
       { title: 'JAM',              tier: 1, subTier: 0, genres: ['jpop'] },
       { title: 'Yes? No?',         tier: 1, subTier: 0, genres: ['jpop'] },
+      { title: 'Oh Yeah!',         tier: 1, subTier: 2, genres: ['jpop'] },
+      { title: 'Zero-G',           tier: 2, subTier: 1, genres: ['jpop'] },
+      { title: 'Dear Snow',        tier: 3, subTier: 0, genres: ['jpop'] },
+      { title: 'Endless Game',     tier: 3, subTier: 1, genres: ['jpop'] },
+      { title: 'Your Eyes',        tier: 4, subTier: 2, genres: ['jpop'] },
       { title: '身長差のない恋人',  tier: 1, subTier: 2, genres: ['jpop'] },
       { title: 'Crazy Moon~キミ・ハ・ムテキ~', tier: 2, subTier: 3, genres: ['jpop'] },
       { title: 'BRAVE',            tier: 2, subTier: 2, genres: ['jpop'] },
@@ -210,7 +215,9 @@ export const artists: Artist[] = [
     name: 'ILLIT',
     primaryGenre: 'kpop',
     songs: [
-      { title: 'Magnetic', tier: 1, genres: ['kpop'], year: 2024, album: 'SUPER REAL ME' },
+      { title: 'Magnetic',                          tier: 1, genres: ['kpop'], year: 2024, album: 'SUPER REAL ME' },
+      { title: '빌려온 고양이 (Do the Dance)',       tier: 2, subTier: 2, genres: ['kpop'] },
+      { title: 'Almond Chocolate',                  tier: 3, subTier: 2, genres: ['kpop'] },
     ],
   },
   {
@@ -219,6 +226,7 @@ export const artists: Artist[] = [
     songs: [
       { title: 'HEYA',     tier: 3, subTier: 3, genres: ['kpop'], year: 2024, album: 'IVE SWITCH' },
       { title: 'Bang Bang', tier: 2, subTier: 2, genres: ['kpop'] },
+      { title: 'ELEVEN',    tier: 2, subTier: 2, genres: ['kpop'], year: 2021, album: 'ELEVEN' },
     ],
   },
   {
@@ -228,6 +236,7 @@ export const artists: Artist[] = [
       { title: 'OMG',        tier: 1, subTier: 1, genres: ['kpop'], year: 2023, album: 'NewJeans ‘OMG’' },
       { title: 'New Jeans',  tier: 1, subTier: 2, genres: ['kpop'], year: 2024, album: 'How Sweet' },
       { title: 'Get Up',     tier: 1, subTier: 2, genres: ['kpop'], year: 2023, album: 'Get Up' },
+      { title: 'GODS',       tier: 1, subTier: 0, genres: ['kpop'], year: 2023 },
       { title: 'Attention',  tier: 2, subTier: 3, genres: ['kpop'], year: 2022, album: 'New Jeans' },
       { title: 'Hype Boy',   tier: 2, subTier: 2, genres: ['kpop'], year: 2022, album: 'New Jeans' },
       { title: 'How Sweet',  tier: 2, subTier: 1, genres: ['kpop'], year: 2024, album: 'How Sweet' },
@@ -252,8 +261,10 @@ export const artists: Artist[] = [
     name: 'Kendrick Lamar',
     primaryGenre: 'hiphop',
     songs: [
-      { title: 'Not Like Us', tier: 2, subTier: 0, genres: ['hiphop'], year: 2024 },
-      { title: 'HUMBLE.',     tier: 2, subTier: 0, genres: ['hiphop'], year: 2017, album: 'DAMN.' },
+      { title: 'Not Like Us', tier: 2, subTier: 3, genres: ['hiphop'], year: 2024 },
+      { title: 'HUMBLE.',     tier: 2, subTier: 3, genres: ['hiphop'], year: 2017, album: 'DAMN.' },
+      { title: 'Luther',      tier: 2, subTier: 3, genres: ['hiphop', 'rnb'], features: ['SZA'] },
+      { title: 'N95',         tier: 3, subTier: 0, genres: ['hiphop'], year: 2022, album: 'Mr. Morale & The Big Steppers' },
     ],
   },
   {
@@ -275,7 +286,7 @@ export const artists: Artist[] = [
     name: 'Lil Uzi Vert',
     primaryGenre: 'hiphop',
     songs: [
-      { title: '20 Min', tier: 2, subTier: 0, genres: ['hiphop'], year: 2017, album: 'Luv Is Rage 2' },
+      { title: '20 Min', tier: 2, subTier: 3, genres: ['hiphop'], year: 2017, album: 'Luv Is Rage 2' },
     ],
   },
   {
@@ -318,8 +329,395 @@ export const artists: Artist[] = [
     name: 'Beenzino',
     primaryGenre: 'khiphop',
     songs: [
-      { title: '990', tier: 2, subTier: 1, genres: ['khiphop'] },
+      { title: '990',    tier: 2, subTier: 1, genres: ['khiphop'] },
+      { title: 'Radio',  tier: 3, subTier: 3, genres: ['khiphop'] },
     ],
+  },
+
+  // ===== K-Pop additions =====
+  {
+    name: 'SHINee',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: 'Stand By Me', tier: 3, subTier: 2, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: 'KARA',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: 'Pretty Girl', tier: 3, subTier: 3, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: 'NCT WISH',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: 'Surf', tier: 3, subTier: 0, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: 'NCT U',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: 'Kangaroo', tier: 3, subTier: 2, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: 'TXT',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: 'Force', tier: 1, subTier: 0, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: 'JENNIE',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: 'Love Hangover', tier: 3, subTier: 2, genres: ['kpop'], features: ['Dominic Fike'] },
+    ],
+  },
+  {
+    name: 'QWER',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: '고민중독', tier: 2, subTier: 0, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: 'TVXQ',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: '풍선',   tier: 1, subTier: 0, genres: ['kpop'] },
+      { title: 'Tonight', tier: 3, subTier: 3, genres: ['kpop'] },
+      { title: '믿어요',  tier: 3, subTier: 3, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: 'BOYNEXTDOOR',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: '오늘만 I LOVE YOU', tier: 3, subTier: 3, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: 'SEVENTEEN',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: '음악의 신', tier: 2, subTier: 1, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: '혁오',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: '와리가리', tier: 2, subTier: 0, genres: ['kpop', 'rock'] },
+    ],
+  },
+  {
+    name: '정국',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: 'Standing Next to You', tier: 3, subTier: 2, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: 'BTS',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: 'Dynamite', tier: 1, subTier: 0, genres: ['kpop'], year: 2020, album: 'BE' },
+    ],
+  },
+  {
+    name: 'JYJ',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: '찾았다', tier: 2, subTier: 3, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: 'Peppertones',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: 'Superfantastic', tier: 2, subTier: 1, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: '신지',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: 'Always', tier: 1, subTier: 0, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: 'NS 윤지',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: 'If You Love Me', tier: 4, subTier: 0, genres: ['kpop'], features: ['박재범'] },
+    ],
+  },
+  {
+    name: 'Hearts2Hearts',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: 'STYLE', tier: 2, subTier: 2, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: 'DEAN',
+    primaryGenre: 'rnb',
+    songs: [
+      { title: '넘어와', tier: 2, subTier: 0, genres: ['rnb', 'kpop'], features: ['백예린'] },
+    ],
+  },
+
+  // ===== K-Hip-Hop additions =====
+  {
+    name: 'Effie',
+    primaryGenre: 'khiphop',
+    songs: [
+      { title: '2025기침', tier: 2, subTier: 0, genres: ['khiphop'] },
+      { title: 'down',     tier: 3, subTier: 1, genres: ['khiphop'] },
+    ],
+  },
+  {
+    name: 'EsDeeKid',
+    primaryGenre: 'khiphop',
+    songs: [
+      { title: '4 Raws', tier: 2, subTier: 1, genres: ['khiphop'] },
+    ],
+  },
+  {
+    name: '나우아임영',
+    primaryGenre: 'khiphop',
+    songs: [
+      { title: 'AH', tier: 3, subTier: 3, genres: ['khiphop'] },
+    ],
+  },
+  {
+    name: 'Jazzyfact',
+    primaryGenre: 'khiphop',
+    songs: [
+      { title: '하루종일', tier: 3, subTier: 3, genres: ['khiphop'] },
+    ],
+  },
+  {
+    name: 'SYSTEM SEOUL',
+    primaryGenre: 'khiphop',
+    songs: [
+      { title: 'SS', tier: 2, subTier: 1, genres: ['khiphop'] },
+    ],
+  },
+  {
+    name: 'Young B',
+    primaryGenre: 'khiphop',
+    songs: [
+      { title: '아침에', tier: 2, subTier: 0, genres: ['khiphop'], features: ['Bryn'] },
+    ],
+  },
+  {
+    name: 'Kid Milli',
+    primaryGenre: 'khiphop',
+    songs: [
+      { title: '25', tier: 2, subTier: 1, genres: ['khiphop'], features: ['Young B'] },
+    ],
+  },
+
+  // ===== J-Pop additions =====
+  {
+    name: 'V6',
+    primaryGenre: 'jpop',
+    songs: [
+      { title: 'Can do! Can go!', tier: 2, subTier: 2, genres: ['jpop'] },
+      { title: 'Super Powers',    tier: 2, subTier: 1, genres: ['jpop'] },
+    ],
+  },
+  {
+    name: 'Buono!',
+    primaryGenre: 'jpop',
+    songs: [
+      { title: 'Kiss! Kiss! Kiss!', tier: 2, subTier: 2, genres: ['jpop'] },
+    ],
+  },
+  {
+    name: 'Kenshi Yonezu',
+    primaryGenre: 'jpop',
+    songs: [
+      { title: 'IRIS OUT', tier: 3, subTier: 2, genres: ['jpop'] },
+    ],
+  },
+  {
+    name: 'Number_i',
+    primaryGenre: 'jpop',
+    songs: [
+      { title: 'BON', tier: 1, subTier: 0, genres: ['jpop'] },
+    ],
+  },
+  {
+    name: 'EXILE',
+    primaryGenre: 'jpop',
+    songs: [
+      { title: 'Choo Choo Train', tier: 2, subTier: 2, genres: ['jpop'] },
+    ],
+  },
+  {
+    name: 'SEKAI NO OWARI',
+    primaryGenre: 'jpop',
+    songs: [
+      { title: 'ターコイズ', tier: 2, subTier: 2, genres: ['jpop'] },
+      { title: 'RPG',        tier: 2, subTier: 1, genres: ['jpop'] },
+    ],
+  },
+  {
+    name: 'Official髭男dism',
+    primaryGenre: 'jpop',
+    songs: [
+      { title: '犬かキャットかで死ぬまで喧嘩しよう!', tier: 1, subTier: 2, genres: ['jpop'] },
+    ],
+  },
+
+  // ===== Anime =====
+  {
+    name: 'ClariS',
+    primaryGenre: 'anime',
+    songs: [
+      { title: 'Irony', tier: 3, subTier: 0, genres: ['anime'] },
+    ],
+  },
+  {
+    name: 'Hiroshi Kitadani',
+    primaryGenre: 'anime',
+    songs: [
+      { title: 'ウィーアー！', tier: 1, subTier: 0, genres: ['anime'] },
+    ],
+  },
+  {
+    name: '5050',
+    primaryGenre: 'anime',
+    songs: [
+      { title: 'Jungle P', tier: 1, subTier: 0, genres: ['anime'] },
+    ],
+  },
+
+  // ===== Hip-Hop (Western) =====
+  {
+    name: 'DJ Khaled',
+    primaryGenre: 'hiphop',
+    songs: [
+      { title: 'POPSTAR', tier: 2, subTier: 2, genres: ['hiphop'], features: ['Drake'] },
+    ],
+  },
+  {
+    name: 'The Notorious B.I.G.',
+    primaryGenre: 'hiphop',
+    songs: [
+      { title: 'Hypnotize', tier: 3, subTier: 1, genres: ['hiphop'], year: 1997, album: 'Life After Death' },
+    ],
+  },
+  {
+    name: 'Nas',
+    primaryGenre: 'hiphop',
+    songs: [
+      { title: 'N.Y. State of Mind', tier: 3, subTier: 0, genres: ['hiphop'], year: 1994, album: 'Illmatic' },
+    ],
+  },
+
+  // ===== Pop =====
+  {
+    name: 'Sabrina Carpenter',
+    primaryGenre: 'pop',
+    songs: [
+      { title: 'Espresso', tier: 2, subTier: 3, genres: ['pop'], year: 2024, album: 'Short n’ Sweet' },
+    ],
+  },
+  {
+    name: 'Dominic Fike',
+    primaryGenre: 'pop',
+    songs: [
+      { title: 'Pasture Child', tier: 4, subTier: 3, genres: ['pop', 'rock'] },
+    ],
+  },
+  {
+    name: 'Karencici',
+    primaryGenre: 'pop',
+    songs: [
+      { title: 'Hard to say', tier: 3, subTier: 1, genres: ['pop'] },
+    ],
+  },
+  {
+    name: 'Chelsea Collins',
+    primaryGenre: 'pop',
+    songs: [
+      { title: '07 Britney', tier: 3, subTier: 3, genres: ['pop'] },
+    ],
+  },
+
+  // ===== Rock =====
+  {
+    name: 'The Beatles',
+    primaryGenre: 'rock',
+    songs: [
+      { title: 'Let It Be', tier: 4, subTier: 2, genres: ['rock'], year: 1970, album: 'Let It Be' },
+    ],
+  },
+  {
+    name: 'Redbone',
+    primaryGenre: 'rock',
+    songs: [
+      { title: 'Come and Get Your Love', tier: 3, subTier: 3, genres: ['rock'], year: 1974, album: 'Wovoka' },
+    ],
+  },
+  {
+    name: 'Avril Lavigne',
+    primaryGenre: 'rock',
+    songs: [
+      { title: 'Sk8er Boi', tier: 1, subTier: 0, genres: ['rock', 'pop'], year: 2002, album: 'Let Go' },
+    ],
+  },
+  {
+    name: 'Steriogram',
+    primaryGenre: 'rock',
+    songs: [
+      { title: 'Walkie Talkie Man', tier: 3, subTier: 3, genres: ['rock'] },
+    ],
+  },
+
+  // ===== R&B =====
+  {
+    name: 'SZA',
+    primaryGenre: 'rnb',
+    songs: [
+      { title: 'Snooze',   tier: 2, subTier: 0, genres: ['rnb'], year: 2022, album: 'SOS' },
+      { title: '30 For 30', tier: 3, subTier: 3, genres: ['rnb'], features: ['Kendrick Lamar'] },
+    ],
+  },
+  {
+    name: 'The Weeknd',
+    primaryGenre: 'rnb',
+    songs: [
+      { title: 'Out of Time', tier: 1, subTier: 0, genres: ['rnb'], year: 2022, album: 'Dawn FM' },
+    ],
+  },
+  {
+    name: 'Jackson 5',
+    primaryGenre: 'rnb',
+    songs: [
+      { title: 'I Want You Back', tier: 3, subTier: 2, genres: ['rnb'], year: 1969 },
+    ],
+  },
+  {
+    name: 'Bruno Mars',
+    primaryGenre: 'rnb',
+    songs: [
+      { title: 'Skate', tier: 1, subTier: 3, genres: ['rnb', 'pop'], year: 2021, album: 'An Evening with Silk Sonic', features: ['Anderson .Paak'] },
+    ],
+  },
+  {
+    name: 'Anderson .Paak',
+    primaryGenre: 'rnb',
+    // No song entries yet — exists in the roster so the Silk Sonic
+    // collaboration draws a feature bond from "Skate" to this planet.
+    songs: [],
   },
 ]
 
