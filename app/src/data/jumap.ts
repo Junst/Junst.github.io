@@ -248,6 +248,7 @@ export const artists: Artist[] = [
     songs: [
       // 'WDA': please confirm the full title + year + album
       { title: 'WDA',   tier: 3, genres: ['kpop'] },
+      { title: 'Spicy', tier: 2, subTier: 3, genres: ['kpop'], year: 2023, album: 'MY WORLD' },
       { title: 'Girls', tier: 3, subTier: 1, genres: ['kpop'], year: 2022, album: 'Girls' },
     ],
   },

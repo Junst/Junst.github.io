@@ -37,6 +37,7 @@ export const ALBUM_ART: Record<string, string> = {
   "Hey! Say! JUMP|Muah Muah": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/1a/2e/8a/1a2e8a59-51db-b41e-9a61-2d9f37a11102/4517331091080.jpg/600x600bb.jpg",
   "KAT-TUN|Real Face": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/b2/e4/92/b2e49204-2d6a-25fa-ecc5-7e84abf85ec2/4517331099192.jpg/600x600bb.jpg",
   "aespa|WDA": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/e2/b8/2f/e2b82f49-e51b-725f-2797-ea2a3de44b55/888735955426_Cover.jpg/600x600bb.jpg",
+  "aespa|Spicy": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/af/2c/6d/af2c6d62-0ebc-2dff-17b3-8eeb2b3986a0/888735943621.jpg/600x600bb.jpg",
   "aespa|Girls": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/c9/7d/dd/c97ddd34-5962-8cf1-a55c-cf730d3069f5/888735941375.jpg/600x600bb.jpg",
   "ILLIT|Magnetic": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/3e/49/1e/3e491e43-4961-21ab-2abe-37fb1c0feb40/196922879227_Cover.jpg/600x600bb.jpg",
   "ILLIT|빌려온 고양이 (Do the Dance)": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/e4/bc/4d/e4bc4da3-0013-9949-8e54-0eede523f9d4/198704525001_Cover.jpg/600x600bb.jpg",

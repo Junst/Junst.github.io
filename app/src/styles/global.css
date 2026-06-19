@@ -1984,12 +1984,15 @@ html[data-theme="dark"] .jumap-modal {
 /* Jumap modal: content on the left (title → stars/meta → review),
    album art on the right. Card softly inherits the album art's dominant
    colour through --song-tint. */
-.jumap-modal-song {
+/* Use a higher-specificity selector — there's a `.jumap-modal-songs li`
+   rule above with grid-template-columns: 44px 1fr that was overriding
+   the layout we want here and cramming the title into ~44px (so "Jungle"
+   wrapped to "Jun / gle"). Win the cascade by qualifying with both
+   the parent <ol> class and the <li> class. */
+.jumap-modal-songs li.jumap-modal-song {
   --song-tint: rgba(0, 0, 0, 0);
-  /* Restore the original two-row grid — note flows BELOW everything,
-     head (title + meta) sits left, album art sits top-right. The art
-     column was the title-room culprit before: shrink it without
-     changing the row structure. */
+  /* Two-row grid — note flows BELOW everything, head (title + meta) sits
+     left, album art sits top-right. */
   display: grid;
   grid-template-columns: 1fr 64px;
   grid-template-areas:
@@ -2243,7 +2246,7 @@ html[data-theme="dark"] .jumap-modal {
 
 @media (max-width: 640px) {
   /* Same two-row grid on mobile, smaller art so the title row stays wide. */
-  .jumap-modal-song {
+  .jumap-modal-songs li.jumap-modal-song {
     grid-template-columns: 1fr 52px;
     column-gap: 10px;
     row-gap: 10px;
@@ -2256,7 +2259,7 @@ html[data-theme="dark"] .jumap-modal {
   .juward-ranking-art { width: 22px; height: 22px; }
 }
 @media (max-width: 380px) {
-  .jumap-modal-song { grid-template-columns: 1fr 44px; column-gap: 8px; }
+  .jumap-modal-songs li.jumap-modal-song { grid-template-columns: 1fr 44px; column-gap: 8px; }
   .jumap-modal-song-art, .jumap-modal-song-art-placeholder {
     width: 44px; height: 44px;
   }
