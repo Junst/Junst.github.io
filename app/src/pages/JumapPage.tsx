@@ -16,7 +16,6 @@ import {
   bestTier,
   genreFor,
   countryOfGenre,
-  groupArtistsByGenre,
   artistPrimaryGenre,
   artistGenres,
   sortArtists,
@@ -42,6 +41,9 @@ interface PlacedArtist extends Artist {
    *  from getting closer than their combined orbits — so songs of artist A
    *  can never be closer to artist B than to A. */
   orbitR: number
+  /** Country / region key (jp / kr / west / other) — set at place() time
+   *  so the force pass can apply a wider gap to inter-country pairs. */
+  country: string
   // Idle drift seeds (deterministic so the motion is stable per artist)
   driftDelay: number
   driftDuration: number
@@ -154,75 +156,67 @@ function estimateOrbitR(a: Artist): number {
 }
 
 function place(items: Artist[], width: number, height: number): PlacedArtist[] {
-  const groups = groupArtistsByGenre(items)
-  const primaryGenres = GENRES.filter((g) => groups.has(g.key))
-  const out: PlacedArtist[] = []
+  // Country-first clustering: each country gets its own centroid on a wide
+  // outer ring, and ALL artists in that country phyllotaxis-spiral around
+  // their country centre. This guarantees same-country artists land near
+  // each other before the force pass even starts — so the country
+  // territory blob actually contains them. The force pass then refines
+  // spacing without letting different-country artists collide.
+  const byCountry = new Map<string, Artist[]>()
+  for (const a of items) {
+    const c = countryOfGenre(artistPrimaryGenre(a))
+    if (!byCountry.has(c)) byCountry.set(c, [])
+    byCountry.get(c)!.push(a)
+  }
+  // Use the COUNTRIES order so the layout is stable across data changes.
+  const countryKeys = COUNTRIES.map((c) => c.key).filter((k) => byCountry.has(k))
   const cx = width / 2
   const cy = height / 2
 
   const centres: Record<string, { x: number; y: number }> = {}
-  if (primaryGenres.length === 1) {
-    centres[primaryGenres[0].key] = { x: cx, y: cy }
+  if (countryKeys.length === 1) {
+    centres[countryKeys[0]] = { x: cx, y: cy }
   } else {
-    // Wider ring so distinct genres have visible breathing room between
-    // their territories; cross-genre overlap still happens via the
-    // secondary-genre pull below.
-    const ringR = Math.min(width, height) * 1.05
-    primaryGenres.forEach((g, i) => {
-      const angle = (i / primaryGenres.length) * Math.PI * 2 - Math.PI / 2
-      centres[g.key] = {
+    // Wide super-ring for countries. Per-country cluster radius is large
+    // (lots of artists), so we need lots of room between centroids.
+    const ringR = Math.min(width, height) * 1.4
+    countryKeys.forEach((key, i) => {
+      const angle = (i / countryKeys.length) * Math.PI * 2 - Math.PI / 2
+      centres[key] = {
         x: cx + Math.cos(angle) * ringR,
         y: cy + Math.sin(angle) * ringR,
       }
     })
   }
 
-  // Phyllotaxis (sunflower spiral): angle_i = i · golden_angle, radius
-  // grows with sqrt(i). Naturally produces a near-uniform packing for any
-  // cluster size without paired bubbles ever landing on top of each other.
-  for (const g of primaryGenres) {
-    const c = centres[g.key]
-    const cluster = sortArtists(groups.get(g.key) ?? [])
+  const out: PlacedArtist[] = []
+  for (const country of countryKeys) {
+    const c = centres[country]
+    const cluster = sortArtists(byCountry.get(country) ?? [])
+    const phase = cluster.length > 0 ? seed(cluster[0].name) * Math.PI * 2 : 0
     cluster.forEach((a, i) => {
       const r = bubbleRadius(a)
       const sd = seed(a.name)
-      // Per-cluster phase rotation derived from the first artist's seed so
-      // the spirals don't all point the same way.
-      const phase = seed(cluster[0].name) * Math.PI * 2
+      // Phyllotaxis within the country: tight enough that members stay
+      // visibly grouped, loose enough that the relax pass doesn't have to
+      // unstick them.
       const angle = i * GOLDEN_ANGLE + phase
       const localRadius = cluster.length === 1
         ? 0
-        : Math.sqrt(i + 0.6) * 120
-
-      // Pull toward the average of this artist's *secondary* genre centroids,
-      // so cross-genre artists (e.g. Travis Scott rage+hiphop) sit between
-      // territories instead of fully inside their primary one. The shared
-      // genre's coloured footprint then bridges into the neighbour's blob.
-      let pullX = 0, pullY = 0
-      const secondaries = artistGenres(a).filter((k) => k !== g.key && centres[k])
-      if (secondaries.length > 0) {
-        let sx = 0, sy = 0
-        for (const sk of secondaries) { sx += centres[sk].x; sy += centres[sk].y }
-        sx /= secondaries.length; sy /= secondaries.length
-        pullX = (sx - c.x) * 0.30
-        pullY = (sy - c.y) * 0.30
-      }
-
+        : Math.sqrt(i + 0.6) * 130
       out.push({
         ...a,
         kind: 'artist',
-        cx: c.x + pullX + Math.cos(angle) * localRadius,
-        cy: c.y + pullY + Math.sin(angle) * localRadius,
+        cx: c.x + Math.cos(angle) * localRadius,
+        cy: c.y + Math.sin(angle) * localRadius,
         r,
-        // Predicted orbit reach so the artist-only force pass has something
-        // to enforce against. placeSongsAround refines this later.
         orbitR: estimateOrbitR(a),
-        driftDelay: -(sd * 12),                  // 0..-12s offset
-        driftDuration: 8 + (sd * 6),             // 8..14s loop
+        country,
+        driftDelay: -(sd * 12),
+        driftDuration: 8 + (sd * 6),
       })
     })
   }
-
   return out
 }
 
@@ -330,10 +324,15 @@ function forceLayoutNodes(
           // an edge song at distance orbitR_max from its artist ends up
           // at distance >= orbitR_max + 60 from the other artist — so
           // proximity always identifies the right primary.
+          const sameCountry = a.country === b.country
+          // Inter-country pairs get a much larger floor, so the country
+          // territory blobs end up clearly separated and the visual
+          // grouping reads as Japan / Korea / Western at a glance.
+          const countryBoost = sameCountry ? 0 : 380
           minDist = Math.max(
-            2 * Math.max(a.orbitR, b.orbitR) + 120,
-            a.orbitR + b.orbitR + GAP_AA_BUFFER,
-            a.r + b.r + GAP_AA_MIN,
+            2 * Math.max(a.orbitR, b.orbitR) + 120 + countryBoost,
+            a.orbitR + b.orbitR + GAP_AA_BUFFER + countryBoost,
+            a.r + b.r + GAP_AA_MIN + countryBoost,
           )
         } else {
           const gap = a.kind !== b.kind ? GAP_AS : GAP_SS
@@ -1014,7 +1013,7 @@ export function JumapPage() {
         cy,
         // Extra padding so the country tint extends well past every artist
         // in it — reads as a region rather than a tight outline.
-        r: r + 90,
+        r: r + 160,
         color: spec.color,
         label: spec.label,
         labelY: cy - r - 110,
@@ -1134,10 +1133,10 @@ export function JumapPage() {
     const ch = bbox.maxY - bbox.minY + 160
     const zX = width / cw
     const zY = height / ch
-    // Don't auto-fit smaller than 0.55 — past that, song moons become so
-    // tiny on screen that they're hard to click, and the legend / labels
-    // get unreadable. The user can pan to see the rest.
-    const z = Math.max(0.55, Math.min(1, Math.min(zX, zY)))
+    // Don't auto-fit too small — past 0.4 song moons get hard to click.
+    // With the new country super-ring the cluster spans a lot more, so
+    // we allow zooming a bit further out than before.
+    const z = Math.max(0.4, Math.min(1, Math.min(zX, zY)))
     const cx = (bbox.minX + bbox.maxX) / 2
     const cy = (bbox.minY + bbox.maxY) / 2
     return {
