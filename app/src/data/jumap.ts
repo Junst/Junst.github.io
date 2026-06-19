@@ -188,6 +188,8 @@ export const artists: Artist[] = [
     primaryGenre: 'jpop',
     songs: [
       { title: 'A·RA·SHI',         tier: 1, subTier: 3, genres: ['jpop'] },
+      { title: 'Ready To Fly',     tier: 1, subTier: 3, genres: ['jpop'] },
+      { title: 'LOVE PARADE',      tier: 1, subTier: 3, genres: ['jpop'] },
       { title: 'Love so sweet',    tier: 1, subTier: 3, genres: ['jpop'] },
       { title: 'Monster',          tier: 1, subTier: 3, genres: ['jpop'] },
       { title: 'One Love',         tier: 1, subTier: 3, genres: ['jpop'] },
@@ -210,8 +212,10 @@ export const artists: Artist[] = [
       { title: 'WISH',             tier: 3, subTier: 0, genres: ['jpop'] },
       { title: 'Troublemaker',     tier: 3, subTier: 0, genres: ['jpop'] },
       { title: 'Summer Splash!',   tier: 3, genres: ['jpop'] },
+      { title: 'Green Light',      tier: 3, subTier: 2, genres: ['jpop'] },
       { title: 'Whenever you call', tier: 4, subTier: 2, genres: ['jpop'] },
       { title: 'Raise Your Hands', tier: 4, genres: ['jpop'] },
+      { title: 'Face Down : Reborn', tier: 5, subTier: 1, genres: ['jpop'] },
     ],
   },
   {
@@ -365,8 +369,9 @@ export const artists: Artist[] = [
     name: 'Beenzino',
     primaryGenre: 'khiphop',
     songs: [
-      { title: '990',    tier: 2, subTier: 1, genres: ['khiphop'] },
-      { title: 'Radio',  tier: 3, subTier: 3, genres: ['khiphop'] },
+      { title: '990',         tier: 2, subTier: 1, genres: ['khiphop'] },
+      { title: 'Time Travel', tier: 2, subTier: 3, genres: ['khiphop'] },
+      { title: 'Radio',       tier: 3, subTier: 3, genres: ['khiphop'] },
     ],
   },
 
@@ -868,6 +873,124 @@ export const artists: Artist[] = [
     primaryGenre: 'pop',
     songs: [
       { title: 'California Gurls', tier: 1, subTier: 0, genres: ['pop'], year: 2010, album: 'Teenage Dream', features: ['Snoop Dogg'] },
+    ],
+  },
+
+  // ===== K-Pop third batch =====
+  {
+    name: 'STAYC',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: '색안경 (STEREOTYPE)', tier: 3, subTier: 0, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: 'B.A.P',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: '대박사건 (Crash)', tier: 3, subTier: 0, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: 'Red Velvet',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: 'Queendom', tier: 4, subTier: 3, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: 'BEAST',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: '미운사람', tier: 3, subTier: 3, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: 'IZ*ONE',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: 'Panorama', tier: 4, subTier: 3, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: '소녀시대',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: 'I GOT A BOY', tier: 2, subTier: 3, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: '박세아',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: '희망', tier: 3, subTier: 3, genres: ['kpop'] },
+    ],
+  },
+
+  // ===== J-Pop third batch =====
+  {
+    name: 'Melody.',
+    primaryGenre: 'jpop',
+    songs: [
+      { title: 'Realize', tier: 3, subTier: 2, genres: ['jpop'] },
+    ],
+  },
+  {
+    name: '레나 (LENA)',
+    primaryGenre: 'jpop',
+    songs: [
+      { title: 'TOK! TOK! TOK!', tier: 4, subTier: 2, genres: ['jpop'] },
+    ],
+  },
+  {
+    name: 'Ken Hirai',
+    primaryGenre: 'jpop',
+    songs: [
+      { title: 'Pop Star', tier: 3, subTier: 2, genres: ['jpop'] },
+    ],
+  },
+  {
+    name: 'Perfume',
+    primaryGenre: 'jpop',
+    songs: [
+      { title: 'Love The World', tier: 2, subTier: 2, genres: ['jpop'] },
+    ],
+  },
+
+  // ===== Western third batch =====
+  {
+    name: 'Fall Out Boy',
+    primaryGenre: 'rock',
+    songs: [
+      { title: 'The Phoenix', tier: 4, subTier: 1, genres: ['rock'], year: 2013, album: 'Save Rock and Roll' },
+    ],
+  },
+  {
+    name: 'Boys Like Girls',
+    primaryGenre: 'rock',
+    songs: [
+      { title: 'The Great Escape', tier: 4, subTier: 2, genres: ['rock'] },
+    ],
+  },
+  {
+    name: 'Billie Eilish',
+    primaryGenre: 'pop',
+    songs: [
+      { title: 'bad guy', tier: 3, subTier: 1, genres: ['pop'], year: 2019, album: 'When We All Fall Asleep, Where Do We Go?' },
+    ],
+  },
+  {
+    name: 'Jonas Brothers',
+    primaryGenre: 'pop',
+    songs: [
+      { title: 'Sucker', tier: 3, subTier: 1, genres: ['pop'], year: 2019, album: 'Happiness Begins' },
+    ],
+  },
+  {
+    name: 'Justin Bieber',
+    primaryGenre: 'pop',
+    songs: [
+      { title: 'Sorry', tier: 2, subTier: 0, genres: ['pop'], year: 2015, album: 'Purpose' },
     ],
   },
 ]

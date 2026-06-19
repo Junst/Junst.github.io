@@ -1926,17 +1926,18 @@ html[data-theme="dark"] .jumap-modal {
    colour through --song-tint. */
 .jumap-modal-song {
   --song-tint: rgba(0, 0, 0, 0);
-  display: grid;
-  /* Was 1fr / 96px — shrunk the art column to 78px so the title row has
-     ~20% more horizontal runway before it wraps. */
-  grid-template-columns: 1fr 78px;
-  grid-template-areas:
-    "head art"
-    "note note";
-  column-gap: 16px;
-  row-gap: 12px;
-  align-items: start;
-  padding: 18px 20px;
+  /* Album art is positioned ABSOLUTELY at the top-right corner of the card
+     now — not as a grid column. That way the title row gets the full
+     content width (minus a reserved gutter for the art) instead of being
+     squeezed into a fixed 1fr column next to it. Was reading as the
+     title wrapping after 2-4 characters even on wide modals because the
+     grid column was actually the constraint. */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  /* Right padding reserves space for the absolutely-positioned art. */
+  padding: 18px 92px 18px 20px;
   background:
     linear-gradient(180deg,
       color-mix(in srgb, var(--song-tint) 18%, var(--bg-soft)) 0%,
@@ -1965,19 +1966,22 @@ html[data-theme="dark"] .jumap-modal {
 }
 
 .jumap-modal-song-head {
-  grid-area: head;
   display: flex;
   flex-direction: column;
   gap: 8px;
   min-width: 0;
+  /* No max-width — the card's right padding (set on .jumap-modal-song)
+     already reserves space for the absolutely-positioned art, so the
+     title row can stretch to fill everything else. */
 }
 .jumap-modal-song-art,
 .jumap-modal-song-art-placeholder {
-  grid-area: art;
-  align-self: start;
+  position: absolute;
+  top: 18px;
+  right: 16px;
 }
 .jumap-modal-song-note {
-  grid-area: note;
+  /* Note now flows in normal document order below the head. */
 }
 .jumap-modal-song-title {
   margin: 0;
@@ -2178,28 +2182,27 @@ html[data-theme="dark"] .jumap-modal {
 .nominee-songs { display: none; }
 
 @media (max-width: 640px) {
-  /* Match desktop's [head | art] / [note note] shape but with an even
-     tighter art column on the right, so the title gets as much
-     horizontal room as the modal can give it. */
+  /* Same absolute-art shape on phones — just smaller art and a tighter
+     reserved gutter so even more title runway opens up. */
   .jumap-modal-song {
-    grid-template-columns: 1fr 60px;
-    column-gap: 10px;
-    row-gap: 10px;
-    padding: 12px 12px;
+    gap: 8px;
+    padding: 12px 70px 12px 12px;
   }
   .jumap-modal-song-art, .jumap-modal-song-art-placeholder {
-    width: 60px; height: 60px;
-    justify-self: end;
+    top: 12px;
+    right: 10px;
+    width: 56px; height: 56px;
   }
   .jumap-modal-single { padding: 22px 14px 18px; }
   .juward-ranking-art { width: 22px; height: 22px; }
 }
 @media (max-width: 380px) {
-  /* Very narrow phones — shrink art a little more so the title has
-     extra breathing room for one-line layout. */
-  .jumap-modal-song { grid-template-columns: 1fr 52px; column-gap: 8px; }
+  /* Very narrow phones — even smaller art. */
+  .jumap-modal-song { padding: 10px 60px 10px 10px; }
   .jumap-modal-song-art, .jumap-modal-song-art-placeholder {
-    width: 52px; height: 52px;
+    top: 10px;
+    right: 8px;
+    width: 48px; height: 48px;
   }
   .jumap-modal-single { padding: 18px 12px 14px; }
 }
