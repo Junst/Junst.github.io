@@ -1172,6 +1172,11 @@ export function JumapPage() {
   // Chrome / Firefox), so without handling it the page itself zooms via
   // Safari's default. Listen for the gesture events, prevent default, and
   // map them through commitView like a wheel zoom.
+  // We ALSO bind wheel as a native non-passive listener here — React's
+  // synthetic wheel ends up passive in some browsers, and a passive
+  // wheel handler's preventDefault is silently ignored, which lets the
+  // page itself scroll while the user is trying to zoom Jumap (the very
+  // scrollbar that then steals their vertical pan).
   useEffect(() => {
     const svg = svgRef.current
     if (!svg) return
@@ -1196,15 +1201,39 @@ export function JumapPage() {
       commitView((v) => reframeAt(v, cx, cy, rect, targetZ))
     }
     function onGestureEnd(e: Event) { e.preventDefault() }
+    function onNativeWheel(e: WheelEvent) {
+      if (e.deltaX === 0 && e.deltaY === 0) return
+      e.preventDefault()
+      const svgEl = svgRef.current
+      if (!svgEl) return
+      const rect = svgEl.getBoundingClientRect()
+      if (e.ctrlKey || e.metaKey) {
+        const dy = Math.max(-80, Math.min(80, e.deltaY))
+        const factor = Math.exp(-dy * 0.0009)
+        commitView((v) => reframeAt(v, e.clientX, e.clientY, rect, v.z * factor))
+        return
+      }
+      commitView((v) => {
+        const scaleX = rect.width > 0 ? (width / v.z) / rect.width : 1
+        const scaleY = rect.height > 0 ? (height / v.z) / rect.height : 1
+        return {
+          x: clamp(v.x + e.deltaX * scaleX, -PAN_MAX_X, PAN_MAX_X),
+          y: clamp(v.y + e.deltaY * scaleY, -PAN_MAX_Y, PAN_MAX_Y),
+          z: v.z,
+        }
+      })
+    }
     svg.addEventListener('gesturestart' as keyof SVGSVGElementEventMap, onGestureStart as EventListener)
     svg.addEventListener('gesturechange' as keyof SVGSVGElementEventMap, onGestureChange as EventListener)
     svg.addEventListener('gestureend' as keyof SVGSVGElementEventMap, onGestureEnd as EventListener)
+    svg.addEventListener('wheel', onNativeWheel, { passive: false })
     return () => {
       svg.removeEventListener('gesturestart' as keyof SVGSVGElementEventMap, onGestureStart as EventListener)
       svg.removeEventListener('gesturechange' as keyof SVGSVGElementEventMap, onGestureChange as EventListener)
       svg.removeEventListener('gestureend' as keyof SVGSVGElementEventMap, onGestureEnd as EventListener)
+      svg.removeEventListener('wheel', onNativeWheel)
     }
-  }, [commitView, reframeAt])
+  }, [commitView, reframeAt, PAN_MAX_X, PAN_MAX_Y, width, height])
 
   const onPointerDown = useCallback(
     (e: React.PointerEvent<SVGSVGElement>) => {
@@ -1354,34 +1383,8 @@ export function JumapPage() {
     try { e.currentTarget.releasePointerCapture(e.pointerId) } catch { /* noop */ }
   }, [])
 
-  const onWheel = useCallback(
-    (e: React.WheelEvent<SVGSVGElement>) => {
-      if (e.deltaX === 0 && e.deltaY === 0) return
-      e.preventDefault()
-      // Browsers surface trackpad pinch as a wheel event with ctrlKey set.
-      if (e.ctrlKey || e.metaKey) {
-        // Clamp single-event delta to keep chunky mouse wheels from
-        // teleporting; a smaller per-event step (0.0009) makes both
-        // mouse wheels and trackpads feel like fine-grained zoom.
-        const dy = Math.max(-80, Math.min(80, e.deltaY))
-        const factor = Math.exp(-dy * 0.0009)
-        const rect = e.currentTarget.getBoundingClientRect()
-        commitView((v) => reframeAt(v, e.clientX, e.clientY, rect, v.z * factor))
-        return
-      }
-      const rect = e.currentTarget.getBoundingClientRect()
-      commitView((v) => {
-        const scaleX = rect.width > 0 ? (width / v.z) / rect.width : 1
-        const scaleY = rect.height > 0 ? (height / v.z) / rect.height : 1
-        return {
-          x: clamp(v.x + e.deltaX * scaleX, -PAN_MAX_X, PAN_MAX_X),
-          y: clamp(v.y + e.deltaY * scaleY, -PAN_MAX_Y, PAN_MAX_Y),
-          z: v.z,
-        }
-      })
-    },
-    [PAN_MAX_X, PAN_MAX_Y, width, height, reframeAt, commitView],
-  )
+  // (Wheel handling is attached as a native non-passive listener in the
+  // useEffect above so preventDefault is honoured everywhere.)
 
   // +/− buttons zoom around the canvas centre.
   const zoomBy = useCallback((factor: number) => {
@@ -1420,7 +1423,6 @@ export function JumapPage() {
         <svg
           ref={svgRef}
           viewBox={`0 0 ${width} ${height}`}
-          overflow="visible"
           className={'jumap-svg jumap-svg-pannable' + (grabbing ? ' is-grabbing' : '')}
           preserveAspectRatio="xMidYMid meet"
           onPointerDown={onPointerDown}
@@ -1428,7 +1430,6 @@ export function JumapPage() {
           onPointerUp={endPointer}
           onPointerCancel={endPointer}
           onPointerLeave={endPointer}
-          onWheel={onWheel}
           onClickCapture={onClickCapture}
         >
           <g ref={contentRef} className="jumap-content">

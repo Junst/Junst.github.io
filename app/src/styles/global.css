@@ -769,9 +769,13 @@ html[data-theme="dark"] .jumap-back { background: rgba(20,20,20,0.7); }
   display: block;
   width: 100%;
   height: 100%;
-  /* Allow the content <g> to be transformed outside the viewBox without
-     getting clipped — we pan/zoom via transform instead of viewBox now. */
-  overflow: visible;
+  /* Clip content to the SVG's box. Was `visible` to avoid clipping during
+     g-transform pan/zoom, but that let the scaled content spill outside
+     the viewport and induce *page* scrollbars whenever the user zoomed
+     in — which then hijacked their vertical pan gestures. The default
+     clip is fine; out-of-viewBox content just isn't visible, exactly
+     like the old viewBox-pan behaviour. */
+  overflow: hidden;
 }
 /* Hint the browser to promote the content group to its own compositing
    layer, so pan/zoom transform changes ride the GPU instead of triggering
