@@ -1986,18 +1986,19 @@ html[data-theme="dark"] .jumap-modal {
    colour through --song-tint. */
 .jumap-modal-song {
   --song-tint: rgba(0, 0, 0, 0);
-  /* Album art is positioned ABSOLUTELY at the top-right corner of the card
-     now — not as a grid column. That way the title row gets the full
-     content width (minus a reserved gutter for the art) instead of being
-     squeezed into a fixed 1fr column next to it. Was reading as the
-     title wrapping after 2-4 characters even on wide modals because the
-     grid column was actually the constraint. */
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  /* Right padding reserves space for the absolutely-positioned art. */
-  padding: 18px 92px 18px 20px;
+  /* Restore the original two-row grid — note flows BELOW everything,
+     head (title + meta) sits left, album art sits top-right. The art
+     column was the title-room culprit before: shrink it without
+     changing the row structure. */
+  display: grid;
+  grid-template-columns: 1fr 64px;
+  grid-template-areas:
+    "head art"
+    "note note";
+  column-gap: 14px;
+  row-gap: 12px;
+  align-items: start;
+  padding: 18px 20px;
   background:
     linear-gradient(180deg,
       color-mix(in srgb, var(--song-tint) 18%, var(--bg-soft)) 0%,
@@ -2026,22 +2027,20 @@ html[data-theme="dark"] .jumap-modal {
 }
 
 .jumap-modal-song-head {
+  grid-area: head;
   display: flex;
   flex-direction: column;
   gap: 8px;
   min-width: 0;
-  /* No max-width — the card's right padding (set on .jumap-modal-song)
-     already reserves space for the absolutely-positioned art, so the
-     title row can stretch to fill everything else. */
 }
 .jumap-modal-song-art,
 .jumap-modal-song-art-placeholder {
-  position: absolute;
-  top: 18px;
-  right: 16px;
+  grid-area: art;
+  align-self: start;
+  justify-self: end;
 }
 .jumap-modal-song-note {
-  /* Note now flows in normal document order below the head. */
+  grid-area: note;
 }
 .jumap-modal-song-title {
   margin: 0;
@@ -2104,7 +2103,8 @@ html[data-theme="dark"] .jumap-modal {
    doesn't shift under the user's pointer when they hover them. */
 .jumap-bubble-song { cursor: pointer; }
 .jumap-bubble-song:hover circle { filter: drop-shadow(0 4px 10px rgba(0,0,0,0.18)); }
-.jumap-bubble-artist { cursor: default; }
+.jumap-bubble-artist { cursor: grab; touch-action: none; }
+.jumap-bubble-artist:active { cursor: grabbing; }
 .jumap-bubble-artist:hover circle { filter: drop-shadow(0 6px 14px rgba(0,0,0,0.18)); }
 /* Sub-tier accent stars — smaller, same warm tone, with a slim left gap
    so they read as "+ N" rather than continuing the main tier row. */
@@ -2149,8 +2149,8 @@ html[data-theme="dark"] .jumap-modal {
 }
 
 .jumap-modal-song-art {
-  width: 78px;
-  height: 78px;
+  width: 64px;
+  height: 64px;
   border-radius: 14px;
   object-fit: cover;
   box-shadow: 0 8px 20px rgba(0,0,0,0.18);
@@ -2158,8 +2158,8 @@ html[data-theme="dark"] .jumap-modal {
 }
 .jumap-modal-song:hover .jumap-modal-song-art { transform: rotate(-2deg) scale(1.03); }
 .jumap-modal-song-art-placeholder {
-  width: 78px;
-  height: 78px;
+  width: 64px;
+  height: 64px;
   border-radius: 14px;
   display: grid;
   place-items: center;
@@ -2242,27 +2242,23 @@ html[data-theme="dark"] .jumap-modal {
 .nominee-songs { display: none; }
 
 @media (max-width: 640px) {
-  /* Same absolute-art shape on phones — just smaller art and a tighter
-     reserved gutter so even more title runway opens up. */
+  /* Same two-row grid on mobile, smaller art so the title row stays wide. */
   .jumap-modal-song {
-    gap: 8px;
-    padding: 12px 70px 12px 12px;
+    grid-template-columns: 1fr 52px;
+    column-gap: 10px;
+    row-gap: 10px;
+    padding: 12px 14px;
   }
   .jumap-modal-song-art, .jumap-modal-song-art-placeholder {
-    top: 12px;
-    right: 10px;
-    width: 56px; height: 56px;
+    width: 52px; height: 52px;
   }
   .jumap-modal-single { padding: 22px 14px 18px; }
   .juward-ranking-art { width: 22px; height: 22px; }
 }
 @media (max-width: 380px) {
-  /* Very narrow phones — even smaller art. */
-  .jumap-modal-song { padding: 10px 60px 10px 10px; }
+  .jumap-modal-song { grid-template-columns: 1fr 44px; column-gap: 8px; }
   .jumap-modal-song-art, .jumap-modal-song-art-placeholder {
-    top: 10px;
-    right: 8px;
-    width: 48px; height: 48px;
+    width: 44px; height: 44px;
   }
   .jumap-modal-single { padding: 18px 12px 14px; }
 }

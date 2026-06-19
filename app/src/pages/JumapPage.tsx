@@ -497,11 +497,12 @@ function forceLayoutNodes(
 interface Ripple { id: number; cx: number; cy: number; r: number }
 
 const ArtistBubble = memo(function ArtistBubble({
-  a, focus, onFocus,
+  a, focus, onFocus, onDragStart,
 }: {
   a: PlacedArtist
   focus: string | null
   onFocus: (key: string | null) => void
+  onDragStart: (e: React.PointerEvent, name: string) => void
 }) {
   const primary = genreFor(artistPrimaryGenre(a))
   const genres = artistGenres(a)
@@ -516,12 +517,14 @@ const ArtistBubble = memo(function ArtistBubble({
   return (
     <g
       className={'jumap-bubble jumap-bubble-artist' + (focused ? ' focused' : '')}
+      data-artist-name={a.name}
       style={{
         ['--drift-delay' as string]: `${a.driftDelay}s`,
         ['--drift-duration' as string]: `${a.driftDuration}s`,
       }}
       onMouseEnter={() => onFocus(a.name)}
       onMouseLeave={() => onFocus(null)}
+      onPointerDown={(e) => onDragStart(e, a.name)}
     >
       <defs>
         <clipPath id={clipId}>
@@ -659,6 +662,7 @@ const SongBubble = memo(function SongBubble({
   return (
     <g
       className={'jumap-bubble jumap-bubble-song' + (focused ? ' focused' : '')}
+      data-song-artist={s.primaryArtist}
       style={{
         ['--drift-delay' as string]: `${s.driftDelay}s`,
         ['--drift-duration' as string]: `${s.driftDuration}s`,
@@ -870,7 +874,7 @@ interface CountryTerritory {
 const JumapSvgInner = memo(function JumapSvgInner({
   artistsPlaced, songsPlaced, territories, countryTerritories, orbits, bonds,
   focus, openSong, ripples,
-  setFocus, setOpenSong, addRipple,
+  setFocus, setOpenSong, addRipple, onArtistDragStart,
 }: {
   artistsPlaced: PlacedArtist[]
   songsPlaced: PlacedSong[]
@@ -884,6 +888,7 @@ const JumapSvgInner = memo(function JumapSvgInner({
   setFocus: (k: string | null) => void
   setOpenSong: (s: PlacedSong | null) => void
   addRipple: (r: Ripple) => void
+  onArtistDragStart: (e: React.PointerEvent, name: string) => void
 }) {
   const focusedBond = (b: Bond) =>
     focus === b.from || focus === b.to ||
@@ -1049,6 +1054,7 @@ const JumapSvgInner = memo(function JumapSvgInner({
           a={a}
           focus={focus}
           onFocus={setFocus}
+          onDragStart={onArtistDragStart}
         />
       ))}
       {songsPlaced.map((s) => (
@@ -1611,6 +1617,239 @@ export function JumapPage() {
     }
   }, [])
 
+  // --- Artist drag with soft-body physics --------------------------------
+  // User grabs a planet, drags it, and the rest of the cluster responds
+  // via repulsion + anchor pull springs. Songs of every artist follow
+  // their planet rigidly (offset preserved). Updates are imperative
+  // (setAttribute on each bubble's <g>) so React isn't invoked per frame.
+  const artistDragRef = useRef<{
+    name: string
+    pointerId: number
+    grabDx: number
+    grabDy: number
+    targetCx: number
+    targetCy: number
+    artistEls: Map<string, SVGGElement>
+    songEls: Map<string, SVGGElement[]>
+    livePos: Map<string, { cx: number; cy: number; vx: number; vy: number }>
+    origPos: Map<string, { cx: number; cy: number; orbitR: number }>
+    moved: boolean
+  } | null>(null)
+  const dragRafRef = useRef<number | null>(null)
+  // Persistent per-artist offsets that survive re-renders. After a drag
+  // ends, the artist keeps the dx/dy we last applied. A layout effect
+  // re-applies them after every React render so a view-mode switch or
+  // hover-driven re-render doesn't snap planets back.
+  const dragOffsetsRef = useRef<Map<string, { dx: number; dy: number }>>(new Map())
+  // Reset the persistent offsets when the underlying layout changes
+  // (view mode switch), since the new memoised positions are the new
+  // baseline.
+  useEffect(() => {
+    dragOffsetsRef.current = new Map()
+  }, [artistsPlaced])
+  useLayoutEffect(() => {
+    if (!svgRef.current) return
+    for (const [name, delta] of dragOffsetsRef.current) {
+      const safe = name.replace(/(["\\])/g, '\\$1')
+      const aEl = svgRef.current.querySelector(`[data-artist-name="${safe}"]`)
+      if (aEl) aEl.setAttribute('transform', `translate(${delta.dx} ${delta.dy})`)
+      const sEls = svgRef.current.querySelectorAll(`[data-song-artist="${safe}"]`)
+      sEls.forEach((el) => el.setAttribute('transform', `translate(${delta.dx} ${delta.dy})`))
+    }
+  })
+
+  const clientToWorld = useCallback((clientX: number, clientY: number) => {
+    // Use SVG's getScreenCTM so we correctly invert the CSS transform
+    // (perspective + rotateX tilt) plus the content-group transform.
+    const g = contentRef.current
+    if (!g) return { x: 0, y: 0 }
+    const ctm = g.getScreenCTM()
+    if (!ctm) return { x: 0, y: 0 }
+    const inv = ctm.inverse()
+    return {
+      x: clientX * inv.a + clientY * inv.c + inv.e,
+      y: clientX * inv.b + clientY * inv.d + inv.f,
+    }
+  }, [])
+
+  const stopArtistDragLoop = useCallback(() => {
+    if (dragRafRef.current != null) {
+      cancelAnimationFrame(dragRafRef.current)
+      dragRafRef.current = null
+    }
+  }, [])
+
+  const onArtistDragStart = useCallback(
+    (e: React.PointerEvent, name: string) => {
+      if (e.button !== 0 && e.pointerType === 'mouse') return
+      // Don't compete with the canvas pan handler.
+      e.stopPropagation()
+
+      const world = clientToWorld(e.clientX, e.clientY)
+      const aOrig = artistsPlaced.find((a) => a.name === name)
+      if (!aOrig) return
+      const existing = dragOffsetsRef.current.get(name) ?? { dx: 0, dy: 0 }
+      const curCx = aOrig.cx + existing.dx
+      const curCy = aOrig.cy + existing.dy
+
+      // Snapshot DOM element refs so we don't re-query each frame.
+      const svg = svgRef.current
+      if (!svg) return
+      const artistEls = new Map<string, SVGGElement>()
+      svg.querySelectorAll<SVGGElement>('[data-artist-name]').forEach((el) => {
+        const n = el.getAttribute('data-artist-name')
+        if (n) artistEls.set(n, el)
+      })
+      const songEls = new Map<string, SVGGElement[]>()
+      svg.querySelectorAll<SVGGElement>('[data-song-artist]').forEach((el) => {
+        const n = el.getAttribute('data-song-artist')
+        if (!n) return
+        if (!songEls.has(n)) songEls.set(n, [])
+        songEls.get(n)!.push(el)
+      })
+
+      // Live positions per artist (start at last-known = orig + persisted offset).
+      const livePos = new Map<string, { cx: number; cy: number; vx: number; vy: number }>()
+      const origPos = new Map<string, { cx: number; cy: number; orbitR: number }>()
+      for (const a of artistsPlaced) {
+        const off = dragOffsetsRef.current.get(a.name) ?? { dx: 0, dy: 0 }
+        livePos.set(a.name, { cx: a.cx + off.dx, cy: a.cy + off.dy, vx: 0, vy: 0 })
+        origPos.set(a.name, { cx: a.cx, cy: a.cy, orbitR: a.orbitR })
+      }
+
+      artistDragRef.current = {
+        name,
+        pointerId: e.pointerId,
+        grabDx: world.x - curCx,
+        grabDy: world.y - curCy,
+        targetCx: curCx,
+        targetCy: curCy,
+        artistEls,
+        songEls,
+        livePos,
+        origPos,
+        moved: false,
+      }
+      // Latch grab so a click immediately after a drag doesn't open the
+      // accidentally-clicked song behind the planet.
+      draggedRef.current = false  // start fresh; will set true once moved
+      setGrabbing(true)
+
+      function onMove(ev: PointerEvent) {
+        const drag = artistDragRef.current
+        if (!drag || drag.pointerId !== ev.pointerId) return
+        const w = clientToWorld(ev.clientX, ev.clientY)
+        drag.targetCx = w.x - drag.grabDx
+        drag.targetCy = w.y - drag.grabDy
+        if (!drag.moved) {
+          drag.moved = true
+          draggedRef.current = true
+        }
+      }
+      function onUp(ev: PointerEvent) {
+        const drag = artistDragRef.current
+        if (!drag || drag.pointerId !== ev.pointerId) return
+        document.removeEventListener('pointermove', onMove)
+        document.removeEventListener('pointerup', onUp)
+        document.removeEventListener('pointercancel', onUp)
+        // Persist final offsets per artist so the planets stay where the
+        // user left them across React re-renders.
+        for (const a of artistsPlaced) {
+          const live = drag.livePos.get(a.name)
+          const orig = drag.origPos.get(a.name)
+          if (!live || !orig) continue
+          dragOffsetsRef.current.set(a.name, {
+            dx: live.cx - orig.cx,
+            dy: live.cy - orig.cy,
+          })
+        }
+        artistDragRef.current = null
+        setGrabbing(false)
+        // Let the loop wind down gracefully (it'll see no drag and exit).
+      }
+      document.addEventListener('pointermove', onMove)
+      document.addEventListener('pointerup', onUp)
+      document.addEventListener('pointercancel', onUp)
+
+      // Kick off the rAF physics loop.
+      if (dragRafRef.current == null) {
+        const STEP = 0.55
+        const DAMPING = 0.78
+        const ANCHOR_PULL = 0.030
+        const REPULSION_BUFFER = 60
+        const step = () => {
+          const drag = artistDragRef.current
+          // No active drag? Run one more settle pass then stop.
+          let stillBusy = drag !== null
+          // Source of truth for this frame's positions.
+          // (Use drag.livePos if available, else fall back to last snapshot.)
+          const live = drag ? drag.livePos : null
+          if (live) {
+            // 1) Force step on every non-grabbed artist.
+            const names = Array.from(live.keys())
+            for (const n of names) {
+              const p = live.get(n)!
+              const o = drag!.origPos.get(n)!
+              if (n === drag!.name) {
+                // Grabbed planet — snap toward pointer target, no spring.
+                p.cx = drag!.targetCx
+                p.cy = drag!.targetCy
+                p.vx = 0
+                p.vy = 0
+                continue
+              }
+              let fx = 0
+              let fy = 0
+              // Anchor spring back to original spot.
+              fx += (o.cx - p.cx) * ANCHOR_PULL
+              fy += (o.cy - p.cy) * ANCHOR_PULL
+              // Pairwise repulsion only when overlapping the buffer.
+              for (const m of names) {
+                if (m === n) continue
+                const q = live.get(m)!
+                const dx = p.cx - q.cx
+                const dy = p.cy - q.cy
+                const dist = Math.sqrt(dx * dx + dy * dy) || 0.01
+                const minDist = o.orbitR + drag!.origPos.get(m)!.orbitR + REPULSION_BUFFER
+                if (dist < minDist) {
+                  const push = (minDist - dist) * 0.45
+                  fx += (dx / dist) * push
+                  fy += (dy / dist) * push
+                }
+              }
+              p.vx = (p.vx + fx * STEP) * DAMPING
+              p.vy = (p.vy + fy * STEP) * DAMPING
+              p.cx += p.vx
+              p.cy += p.vy
+              if (Math.abs(p.vx) + Math.abs(p.vy) > 0.05) stillBusy = true
+            }
+            // 2) Imperative DOM update — transform each bubble by (cx - orig).
+            for (const n of names) {
+              const p = live.get(n)!
+              const o = drag!.origPos.get(n)!
+              const dx = p.cx - o.cx
+              const dy = p.cy - o.cy
+              const aEl = drag!.artistEls.get(n)
+              if (aEl) aEl.setAttribute('transform', `translate(${dx} ${dy})`)
+              const sEls = drag!.songEls.get(n)
+              if (sEls) for (const el of sEls) {
+                el.setAttribute('transform', `translate(${dx} ${dy})`)
+              }
+            }
+          }
+          if (stillBusy) {
+            dragRafRef.current = requestAnimationFrame(step)
+          } else {
+            dragRafRef.current = null
+          }
+        }
+        dragRafRef.current = requestAnimationFrame(step)
+      }
+    },
+    [artistsPlaced, clientToWorld],
+  )
+  useEffect(() => () => { stopArtistDragLoop() }, [stopArtistDragLoop])
+
   return (
     <div className="jumap-page">
       {/* Soft drifting background blobs */}
@@ -1648,6 +1887,7 @@ export function JumapPage() {
               setFocus={setFocus}
               setOpenSong={setOpenSong}
               addRipple={addRipple}
+              onArtistDragStart={onArtistDragStart}
             />
           </g>
         </svg>
