@@ -155,34 +155,43 @@ function estimateOrbitR(a: Artist): number {
   return orbitR + 22 + 18
 }
 
-function place(items: Artist[], width: number, height: number): PlacedArtist[] {
-  // Country-first clustering: each country gets its own centroid on a wide
-  // outer ring, and ALL artists in that country phyllotaxis-spiral around
-  // their country centre. This guarantees same-country artists land near
-  // each other before the force pass even starts — so the country
-  // territory blob actually contains them. The force pass then refines
-  // spacing without letting different-country artists collide.
+export type ViewMode = 'country' | 'genre' | 'tier'
+
+function place(
+  items: Artist[],
+  width: number,
+  height: number,
+  mode: ViewMode = 'country',
+): PlacedArtist[] {
+  if (mode === 'genre') return placeByGenre(items, width, height)
+  if (mode === 'tier') return placeByTier(items, width, height)
+  return placeByCountry(items, width, height)
+}
+
+function placeByCountry(items: Artist[], width: number, height: number): PlacedArtist[] {
+  // Country-first clustering. Each country picks a centroid on a wide
+  // super-ring. Inside each country, members are further sub-grouped by
+  // their primary genre on a small inner ring around the country centre,
+  // and each genre sub-cluster phyllotaxis-spirals out from there. So
+  // J-Pop and anime both sit clearly under "Japan", and K-Pop and
+  // K-Hip-Hop both sit under "Korea", instead of intermingling.
   const byCountry = new Map<string, Artist[]>()
   for (const a of items) {
     const c = countryOfGenre(artistPrimaryGenre(a))
     if (!byCountry.has(c)) byCountry.set(c, [])
     byCountry.get(c)!.push(a)
   }
-  // Use the COUNTRIES order so the layout is stable across data changes.
   const countryKeys = COUNTRIES.map((c) => c.key).filter((k) => byCountry.has(k))
   const cx = width / 2
   const cy = height / 2
-
-  const centres: Record<string, { x: number; y: number }> = {}
+  const countryCentres: Record<string, { x: number; y: number }> = {}
   if (countryKeys.length === 1) {
-    centres[countryKeys[0]] = { x: cx, y: cy }
+    countryCentres[countryKeys[0]] = { x: cx, y: cy }
   } else {
-    // Wide super-ring for countries. Per-country cluster radius is large
-    // (lots of artists), so we need lots of room between centroids.
     const ringR = Math.min(width, height) * 1.4
     countryKeys.forEach((key, i) => {
       const angle = (i / countryKeys.length) * Math.PI * 2 - Math.PI / 2
-      centres[key] = {
+      countryCentres[key] = {
         x: cx + Math.cos(angle) * ringR,
         y: cy + Math.sin(angle) * ringR,
       }
@@ -191,19 +200,86 @@ function place(items: Artist[], width: number, height: number): PlacedArtist[] {
 
   const out: PlacedArtist[] = []
   for (const country of countryKeys) {
-    const c = centres[country]
-    const cluster = sortArtists(byCountry.get(country) ?? [])
+    const cc = countryCentres[country]
+    const arts = byCountry.get(country) ?? []
+    // Sub-group this country's artists by genre
+    const byGenre = new Map<string, Artist[]>()
+    for (const a of arts) {
+      const g = artistPrimaryGenre(a)
+      if (!byGenre.has(g)) byGenre.set(g, [])
+      byGenre.get(g)!.push(a)
+    }
+    const genreKeys = GENRES.map((g) => g.key).filter((k) => byGenre.has(k))
+    // Inner ring inside the country — places each genre at its own sub-centroid.
+    const innerR = Math.min(width, height) * 0.20
+    const genreCentres: Record<string, { x: number; y: number }> = {}
+    if (genreKeys.length === 1) {
+      genreCentres[genreKeys[0]] = { x: cc.x, y: cc.y }
+    } else {
+      genreKeys.forEach((g, i) => {
+        const angle = (i / genreKeys.length) * Math.PI * 2 - Math.PI / 2
+        genreCentres[g] = {
+          x: cc.x + Math.cos(angle) * innerR,
+          y: cc.y + Math.sin(angle) * innerR,
+        }
+      })
+    }
+    for (const genre of genreKeys) {
+      const gc = genreCentres[genre]
+      const cluster = sortArtists(byGenre.get(genre) ?? [])
+      const phase = cluster.length > 0 ? seed(cluster[0].name) * Math.PI * 2 : 0
+      cluster.forEach((a, i) => {
+        const r = bubbleRadius(a)
+        const sd = seed(a.name)
+        const angle = i * GOLDEN_ANGLE + phase
+        const localRadius = cluster.length === 1 ? 0 : Math.sqrt(i + 0.6) * 110
+        out.push({
+          ...a,
+          kind: 'artist',
+          cx: gc.x + Math.cos(angle) * localRadius,
+          cy: gc.y + Math.sin(angle) * localRadius,
+          r,
+          orbitR: estimateOrbitR(a),
+          country,
+          driftDelay: -(sd * 12),
+          driftDuration: 8 + (sd * 6),
+        })
+      })
+    }
+  }
+  return out
+}
+
+function placeByGenre(items: Artist[], width: number, height: number): PlacedArtist[] {
+  // Genre-first: each genre on a wide ring, country becomes secondary.
+  const byGenre = new Map<string, Artist[]>()
+  for (const a of items) {
+    const g = artistPrimaryGenre(a)
+    if (!byGenre.has(g)) byGenre.set(g, [])
+    byGenre.get(g)!.push(a)
+  }
+  const genreKeys = GENRES.map((g) => g.key).filter((k) => byGenre.has(k))
+  const cx = width / 2
+  const cy = height / 2
+  const centres: Record<string, { x: number; y: number }> = {}
+  if (genreKeys.length === 1) centres[genreKeys[0]] = { x: cx, y: cy }
+  else {
+    const ringR = Math.min(width, height) * 1.4
+    genreKeys.forEach((g, i) => {
+      const angle = (i / genreKeys.length) * Math.PI * 2 - Math.PI / 2
+      centres[g] = { x: cx + Math.cos(angle) * ringR, y: cy + Math.sin(angle) * ringR }
+    })
+  }
+  const out: PlacedArtist[] = []
+  for (const genre of genreKeys) {
+    const c = centres[genre]
+    const cluster = sortArtists(byGenre.get(genre) ?? [])
     const phase = cluster.length > 0 ? seed(cluster[0].name) * Math.PI * 2 : 0
     cluster.forEach((a, i) => {
       const r = bubbleRadius(a)
       const sd = seed(a.name)
-      // Phyllotaxis within the country: tight enough that members stay
-      // visibly grouped, loose enough that the relax pass doesn't have to
-      // unstick them.
       const angle = i * GOLDEN_ANGLE + phase
-      const localRadius = cluster.length === 1
-        ? 0
-        : Math.sqrt(i + 0.6) * 130
+      const localRadius = cluster.length === 1 ? 0 : Math.sqrt(i + 0.6) * 130
       out.push({
         ...a,
         kind: 'artist',
@@ -211,7 +287,51 @@ function place(items: Artist[], width: number, height: number): PlacedArtist[] {
         cy: c.y + Math.sin(angle) * localRadius,
         r,
         orbitR: estimateOrbitR(a),
-        country,
+        country: countryOfGenre(artistPrimaryGenre(a)),
+        driftDelay: -(sd * 12),
+        driftDuration: 8 + (sd * 6),
+      })
+    })
+  }
+  return out
+}
+
+function placeByTier(items: Artist[], width: number, height: number): PlacedArtist[] {
+  // Tier-first: best-tier artists at the centre, lower-tier artists out on
+  // rings further from the centre — concentric circles.
+  const cx = width / 2
+  const cy = height / 2
+  const byTier = new Map<number, Artist[]>()
+  for (const a of items) {
+    const t = bestTier(a)
+    if (!byTier.has(t)) byTier.set(t, [])
+    byTier.get(t)!.push(a)
+  }
+  const tiers = Array.from(byTier.keys()).sort((a, b) => a - b)
+  const out: PlacedArtist[] = []
+  const ringStep = Math.min(width, height) * 0.55
+  for (const tier of tiers) {
+    const cluster = sortArtists(byTier.get(tier) ?? [])
+    // Tier 1 is innermost (small ring). Each subsequent tier sits further
+    // out, evenly distributed around its ring.
+    const ringR = (tier - 1) * ringStep + 80
+    const phase = cluster.length > 0 ? seed(cluster[0].name) * Math.PI * 2 : 0
+    cluster.forEach((a, i) => {
+      const r = bubbleRadius(a)
+      const sd = seed(a.name)
+      // Use the ring for >1 members; single member sits on the ring.
+      const angle =
+        cluster.length === 1
+          ? phase
+          : (i / cluster.length) * Math.PI * 2 + phase
+      out.push({
+        ...a,
+        kind: 'artist',
+        cx: cx + Math.cos(angle) * ringR,
+        cy: cy + Math.sin(angle) * ringR,
+        r,
+        orbitR: estimateOrbitR(a),
+        country: countryOfGenre(artistPrimaryGenre(a)),
         driftDelay: -(sd * 12),
         driftDuration: 8 + (sd * 6),
       })
@@ -967,22 +1087,20 @@ export function JumapPage() {
   // songs in orbit around each artist. A single force pass then settles all
   // bubbles together so song moons drift to the orbit boundary between
   // featured artists, and no two bubbles overlap.
+  const [viewMode, setViewMode] = useState<ViewMode>('country')
   const { artistsPlaced, songsPlaced } = useMemo(() => {
-    // Two-pass layout:
-    //   (1) Place artists from genre rings + phyllotaxis, then run the force
-    //       sim on just the artists with their *predicted* orbit radii so
-    //       gaps are enforced before any songs are committed to positions.
-    //   (2) Lay songs out around the now-settled artists, then run the sim
-    //       again with artists frozen — songs anchor to their primary
-    //       planet's actual final position, so a small-orbit artist (e.g.
-    //       ILLIT) doesn't end up with its songs marooned next to a bigger
-    //       neighbour like NewJeans.
-    const a = place(artists, width, height)
+    // Two-pass layout, view-mode-aware:
+    //   (1) Place artists per mode (country / genre / tier) then force-sim
+    //       just the artists with their predicted orbit radii.
+    //   (2) Lay songs out around the now-settled artists, then force-sim
+    //       again with artists frozen — songs anchor to their planet's
+    //       final position.
+    const a = place(artists, width, height, viewMode)
     forceLayoutNodes(a, 700)
     const s = placeSongsAround(a)
     forceLayoutNodes([...a, ...s], 500, { freezeArtists: true })
     return { artistsPlaced: a, songsPlaced: s }
-  }, [])
+  }, [viewMode])
   const territories = useMemo(() => computeTerritories(artistsPlaced), [artistsPlaced])
   // Coarse country / region territory — much larger soft blob behind the
   // genre territories so it reads as a region atlas at any zoom.
@@ -1533,6 +1651,21 @@ export function JumapPage() {
             />
           </g>
         </svg>
+
+        <div className="jumap-view-modes" role="tablist" aria-label="View grouping">
+          {(['country', 'genre', 'tier'] as const).map((m) => (
+            <button
+              key={m}
+              type="button"
+              role="tab"
+              aria-selected={viewMode === m}
+              className={'jumap-mode-btn' + (viewMode === m ? ' active' : '')}
+              onClick={() => setViewMode(m)}
+            >
+              {m === 'country' ? 'Country' : m === 'genre' ? 'Genre' : 'Tier'}
+            </button>
+          ))}
+        </div>
 
         <div className="jumap-zoom-controls" aria-label="Zoom controls">
           <button

@@ -847,6 +847,66 @@ html[data-theme="dark"] .jumap-back { background: rgba(20,20,20,0.7); }
   /* Above the SVG stage / blob menu but still below FABs on the right. */
   z-index: 5;
 }
+/* View-mode toggle (Country / Genre / Tier) — sits at the top edge so
+   the user can clock the active grouping at a glance and switch in one
+   tap. Translucent pill row, glass background. */
+.jumap-view-modes {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  background: rgba(255,255,255,0.78);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  z-index: 5;
+}
+.jumap-mode-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: background .18s ease, color .18s ease;
+}
+.jumap-mode-btn:hover { color: var(--text); }
+.jumap-mode-btn.active {
+  background: var(--text);
+  color: var(--bg);
+}
+@media (prefers-color-scheme: dark) {
+  .jumap-view-modes {
+    background: rgba(28,28,30,0.78);
+    border-color: rgba(255,255,255,0.08);
+  }
+}
+/* Pseudo-3D: gently tilt the SVG content with a small CSS perspective so
+   pan/zoom feels a bit more atmospheric than a flat plane. The transform
+   is on the stage so the buttons and legend stay un-tilted. */
+.jumap-stage-full {
+  perspective: 1600px;
+}
+.jumap-svg {
+  transform: rotateX(8deg) rotateZ(-1deg);
+  transform-style: preserve-3d;
+  transform-origin: 50% 60%;
+}
+@media (max-width: 640px), (hover: none) and (pointer: coarse) {
+  /* Skip the 3D tilt on mobile to keep paint cost down. */
+  .jumap-svg { transform: none; }
+}
 .jumap-zoom-btn {
   appearance: none;
   border: 1px solid rgba(0,0,0,0.08);
