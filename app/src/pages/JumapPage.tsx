@@ -10,10 +10,12 @@ import {
 import {
   artists,
   GENRES,
+  COUNTRIES,
   TIERS,
   bubbleRadius,
   bestTier,
   genreFor,
+  countryOfGenre,
   groupArtistsByGenre,
   artistPrimaryGenre,
   artistGenres,
@@ -296,9 +298,11 @@ function forceLayoutNodes(
     if (nd.kind === 'artist') artistIdx.set(nd.name, i)
   }
 
-  // Extra padding once the two orbits clear each other.
-  const GAP_AA_BUFFER = 90
-  const GAP_AA_MIN = 220
+  // Extra padding once the two orbits clear each other — bumped up so
+  // even small-orbit artists have plenty of breathing room between
+  // their planet and the next one over.
+  const GAP_AA_BUFFER = 180
+  const GAP_AA_MIN = 320
   const GAP_AS = 12
   const GAP_SS = 6
   const ANCHOR_PULL = 0.022
@@ -327,7 +331,7 @@ function forceLayoutNodes(
           // at distance >= orbitR_max + 60 from the other artist — so
           // proximity always identifies the right primary.
           minDist = Math.max(
-            2 * Math.max(a.orbitR, b.orbitR) + 60,
+            2 * Math.max(a.orbitR, b.orbitR) + 120,
             a.orbitR + b.orbitR + GAP_AA_BUFFER,
             a.r + b.r + GAP_AA_MIN,
           )
@@ -728,19 +732,31 @@ interface Orbit {
   name: string
 }
 
+interface CountryTerritory {
+  id: string
+  key: string
+  cx: number
+  cy: number
+  r: number
+  color: string
+  label: string
+  labelY: number
+}
+
 // Heavy SVG inner — everything that's expensive to reconcile (territories,
 // orbit halos, feature bonds, all bubble nodes, ripples). Memoised so the
 // pan / zoom re-renders of JumapPage skip this entire subtree as long as
 // the data + focus + ripples haven't changed. Only the <svg> viewBox
 // attribute updates per frame during drag.
 const JumapSvgInner = memo(function JumapSvgInner({
-  artistsPlaced, songsPlaced, territories, orbits, bonds,
+  artistsPlaced, songsPlaced, territories, countryTerritories, orbits, bonds,
   focus, openSong, ripples,
   setFocus, setOpenSong, addRipple,
 }: {
   artistsPlaced: PlacedArtist[]
   songsPlaced: PlacedSong[]
   territories: Territory[]
+  countryTerritories: CountryTerritory[]
   orbits: Orbit[]
   bonds: Bond[]
   focus: string | null
@@ -800,7 +816,40 @@ const JumapSvgInner = memo(function JumapSvgInner({
             <stop offset="100%" stopColor={g.color} stopOpacity="0" />
           </radialGradient>
         ))}
+        {/* Country / region territory gradient — wider + softer than the
+            genre tint, so it reads as an atlas region underneath the
+            per-genre stains. */}
+        {COUNTRIES.map((c) => (
+          <radialGradient key={`ct-${c.key}`} id={`ct-${c.key}`} cx="50%" cy="50%" r="50%">
+            <stop offset="0%"   stopColor={c.color} stopOpacity="0.55" />
+            <stop offset="65%"  stopColor={c.color} stopOpacity="0.28" />
+            <stop offset="100%" stopColor={c.color} stopOpacity="0" />
+          </radialGradient>
+        ))}
       </defs>
+      {/* Country regions — drawn BEFORE genre territories so they sit at
+          the back as a large atlas backdrop. */}
+      <g className="jumap-country-territories" aria-hidden="true">
+        {countryTerritories.map((c) => (
+          <g key={c.id} className="jumap-country-territory">
+            <circle
+              cx={c.cx}
+              cy={c.cy}
+              r={c.r}
+              fill={`url(#ct-${c.key})`}
+            />
+            <text
+              x={c.cx}
+              y={c.labelY}
+              textAnchor="middle"
+              className="jumap-country-label"
+              fill={c.color}
+            >
+              {c.label}
+            </text>
+          </g>
+        ))}
+      </g>
       <g className="jumap-territories" aria-hidden="true">
         {territories.map((t) => (
           <g
@@ -936,6 +985,42 @@ export function JumapPage() {
     return { artistsPlaced: a, songsPlaced: s }
   }, [])
   const territories = useMemo(() => computeTerritories(artistsPlaced), [artistsPlaced])
+  // Coarse country / region territory — much larger soft blob behind the
+  // genre territories so it reads as a region atlas at any zoom.
+  const countryTerritories = useMemo(() => {
+    const byCountry = new Map<string, PlacedArtist[]>()
+    for (const a of artistsPlaced) {
+      const c = countryOfGenre(artistPrimaryGenre(a))
+      if (!byCountry.has(c)) byCountry.set(c, [])
+      byCountry.get(c)!.push(a)
+    }
+    return COUNTRIES.flatMap((spec) => {
+      const list = byCountry.get(spec.key)
+      if (!list || list.length === 0) return []
+      let cx = 0
+      let cy = 0
+      for (const a of list) { cx += a.cx; cy += a.cy }
+      cx /= list.length
+      cy /= list.length
+      let r = 0
+      for (const a of list) {
+        const d = Math.hypot(a.cx - cx, a.cy - cy) + a.orbitR
+        if (d > r) r = d
+      }
+      return [{
+        id: `country-${spec.key}`,
+        key: spec.key,
+        cx,
+        cy,
+        // Extra padding so the country tint extends well past every artist
+        // in it — reads as a region rather than a tight outline.
+        r: r + 90,
+        color: spec.color,
+        label: spec.label,
+        labelY: cy - r - 110,
+      }]
+    })
+  }, [artistsPlaced])
   // Per-artist orbit halo: a soft tinted disk that contains the artist + all
   // its songs, giving a visual cue that those moons belong to the same
   // planet. Colour is the artist's primary genre tint.
@@ -1437,6 +1522,7 @@ export function JumapPage() {
               artistsPlaced={artistsPlaced}
               songsPlaced={songsPlaced}
               territories={territories}
+              countryTerritories={countryTerritories}
               orbits={orbits}
               bonds={bonds}
               focus={focus}

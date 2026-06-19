@@ -52,6 +52,42 @@ export interface GenreSpec {
   color: string
 }
 
+// Coarse "country / region" grouping — sits behind the per-genre territory
+// blobs as a wider tinted backdrop so the user can read the overall map at
+// a glance even when 60+ artists are on screen.
+export interface CountrySpec {
+  key: string
+  label: string
+  color: string
+}
+export const COUNTRIES: CountrySpec[] = [
+  { key: 'jp',    label: 'Japan',   color: '#ffd6db' },
+  { key: 'kr',    label: 'Korea',   color: '#cfe6ff' },
+  { key: 'west',  label: 'Western', color: '#fff1c4' },
+  { key: 'other', label: 'Other',   color: '#ececec' },
+]
+const COUNTRY_LOOKUP = Object.fromEntries(COUNTRIES.map((c) => [c.key, c]))
+export function countryFor(key: string): CountrySpec {
+  return COUNTRY_LOOKUP[key.toLowerCase()] ?? COUNTRY_LOOKUP['other']
+}
+// Map of genre.key → country.key.
+const COUNTRY_OF_GENRE: Record<string, string> = {
+  jpop:    'jp',
+  anime:   'jp',
+  kpop:    'kr',
+  khiphop: 'kr',
+  pop:     'west',
+  hiphop:  'west',
+  rage:    'west',
+  rock:    'west',
+  rnb:     'west',
+  edm:     'west',
+  other:   'other',
+}
+export function countryOfGenre(genreKey: string): string {
+  return COUNTRY_OF_GENRE[genreKey.toLowerCase()] ?? 'other'
+}
+
 export const GENRES: GenreSpec[] = [
   { key: 'pop',     label: 'Pop',      color: '#ffe3ee' },
   { key: 'jpop',    label: 'J-Pop',    color: '#ffd6e7' },
@@ -696,6 +732,7 @@ export const artists: Artist[] = [
     primaryGenre: 'rnb',
     songs: [
       { title: 'Out of Time', tier: 1, subTier: 0, genres: ['rnb'], year: 2022, album: 'Dawn FM' },
+      { title: 'Die for You', tier: 2, subTier: 3, genres: ['rnb'], year: 2016, album: 'Starboy' },
     ],
   },
   {
@@ -718,6 +755,120 @@ export const artists: Artist[] = [
     // No song entries yet — exists in the roster so the Silk Sonic
     // collaboration draws a feature bond from "Skate" to this planet.
     songs: [],
+  },
+
+  // ===== J-Pop second batch =====
+  {
+    name: 'KinKi Kids',
+    primaryGenre: 'jpop',
+    songs: [
+      { title: 'Amazing Love', tier: 4, subTier: 0, genres: ['jpop'] },
+    ],
+  },
+  {
+    name: 'Noriyuki Makihara',
+    primaryGenre: 'jpop',
+    songs: [
+      { title: '冬がはじまるよ', tier: 4, subTier: 3, genres: ['jpop'] },
+    ],
+  },
+  {
+    name: 'SMAP',
+    primaryGenre: 'jpop',
+    songs: [
+      { title: 'Dear WOMAN', tier: 1, subTier: 1, genres: ['jpop'] },
+    ],
+  },
+  {
+    name: 'Gen Hoshino',
+    primaryGenre: 'jpop',
+    songs: [
+      { title: 'Week End', tier: 4, subTier: 3, genres: ['jpop'] },
+    ],
+  },
+  {
+    name: 'D-51',
+    primaryGenre: 'jpop',
+    songs: [
+      { title: 'BRAND NEW WORLD', tier: 4, subTier: 3, genres: ['jpop', 'anime'] },
+    ],
+  },
+  {
+    name: 'Ken Arai',
+    primaryGenre: 'edm',
+    songs: [
+      { title: 'Marble',            tier: 1, subTier: 0, genres: ['edm', 'jpop'] },
+      { title: 'Sweet Little Lies', tier: 2, subTier: 1, genres: ['edm', 'jpop'] },
+    ],
+  },
+
+  // ===== Anime second batch =====
+  {
+    name: 'Hironobu Kageyama',
+    primaryGenre: 'anime',
+    songs: [
+      { title: 'HEATS 2021', tier: 3, subTier: 2, genres: ['anime'] },
+    ],
+  },
+
+  // ===== K-Pop second batch =====
+  {
+    name: 'NCT DREAM',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: 'Beatbox', tier: 3, subTier: 2, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: 'SS501',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: '애인만들기', tier: 3, subTier: 2, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: 'Kep1er',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: 'WA DA DA', tier: 4, subTier: 3, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: '구혜선',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: '기억상실증 (Flying Galaxy)', tier: 4, subTier: 2, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: '볼빨간 사춘기',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: 'You(=I)', tier: 2, subTier: 2, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: '검정치마',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: 'Antifreeze', tier: 2, subTier: 3, genres: ['kpop', 'rock'] },
+    ],
+  },
+
+  // ===== Western second batch =====
+  {
+    name: 'Green Day',
+    primaryGenre: 'rock',
+    songs: [
+      { title: 'Basket Case', tier: 4, subTier: 3, genres: ['rock'], year: 1994, album: 'Dookie' },
+    ],
+  },
+  {
+    name: 'Katy Perry',
+    primaryGenre: 'pop',
+    songs: [
+      { title: 'California Gurls', tier: 1, subTier: 0, genres: ['pop'], year: 2010, album: 'Teenage Dream', features: ['Snoop Dogg'] },
+    ],
   },
 ]
 

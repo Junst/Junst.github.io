@@ -816,6 +816,24 @@ html[data-theme="dark"] .jumap-back { background: rgba(20,20,20,0.7); }
 @media (prefers-color-scheme: dark) {
   .jumap-territory-label { stroke: rgba(0,0,0,0.45); opacity: 0.7; }
 }
+/* Country / region label — larger, more spaced, sits above each region
+   atlas blob like a map title. */
+.jumap-country-label {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 30px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  opacity: 0.35;
+  pointer-events: none;
+  paint-order: stroke;
+  stroke: rgba(255,255,255,0.45);
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+@media (prefers-color-scheme: dark) {
+  .jumap-country-label { stroke: rgba(0,0,0,0.45); opacity: 0.55; }
+}
 .jumap-zoom-controls {
   position: absolute;
   /* Move to the LEFT edge — the right is occupied by the .theme-fab
