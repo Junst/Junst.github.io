@@ -37,6 +37,10 @@ export interface Artist {
   // Optional: pin the artist to a specific genre cluster. Otherwise the most
   // common genre across their songs is used.
   primaryGenre?: string
+  /** Country / region key — overrides the genre→country inference for
+   *  Country view. Lets us split "Western" into US / UK / Canada / etc.
+   *  Falls back to countryOfGenre() when omitted. */
+  origin?: string
   // Optional artist portrait (Wikipedia Commons URL or any hot-linkable
   // image). If absent, the bubble falls back to the artist's top song's
   // album art via the album-art lookup.
@@ -61,31 +65,42 @@ export interface CountrySpec {
   color: string
 }
 export const COUNTRIES: CountrySpec[] = [
-  { key: 'jp',    label: 'Japan',   color: '#ffd6db' },
-  { key: 'kr',    label: 'Korea',   color: '#cfe6ff' },
-  { key: 'west',  label: 'Western', color: '#fff1c4' },
-  { key: 'other', label: 'Other',   color: '#ececec' },
+  { key: 'jp',    label: 'Japan',     color: '#ffd6db' },
+  { key: 'kr',    label: 'Korea',     color: '#cfe6ff' },
+  { key: 'us',    label: 'USA',       color: '#fff1c4' },
+  { key: 'uk',    label: 'UK',        color: '#d8d4ff' },
+  { key: 'ca',    label: 'Canada',    color: '#ffe4d0' },
+  { key: 'au',    label: 'Australia', color: '#fde2a8' },
+  { key: 'nz',    label: 'New Zealand', color: '#c4e8d0' },
+  { key: 'tw',    label: 'Taiwan',    color: '#d5f4e0' },
+  { key: 'other', label: 'Other',     color: '#ececec' },
 ]
 const COUNTRY_LOOKUP = Object.fromEntries(COUNTRIES.map((c) => [c.key, c]))
 export function countryFor(key: string): CountrySpec {
   return COUNTRY_LOOKUP[key.toLowerCase()] ?? COUNTRY_LOOKUP['other']
 }
-// Map of genre.key → country.key.
+// Default genre→country mapping used when an artist has no explicit
+// `origin` field. Western genres fall back to "us" — most of the roster
+// is American — and per-artist overrides nail the UK/Canada/etc cases.
 const COUNTRY_OF_GENRE: Record<string, string> = {
   jpop:    'jp',
   anime:   'jp',
   kpop:    'kr',
   khiphop: 'kr',
-  pop:     'west',
-  hiphop:  'west',
-  rage:    'west',
-  rock:    'west',
-  rnb:     'west',
-  edm:     'west',
+  pop:     'us',
+  hiphop:  'us',
+  rage:    'us',
+  rock:    'us',
+  rnb:     'us',
+  edm:     'us',
   other:   'other',
 }
 export function countryOfGenre(genreKey: string): string {
   return COUNTRY_OF_GENRE[genreKey.toLowerCase()] ?? 'other'
+}
+export function countryOfArtist(a: Artist): string {
+  if (a.origin) return a.origin.toLowerCase()
+  return countryOfGenre(a.primaryGenre ?? artistPrimaryGenre(a))
 }
 
 export const GENRES: GenreSpec[] = [
@@ -293,6 +308,7 @@ export const artists: Artist[] = [
   {
     name: 'Drake',
     primaryGenre: 'hiphop',
+    origin: 'ca',
     songs: [
       { title: 'Nokia',      tier: 2, genres: ['hiphop'] },
       { title: "God's Plan", tier: 3, genres: ['hiphop'] },
@@ -311,6 +327,7 @@ export const artists: Artist[] = [
   {
     name: 'Masked Wolf',
     primaryGenre: 'hiphop',
+    origin: 'au',
     songs: [
       { title: 'Astronaut In The Ocean', tier: 2, subTier: 0, genres: ['hiphop'], year: 2019, album: 'Astronomical' },
     ],
@@ -682,6 +699,7 @@ export const artists: Artist[] = [
   {
     name: 'Karencici',
     primaryGenre: 'pop',
+    origin: 'tw',
     songs: [
       { title: 'Hard to say', tier: 3, subTier: 1, genres: ['pop'] },
     ],
@@ -698,6 +716,7 @@ export const artists: Artist[] = [
   {
     name: 'The Beatles',
     primaryGenre: 'rock',
+    origin: 'uk',
     songs: [
       { title: 'Let It Be', tier: 4, subTier: 2, genres: ['rock'], year: 1970, album: 'Let It Be' },
     ],
@@ -712,6 +731,7 @@ export const artists: Artist[] = [
   {
     name: 'Avril Lavigne',
     primaryGenre: 'rock',
+    origin: 'ca',
     songs: [
       { title: 'Sk8er Boi', tier: 1, subTier: 0, genres: ['rock', 'pop'], year: 2002, album: 'Let Go' },
     ],
@@ -719,6 +739,7 @@ export const artists: Artist[] = [
   {
     name: 'Steriogram',
     primaryGenre: 'rock',
+    origin: 'nz',
     songs: [
       { title: 'Walkie Talkie Man', tier: 3, subTier: 3, genres: ['rock'] },
     ],
@@ -736,6 +757,7 @@ export const artists: Artist[] = [
   {
     name: 'The Weeknd',
     primaryGenre: 'rnb',
+    origin: 'ca',
     songs: [
       { title: 'Out of Time', tier: 1, subTier: 0, genres: ['rnb'], year: 2022, album: 'Dawn FM' },
       { title: 'Die for You', tier: 2, subTier: 3, genres: ['rnb'], year: 2016, album: 'Starboy' },
@@ -1019,6 +1041,7 @@ export const artists: Artist[] = [
   {
     name: 'Justin Bieber',
     primaryGenre: 'pop',
+    origin: 'ca',
     songs: [
       { title: 'Sorry', tier: 2, subTier: 0, genres: ['pop'], year: 2015, album: 'Purpose' },
     ],

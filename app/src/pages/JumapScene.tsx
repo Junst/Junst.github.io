@@ -9,6 +9,7 @@ import {
   genreFor,
   countryFor,
   countryOfGenre,
+  countryOfArtist,
   bubbleRadius,
   bestTier,
   sortArtists,
@@ -85,7 +86,7 @@ function newPlanet(a: Artist, x: number, z: number, country: string, genre: stri
 function placeByCountry(): Planet[] {
   const byCountry = new Map<string, Artist[]>()
   for (const a of artists) {
-    const c = countryOfGenre(artistPrimaryGenre(a))
+    const c = countryOfArtist(a)
     if (!byCountry.has(c)) byCountry.set(c, [])
     byCountry.get(c)!.push(a)
   }
@@ -158,7 +159,7 @@ function placeByGenre(): Planet[] {
           a,
           c.x + Math.cos(ang) * lr,
           c.z + Math.sin(ang) * lr,
-          countryOfGenre(artistPrimaryGenre(a)),
+          countryOfArtist(a),
           genre,
         ),
       )
@@ -202,24 +203,63 @@ function buildLayout(mode: ViewMode = 'country'): { planets: Planet[]; moons: Mo
   forceSettle(planets)
 
   const moons: Moon[] = []
-  for (const p of planets) {
-    const songs = [...p.artist.songs].sort(
-      (a, b) => a.tier - b.tier || (b.subTier ?? 0) - (a.subTier ?? 0) || a.title.localeCompare(b.title),
-    )
-    const phase = seed(p.name) * Math.PI * 2
-    songs.forEach((song, i) => {
-      const ang = i * GOLDEN + phase
-      const orbitR = p.r + 3.5 + Math.sqrt(i + 0.5) * 4.0
-      const sr = songRadius(song)
-      moons.push({
-        id: `${p.name}|${song.title}`,
-        ownerName: p.name,
-        song,
-        x: p.x + Math.cos(ang) * orbitR,
-        z: p.z + Math.sin(ang) * orbitR,
-        r: sr,
+  if (mode === 'tier') {
+    // Song-first tier ranking: every song lives on a concentric ring keyed
+    // to its own tier (not the artist's best tier). So an ARASHI T1 song
+    // and an ARASHI T4 song sit on different rings. Artist planets stay
+    // where placeByTier put them (best-tier ring) as visual anchors only.
+    type Entry = { artistName: string; song: Song }
+    const byTier = new Map<number, Entry[]>()
+    for (const a of artists) {
+      for (const s of a.songs) {
+        if (!byTier.has(s.tier)) byTier.set(s.tier, [])
+        byTier.get(s.tier)!.push({ artistName: a.name, song: s })
+      }
+    }
+    const tiers = Array.from(byTier.keys()).sort((a, b) => a - b)
+    const ringStep = 36
+    for (const tier of tiers) {
+      const ringR = (tier - 1) * ringStep + 10
+      const list = byTier.get(tier)!.sort(
+        (a, b) =>
+          (b.song.subTier ?? 0) - (a.song.subTier ?? 0) ||
+          a.song.title.localeCompare(b.song.title),
+      )
+      const phase = list.length ? seed(list[0].artistName) * Math.PI * 2 : 0
+      const n = list.length
+      list.forEach((e, i) => {
+        const ang = (i / n) * Math.PI * 2 + phase
+        const sr = songRadius(e.song)
+        moons.push({
+          id: `${e.artistName}|${e.song.title}`,
+          ownerName: e.artistName,
+          song: e.song,
+          x: Math.cos(ang) * ringR,
+          z: Math.sin(ang) * ringR,
+          r: sr,
+        })
       })
-    })
+    }
+  } else {
+    for (const p of planets) {
+      const songs = [...p.artist.songs].sort(
+        (a, b) => a.tier - b.tier || (b.subTier ?? 0) - (a.subTier ?? 0) || a.title.localeCompare(b.title),
+      )
+      const phase = seed(p.name) * Math.PI * 2
+      songs.forEach((song, i) => {
+        const ang = i * GOLDEN + phase
+        const orbitR = p.r + 3.5 + Math.sqrt(i + 0.5) * 4.0
+        const sr = songRadius(song)
+        moons.push({
+          id: `${p.name}|${song.title}`,
+          ownerName: p.name,
+          song,
+          x: p.x + Math.cos(ang) * orbitR,
+          z: p.z + Math.sin(ang) * orbitR,
+          r: sr,
+        })
+      })
+    }
   }
   return { planets, moons }
 }
@@ -615,14 +655,23 @@ function AtlasGround() {
 // whole field reads as "fighting for territory" when zoomed out.
 const TERRITORY_SEGMENTS = 96
 function CountryTerritory({
-  k, cx, cz, r,
+  k, cx, cz, r, color, label,
 }: {
   k: string
   cx: number
   cz: number
   r: number
+  /** Override colour/label — used by Genre mode to reuse this component
+   *  with a genre tint and genre label instead of country. */
+  color?: string
+  label?: string
 }) {
-  const spec = countryFor(k)
+  // Look up the country spec only when caller didn't already supply color
+  // + label. In Genre mode we pass both explicitly and `k` is a genre key
+  // which would mis-resolve through countryFor.
+  const spec = !color || !label ? countryFor(k) : null
+  const finalColor = color ?? spec!.color
+  const finalLabel = label ?? spec!.label
   const meshRef = useRef<THREE.Mesh>(null)
   const lineRef = useRef<THREE.LineLoop>(null)
   // Per-country deterministic phase.
@@ -702,7 +751,7 @@ function CountryTerritory({
       <mesh ref={meshRef}>
         <primitive object={fanGeometry} attach="geometry" />
         <meshBasicMaterial
-          color={spec.color}
+          color={finalColor}
           transparent
           opacity={0.38}
           side={THREE.DoubleSide}
@@ -714,21 +763,21 @@ function CountryTerritory({
           primitive (vs SVG <line> which TS otherwise infers). */}
       <lineLoop ref={lineRef as unknown as React.RefObject<THREE.LineLoop>}>
         <primitive object={lineGeometry} attach="geometry" />
-        <lineBasicMaterial color={spec.color} transparent opacity={0.7} />
+        <lineBasicMaterial color={finalColor} transparent opacity={0.7} />
       </lineLoop>
       {/* Floating label — kept above the centroid so it's stable. */}
       <group rotation={[Math.PI / 2, 0, 0]}>
         <Text
           position={[0, 4, -r * 0.4]}
           fontSize={6}
-          color={spec.color}
+          color={finalColor}
           anchorX="center"
           anchorY="middle"
           outlineWidth={0.3}
           outlineColor="#0e1322"
           rotation={[-Math.PI / 6, 0, 0]}
         >
-          {spec.label}
+          {finalLabel}
         </Text>
       </group>
     </group>
@@ -1112,6 +1161,30 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
     onSongOpen(m.ownerName, m.song)
   }, [onSongOpen])
 
+  // Genre territory groupings — same algorithm as country, just keyed by
+  // each planet's primary genre. Only used when viewMode === 'genre'.
+  const genreDisks = useMemo(() => {
+    const groups = new Map<string, Planet[]>()
+    for (const p of planets) {
+      if (!groups.has(p.primaryGenre)) groups.set(p.primaryGenre, [])
+      groups.get(p.primaryGenre)!.push(p)
+    }
+    const out: Array<{ k: string; cx: number; cz: number; r: number; color: string; label: string }> = []
+    for (const [k, list] of groups) {
+      let cx = 0, cz = 0
+      for (const p of list) { cx += p.x; cz += p.z }
+      cx /= list.length; cz /= list.length
+      let r = 0
+      for (const p of list) {
+        const d = Math.hypot(p.x - cx, p.z - cz) + p.orbitR
+        if (d > r) r = d
+      }
+      const spec = genreFor(k)
+      out.push({ k, cx, cz, r: r + 16, color: spec.color, label: spec.label })
+    }
+    return out
+  }, [planets])
+
   // Country territory disks.
   const countryDisks = useMemo(() => {
     const groups = new Map<string, Planet[]>()
@@ -1152,11 +1225,22 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
       <Stars />
       <AtlasGround />
 
-      {countryDisks.map((c) => (
+      {viewMode === 'country' && countryDisks.map((c) => (
         <CountryTerritory key={c.k} k={c.k} cx={c.cx} cz={c.cz} r={c.r} />
       ))}
+      {viewMode === 'genre' && genreDisks.map((g) => (
+        <CountryTerritory
+          key={g.k}
+          k={g.k}
+          cx={g.cx}
+          cz={g.cz}
+          r={g.r}
+          color={g.color}
+          label={g.label}
+        />
+      ))}
 
-      {planets.map((p) => (
+      {viewMode !== 'tier' && planets.map((p) => (
         <PlanetMesh
           key={p.name}
           planet={p}
@@ -1178,7 +1262,7 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
         ))}
       </Suspense>
 
-      <Bonds planets={planets} moons={moons} dragRef={dragRef} />
+      {viewMode !== 'tier' && <Bonds planets={planets} moons={moons} dragRef={dragRef} />}
       <DragLoop dragRef={dragRef} />
       <DragController
         planets={planets}
