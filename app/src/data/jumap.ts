@@ -86,6 +86,7 @@ export const COUNTRIES: CountrySpec[] = [
   { key: 'fr',    label: 'France',      color: '#dbc4ff' },  // lavender
   { key: 'se',    label: 'Sweden',      color: '#a5d8ff' },  // arctic blue
   { key: 'no',    label: 'Norway',      color: '#b5e8ff' },  // glacier
+  { key: 'es',    label: 'Spain',       color: '#ff9d6a' },  // terracotta
   { key: 'other', label: 'Other',       color: '#a4abb6' },
 ]
 const COUNTRY_LOOKUP = Object.fromEntries(COUNTRIES.map((c) => [c.key, c]))
@@ -479,7 +480,7 @@ export const artists: Artist[] = [
     primaryGenre: 'khiphop',
     origin: 'kr',
     songs: [
-      { title: '990',         tier: 2, subTier: 1, genres: ['khiphop'] },
+      { title: '990',         tier: 1, subTier: 1, genres: ['khiphop'] },
       { title: 'Time Travel', tier: 2, subTier: 3, genres: ['khiphop'] },
       { title: 'Radio',       tier: 3, subTier: 3, genres: ['khiphop'] },
     ],
@@ -738,8 +739,9 @@ export const artists: Artist[] = [
     primaryGenre: 'khiphop',
     origin: 'kr',
     songs: [
-      { title: '2025기침', tier: 2, subTier: 0, genres: ['khiphop'] },
-      { title: 'down',     tier: 3, subTier: 1, genres: ['khiphop'] },
+      { title: 'CAN I SIP 담배', tier: 1, subTier: 0, genres: ['khiphop'] },
+      { title: '2025기침',       tier: 2, subTier: 0, genres: ['khiphop'] },
+      { title: 'down',           tier: 3, subTier: 1, genres: ['khiphop'] },
     ],
   },
   {
@@ -755,7 +757,8 @@ export const artists: Artist[] = [
     primaryGenre: 'khiphop',
     origin: 'kr',
     songs: [
-      { title: 'AH', tier: 3, subTier: 3, genres: ['khiphop'] },
+      { title: 'AH AH', tier: 1, subTier: 0, genres: ['khiphop'] },
+      { title: 'AH',    tier: 3, subTier: 3, genres: ['khiphop'] },
     ],
   },
   {
@@ -1722,6 +1725,119 @@ export const artists: Artist[] = [
     origin: 'kr',
     songs: [
       { title: 'Wu', tier: 2, subTier: 2, genres: ['khiphop'] },
+    ],
+  },
+  {
+    // Kang Min-ho, ex-Supreme Team. Underground K-hip-hop legend.
+    name: 'E SENS',
+    primaryGenre: 'khiphop',
+    origin: 'kr',
+    songs: [
+      { title: '비행',                tier: 2, subTier: 0, genres: ['khiphop'] },
+      { title: 'Gas',                 tier: 2, subTier: 2, genres: ['khiphop'], features: ['Jibin'] },
+    ],
+  },
+  {
+    // K-hip-hop / R&B vocalist Jibin.
+    name: 'Jibin',
+    primaryGenre: 'khiphop',
+    origin: 'kr',
+    songs: [],
+  },
+  {
+    // K-hip-hop rapper EK (이케이).
+    name: 'EK',
+    primaryGenre: 'khiphop',
+    origin: 'kr',
+    songs: [
+      { title: 'MollyWorld', tier: 3, subTier: 3, genres: ['khiphop'], features: ['GV'] },
+    ],
+  },
+  {
+    // K-hip-hop rapper / producer GV (지비).
+    name: 'GV',
+    primaryGenre: 'khiphop',
+    origin: 'kr',
+    songs: [],
+  },
+  {
+    // K-hip-hop rapper Mushvenom (머쉬베놈) — Show Me the Money 9.
+    name: '머쉬베놈',
+    primaryGenre: 'khiphop',
+    origin: 'kr',
+    songs: [
+      { title: '돌림판', tier: 2, subTier: 1, genres: ['khiphop'], features: ['신빠람', '이박사'] },
+    ],
+  },
+  {
+    name: '신빠람',
+    primaryGenre: 'khiphop',
+    origin: 'kr',
+    songs: [],
+  },
+  {
+    // Korean trot/comedy singer Lee Yong-seok aka "Dr. Lee".
+    name: '이박사',
+    primaryGenre: 'pop',
+    origin: 'kr',
+    songs: [],
+  },
+  {
+    // Spanish duo. "Macarena" (1993, dance hit revived by Bayside Boys
+    // Mix 1995/96).
+    name: 'Los Del Rio',
+    primaryGenre: 'pop',
+    origin: 'es',
+    songs: [
+      { title: 'Macarena', tier: 4, subTier: 0, genres: ['pop'], year: 1993 },
+    ],
+  },
+  {
+    // Manchester rock band, Gallagher brothers.
+    name: 'Oasis',
+    primaryGenre: 'rock',
+    origin: 'uk',
+    songs: [
+      { title: "Don't Look Back In Anger", tier: 4, subTier: 2, genres: ['rock'], year: 1995, album: '(What’s the Story) Morning Glory?' },
+    ],
+  },
+  {
+    // LA EDM/pop duo (Redfoo + SkyBlu). 2011 dance-pop juggernaut.
+    name: 'LMFAO',
+    primaryGenre: 'edm',
+    origin: 'us',
+    songs: [
+      { title: 'Party Rock Anthem', tier: 4, subTier: 2, genres: ['edm', 'pop'], year: 2011, album: 'Sorry for Party Rocking', features: ['Lauren Bennett', 'GoonRock'] },
+    ],
+  },
+  {
+    name: 'Lauren Bennett',
+    primaryGenre: 'pop',
+    origin: 'uk',
+    songs: [],
+  },
+  {
+    name: 'GoonRock',
+    primaryGenre: 'edm',
+    origin: 'us',
+    songs: [],
+  },
+  {
+    // Broadway / film singer. Voice of Elsa in Disney's Frozen.
+    name: 'Idina Menzel',
+    primaryGenre: 'pop',
+    origin: 'us',
+    songs: [
+      { title: 'Let It Go', tier: 4, subTier: 0, genres: ['pop'], year: 2013, album: 'Frozen OST' },
+    ],
+  },
+  {
+    // English singer-songwriter from Halifax / Suffolk.
+    name: 'Ed Sheeran',
+    primaryGenre: 'pop',
+    origin: 'uk',
+    songs: [
+      { title: 'Shape of You', tier: 4, subTier: 1, genres: ['pop'], year: 2017, album: '÷ (Divide)' },
     ],
   },
 ]
