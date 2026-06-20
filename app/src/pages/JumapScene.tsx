@@ -161,6 +161,29 @@ function forceSettle(planets: Planet[]): void {
   const ANCHOR = 0.022
   const STEP = 0.85
   const DAMP = 0.78
+
+  // Pre-build adjacency for collaboration pulls: any pair of artists who
+  // appear on each other's songs as features. Stored as an index pair set
+  // so the inner loop just checks `pairs.has(key)`.
+  const indexOf = new Map<string, number>()
+  for (let i = 0; i < n; i++) indexOf.set(planets[i].name, i)
+  const collabs = new Set<string>()
+  for (let i = 0; i < n; i++) {
+    for (const s of planets[i].artist.songs) {
+      if (!s.features) continue
+      for (const f of s.features) {
+        const j = indexOf.get(f)
+        if (j == null || j === i) continue
+        const key = i < j ? `${i}|${j}` : `${j}|${i}`
+        collabs.add(key)
+      }
+    }
+  }
+  // Spring strength + comfortable distance for a collab pair.
+  const COLLAB_PULL = 0.018
+  const COLLAB_TARGET_DELTA = 12 // how far inside the min-separation gap
+                                 // we'd LIKE the pair to settle.
+
   for (let k = 0; k < 700; k++) {
     let maxs = 0
     for (let i = 0; i < n; i++) {
@@ -183,6 +206,19 @@ function forceSettle(planets: Planet[]): void {
           const push = (minD - d) * 0.55
           fx += (dx / d) * push
           fz += (dz / d) * push
+        }
+        // Collab pull — if i and j are tied by any featuring, draw them
+        // toward a comfortable distance just past their min-separation.
+        const key = i < j ? `${i}|${j}` : `${j}|${i}`
+        if (collabs.has(key)) {
+          const target = minD + COLLAB_TARGET_DELTA
+          // If currently farther than the target, pull inward; never push
+          // inside the min separation (that's the repulsion's job above).
+          if (d > target) {
+            const pull = (d - target) * COLLAB_PULL
+            fx -= (dx / d) * pull
+            fz -= (dz / d) * pull
+          }
         }
       }
       fx += (anchorX[i] - a.x) * ANCHOR
@@ -534,11 +570,12 @@ function Bonds({
 // Sits inside the Canvas so it can use the live camera / DOM events.
 
 function DragController({
-  planets, dragRef, setOrbitEnabled,
+  planets, dragRef, setOrbitEnabled, onArtistClick,
 }: {
   planets: Planet[]
   dragRef: React.MutableRefObject<DragState | null>
   setOrbitEnabled: (b: boolean) => void
+  onArtistClick: (name: string) => void
 }) {
   const { camera, gl } = useThree()
   const planeRef = useRef(new THREE.Plane(new THREE.Vector3(0, 1, 0), 0))
@@ -546,11 +583,31 @@ function DragController({
   const ndc = useRef(new THREE.Vector2())
   const planetByName = useMemo(() => new Map(planets.map((p) => [p.name, p])), [planets])
 
-  // Listen for the bubble-emitted CustomEvent `jumap-drag-start`.
   useEffect(() => {
     const canvas = gl.domElement
+    // Click vs drag is disambiguated by movement distance. Until the
+    // pointer crosses ~6 client-px from where it landed, we treat the
+    // gesture as a potential click on the artist — no drag state, no
+    // orbit-controls lock. Once it crosses the threshold, we promote
+    // the pending grab to an active drag.
+    const CLICK_THRESHOLD = 6
+    let pending:
+      | { name: string; pid: number; startX: number; startY: number }
+      | null = null
     let activeId: number | null = null
-    function startDrag(name: string, clientX: number, clientY: number, pid: number) {
+
+    function pointerToWorld(clientX: number, clientY: number): { x: number; z: number } {
+      const rect = canvas.getBoundingClientRect()
+      ndc.current.set(
+        ((clientX - rect.left) / rect.width) * 2 - 1,
+        -((clientY - rect.top) / rect.height) * 2 + 1,
+      )
+      raycaster.current.setFromCamera(ndc.current, camera)
+      const hit = new THREE.Vector3()
+      raycaster.current.ray.intersectPlane(planeRef.current, hit)
+      return { x: hit.x, z: hit.z }
+    }
+    function promoteToDrag(name: string, clientX: number, clientY: number, pid: number) {
       activeId = pid
       setOrbitEnabled(false)
       const anchors = new Map<string, { x: number; z: number; orbitR: number }>()
@@ -566,36 +623,31 @@ function DragController({
       const planet = planetByName.get(name)!
       const off = dragRef.current?.offsets.get(name) ?? { dx: 0, dz: 0 }
       const cur = { x: planet.x + off.dx, z: planet.z + off.dz }
-      ;(dragRef.current as DragState | null) = {
+      const grabDx = t.x - cur.x
+      const grabDz = t.z - cur.z
+      dragRef.current = {
         grabbed: name,
         anchors,
         offsets,
         vels,
-        // Preserve where on the planet the user grabbed.
-        tx: cur.x + (t.x - cur.x) * 0 + (t.x - cur.x), // = t.x; but record grab offset
-        tz: cur.z + (t.z - cur.z),
+        tx: t.x - grabDx,
+        tz: t.z - grabDz,
       }
-      // Better: snap target to pointer minus grab offset so the planet
-      // doesn't jump under the cursor on first frame.
-      const grabDx = t.x - cur.x
-      const grabDz = t.z - cur.z
-      dragRef.current!.tx = t.x - grabDx
-      dragRef.current!.tz = t.z - grabDz
       ;(dragRef.current as DragState & { grabDx: number; grabDz: number }).grabDx = grabDx
       ;(dragRef.current as DragState & { grabDx: number; grabDz: number }).grabDz = grabDz
     }
-    function pointerToWorld(clientX: number, clientY: number): { x: number; z: number } {
-      const rect = canvas.getBoundingClientRect()
-      ndc.current.set(
-        ((clientX - rect.left) / rect.width) * 2 - 1,
-        -((clientY - rect.top) / rect.height) * 2 + 1,
-      )
-      raycaster.current.setFromCamera(ndc.current, camera)
-      const hit = new THREE.Vector3()
-      raycaster.current.ray.intersectPlane(planeRef.current, hit)
-      return { x: hit.x, z: hit.z }
-    }
     function onMove(ev: PointerEvent) {
+      // Promotion phase
+      if (pending && pending.pid === ev.pointerId) {
+        const dx = ev.clientX - pending.startX
+        const dy = ev.clientY - pending.startY
+        if (Math.hypot(dx, dy) > CLICK_THRESHOLD) {
+          const p = pending
+          pending = null
+          promoteToDrag(p.name, ev.clientX, ev.clientY, p.pid)
+        }
+      }
+      // Active drag phase
       const ds = dragRef.current as (DragState & { grabDx?: number; grabDz?: number }) | null
       if (!ds || activeId !== ev.pointerId) return
       ev.preventDefault()
@@ -604,16 +656,28 @@ function DragController({
       ds.tz = t.z - (ds.grabDz ?? 0)
     }
     function onUp(ev: PointerEvent) {
+      // Pending → click: open the artist modal.
+      if (pending && pending.pid === ev.pointerId) {
+        const name = pending.name
+        pending = null
+        onArtistClick(name)
+        return
+      }
       if (activeId !== ev.pointerId) return
       activeId = null
       setOrbitEnabled(true)
-      // Drop the grab marker so the spring sim relaxes; keep offsets as
-      // the new resting state.
       if (dragRef.current) dragRef.current = { ...dragRef.current, grabbed: '' }
     }
     function onCustom(ev: Event) {
       const e = ev as CustomEvent<{ name: string; clientX: number; clientY: number; pointerId: number }>
-      startDrag(e.detail.name, e.detail.clientX, e.detail.clientY, e.detail.pointerId)
+      // Park a pending grab. Don't disable OrbitControls yet — we still
+      // don't know if this is a click or a drag.
+      pending = {
+        name: e.detail.name,
+        pid: e.detail.pointerId,
+        startX: e.detail.clientX,
+        startY: e.detail.clientY,
+      }
     }
     canvas.addEventListener('jumap-drag-start' as keyof HTMLElementEventMap, onCustom as EventListener)
     document.addEventListener('pointermove', onMove, { passive: false })
@@ -625,7 +689,7 @@ function DragController({
       document.removeEventListener('pointerup', onUp)
       document.removeEventListener('pointercancel', onUp)
     }
-  }, [camera, gl, planets, planetByName, dragRef, setOrbitEnabled])
+  }, [camera, gl, planets, planetByName, dragRef, setOrbitEnabled, onArtistClick])
   return null
 }
 
@@ -633,9 +697,10 @@ function DragController({
 
 interface SceneProps {
   onSongOpen: (artist: string, song: Song) => void
+  onArtistOpen: (name: string) => void
 }
 
-function SceneInner({ onSongOpen }: SceneProps) {
+function SceneInner({ onSongOpen, onArtistOpen }: SceneProps) {
   const { planets, moons } = useMemo(() => buildLayout(), [])
   const dragRef = useRef<DragState | null>(null)
   const [orbitEnabled, setOrbitEnabled] = useState(true)
@@ -706,7 +771,12 @@ function SceneInner({ onSongOpen }: SceneProps) {
 
       <Bonds planets={planets} moons={moons} dragRef={dragRef} />
       <DragLoop dragRef={dragRef} />
-      <DragController planets={planets} dragRef={dragRef} setOrbitEnabled={setOrbitEnabled} />
+      <DragController
+        planets={planets}
+        dragRef={dragRef}
+        setOrbitEnabled={setOrbitEnabled}
+        onArtistClick={onArtistOpen}
+      />
       <OrbitControls
         enabled={orbitEnabled}
         enableDamping
@@ -723,7 +793,7 @@ function SceneInner({ onSongOpen }: SceneProps) {
   )
 }
 
-export function JumapScene({ onSongOpen }: SceneProps) {
+export function JumapScene({ onSongOpen, onArtistOpen }: SceneProps) {
   // Track last pointer at document level so a planet pointerdown handler
   // can know its client coords (R3F's event already gives us this; we
   // just shuttle it through window.__lastPointer for the custom event).
@@ -744,7 +814,7 @@ export function JumapScene({ onSongOpen }: SceneProps) {
       gl={{ antialias: true, powerPreference: 'high-performance' }}
       style={{ background: 'transparent' }}
     >
-      <SceneInner onSongOpen={onSongOpen} />
+      <SceneInner onSongOpen={onSongOpen} onArtistOpen={onArtistOpen} />
     </Canvas>
   )
 }

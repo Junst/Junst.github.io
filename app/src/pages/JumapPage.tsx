@@ -803,6 +803,76 @@ function SongRow({ artist, song }: { artist: string; song: Song }) {
 }
 
 
+// Artist detail dialog — opens when the user *clicks* (not drags) a
+// planet in the 3D scene. Shows the artist's name, primary genre/country,
+// best tier crown, and the full SongRow list.
+export function ArtistModal({
+  artist, onClose,
+}: {
+  artist: Artist
+  onClose: () => void
+}) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', onKey)
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prev
+    }
+  }, [onClose])
+  const primary = genreFor(artistPrimaryGenre(artist))
+  const sorted = [...artist.songs].sort(
+    (a, b) =>
+      a.tier - b.tier ||
+      (b.subTier ?? 0) - (a.subTier ?? 0) ||
+      a.title.localeCompare(b.title),
+  )
+  return (
+    <div className="jumap-modal-backdrop" onClick={onClose}>
+      <div
+        className="jumap-modal"
+        role="dialog"
+        aria-label={artist.name}
+        onClick={(e) => e.stopPropagation()}
+        style={{ ['--modal-tint' as string]: primary.color }}
+      >
+        <button
+          type="button"
+          className="jumap-modal-close"
+          aria-label="Close"
+          onClick={onClose}
+        >
+          ×
+        </button>
+        <header className="jumap-modal-head">
+          <img
+            className="jumap-modal-tier-crown"
+            src={tierCrownSrc(bestTier(artist))}
+            alt=""
+            width={32}
+            height={Math.round((32 * 232) / 354)}
+          />
+          <h2 className="jumap-modal-name">{artist.name}</h2>
+          <div className="jumap-modal-genres">
+            {artistGenres(artist).map((k) => genreFor(k).label).join(' · ')}
+          </div>
+        </header>
+        {sorted.length === 0 ? (
+          <p className="jumap-modal-empty">No songs logged yet.</p>
+        ) : (
+          <ol className="jumap-modal-songs">
+            {sorted.map((s, i) => (
+              <SongRow key={i} artist={artist.name} song={s} />
+            ))}
+          </ol>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // Single-song detail dialog opened by clicking a song moon. Reuses SongRow
 // so the layout matches the existing per-song card.
 export function SongModal({
