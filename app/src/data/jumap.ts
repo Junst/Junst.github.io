@@ -211,6 +211,7 @@ export const artists: Artist[] = [
   {
     name: 'ARASHI',
     primaryGenre: 'jpop',
+    origin: 'jp',
     songs: [
       { title: 'A·RA·SHI',         tier: 1, subTier: 3, genres: ['jpop'] },
       { title: 'Ready To Fly',     tier: 1, subTier: 3, genres: ['jpop'] },
@@ -251,6 +252,7 @@ export const artists: Artist[] = [
   {
     name: 'King & Prince',
     primaryGenre: 'jpop',
+    origin: 'jp',
     songs: [
       { title: 'TraceTrace',  tier: 1, subTier: 1, genres: ['jpop'] },
       { title: 'HEART',       tier: 2, genres: ['jpop'], year: 2025 },
@@ -260,6 +262,7 @@ export const artists: Artist[] = [
   {
     name: 'Hey! Say! JUMP',
     primaryGenre: 'jpop',
+    origin: 'jp',
     songs: [
       // year / album: please confirm
       { title: 'Muah Muah',  tier: 2, genres: ['jpop'] },
@@ -269,6 +272,7 @@ export const artists: Artist[] = [
   {
     name: 'KAT-TUN',
     primaryGenre: 'jpop',
+    origin: 'jp',
     songs: [
       { title: 'Real Face', tier: 3, genres: ['jpop'], year: 2006, album: 'Best of KAT-TUN' },
     ],
@@ -284,6 +288,7 @@ export const artists: Artist[] = [
   {
     name: 'aespa',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       // 'WDA': please confirm the full title + year + album
       { title: 'WDA',   tier: 3, genres: ['kpop'], features: ['G-DRAGON'] },
@@ -294,6 +299,7 @@ export const artists: Artist[] = [
   {
     name: 'ILLIT',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: 'Magnetic',                          tier: 1, genres: ['kpop'], year: 2024, album: 'SUPER REAL ME' },
       { title: '빌려온 고양이 (Do the Dance)',       tier: 2, subTier: 2, genres: ['kpop'] },
@@ -304,6 +310,7 @@ export const artists: Artist[] = [
   {
     name: 'IVE',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: 'HEYA',     tier: 3, subTier: 3, genres: ['kpop'], year: 2024, album: 'IVE SWITCH' },
       { title: 'Bang Bang', tier: 2, subTier: 2, genres: ['kpop'] },
@@ -313,6 +320,7 @@ export const artists: Artist[] = [
   {
     name: 'NewJeans',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: 'OMG',        tier: 1, subTier: 1, genres: ['kpop'], year: 2023, album: 'NewJeans ‘OMG’' },
       { title: 'New Jeans',  tier: 1, subTier: 2, genres: ['kpop'], year: 2024, album: 'How Sweet' },
@@ -326,6 +334,7 @@ export const artists: Artist[] = [
   {
     name: 'ReoNa',
     primaryGenre: 'anime',
+    origin: 'jp',
     songs: [
       { title: 'ANIMA', tier: 2, genres: ['anime'] },
     ],
@@ -343,6 +352,7 @@ export const artists: Artist[] = [
   {
     name: 'Kendrick Lamar',
     primaryGenre: 'hiphop',
+    origin: 'us',
     songs: [
       { title: 'Not Like Us', tier: 2, subTier: 3, genres: ['hiphop'], year: 2024 },
       { title: 'HUMBLE.',     tier: 2, subTier: 3, genres: ['hiphop'], year: 2017, album: 'DAMN.' },
@@ -359,8 +369,10 @@ export const artists: Artist[] = [
     ],
   },
   {
+    // Houston, TX. Hip-hop primary (rage / psychedelic-rap sub-genre).
     name: 'Travis Scott',
-    primaryGenre: 'rage',
+    primaryGenre: 'hiphop',
+    origin: 'us',
     songs: [
       { title: 'FE!N',       tier: 1, subTier: 1, genres: ['rage', 'hiphop'] },
       { title: 'SICKO MODE', tier: 1, subTier: 0, genres: ['hiphop', 'rage'], year: 2018, album: 'Astroworld', features: ['Drake'] },
@@ -369,6 +381,7 @@ export const artists: Artist[] = [
   {
     name: 'Lil Uzi Vert',
     primaryGenre: 'hiphop',
+    origin: 'us',
     songs: [
       { title: '20 Min', tier: 2, subTier: 3, genres: ['hiphop'], year: 2017, album: 'Luv Is Rage 2' },
     ],
@@ -376,6 +389,7 @@ export const artists: Artist[] = [
   {
     name: 'Post Malone',
     primaryGenre: 'pop',
+    origin: 'us',
     songs: [
       { title: 'I Like You (A Happier Song)', tier: 3, genres: ['pop', 'hiphop'] },
     ],
@@ -383,6 +397,7 @@ export const artists: Artist[] = [
   {
     name: 'Doja Cat',
     primaryGenre: 'pop',
+    origin: 'us',
     songs: [
       { title: 'Paint The Town Red', tier: 3, subTier: 1, genres: ['pop', 'hiphop'], year: 2023, album: 'Scarlet' },
     ],
@@ -400,20 +415,24 @@ export const artists: Artist[] = [
   {
     name: 'Ariana Grande',
     primaryGenre: 'pop',
+    origin: 'us',
     songs: [
       { title: 'thank u, next', tier: 4, subTier: 2, genres: ['pop'], year: 2018, album: 'thank u, next' },
     ],
   },
   {
+    // Japanese 3-piece pop-rock band. Rock primary.
     name: 'Mrs. GREEN APPLE',
-    primaryGenre: 'jpop',
+    primaryGenre: 'rock',
+    origin: 'jp',
     songs: [
-      { title: 'ライラック', tier: 3, subTier: 2, genres: ['jpop', 'rock'], year: 2024 },
+      { title: 'ライラック', tier: 3, subTier: 2, genres: ['rock', 'jpop'], year: 2024 },
     ],
   },
   {
     name: 'Beenzino',
     primaryGenre: 'khiphop',
+    origin: 'kr',
     songs: [
       { title: '990',         tier: 2, subTier: 1, genres: ['khiphop'] },
       { title: 'Time Travel', tier: 2, subTier: 3, genres: ['khiphop'] },
@@ -425,6 +444,7 @@ export const artists: Artist[] = [
   {
     name: 'SHINee',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: 'Stand By Me', tier: 3, subTier: 2, genres: ['kpop'] },
     ],
@@ -432,6 +452,7 @@ export const artists: Artist[] = [
   {
     name: 'KARA',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: 'Pretty Girl', tier: 3, subTier: 3, genres: ['kpop'] },
     ],
@@ -439,6 +460,7 @@ export const artists: Artist[] = [
   {
     name: 'NCT WISH',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: 'Surf', tier: 3, subTier: 0, genres: ['kpop'] },
     ],
@@ -446,6 +468,7 @@ export const artists: Artist[] = [
   {
     name: 'NCT U',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: 'Kangaroo', tier: 3, subTier: 2, genres: ['kpop'] },
     ],
@@ -453,6 +476,7 @@ export const artists: Artist[] = [
   {
     name: 'TXT',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: 'Force', tier: 1, subTier: 0, genres: ['kpop'] },
     ],
@@ -460,6 +484,7 @@ export const artists: Artist[] = [
   {
     name: 'JENNIE',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: 'Love Hangover', tier: 3, subTier: 2, genres: ['kpop'], features: ['Dominic Fike'] },
     ],
@@ -467,6 +492,7 @@ export const artists: Artist[] = [
   {
     name: 'QWER',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: '고민중독', tier: 2, subTier: 0, genres: ['kpop'] },
     ],
@@ -474,6 +500,7 @@ export const artists: Artist[] = [
   {
     name: 'TVXQ',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: '풍선',           tier: 1, subTier: 0, genres: ['kpop'] },
       { title: 'Show Me Your Love', tier: 2, subTier: 2, genres: ['kpop'], features: ['Super Junior'] },
@@ -484,11 +511,13 @@ export const artists: Artist[] = [
   {
     name: 'Super Junior',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [],
   },
   {
     name: 'PSY',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: '강남스타일', tier: 4, subTier: 1, genres: ['kpop'], year: 2012, album: '강남스타일' },
     ],
@@ -496,6 +525,7 @@ export const artists: Artist[] = [
   {
     name: 'Wonder Girls',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: 'Tell Me', tier: 2, subTier: 1, genres: ['kpop'], year: 2007 },
     ],
@@ -544,6 +574,7 @@ export const artists: Artist[] = [
   {
     name: 'Lady Gaga',
     primaryGenre: 'pop',
+    origin: 'us',
     songs: [
       { title: 'Rain On Me', tier: 2, subTier: 2, genres: ['pop'], year: 2020, album: 'Chromatica', features: ['Ariana Grande'] },
     ],
@@ -559,6 +590,7 @@ export const artists: Artist[] = [
   {
     name: 'Owl City',
     primaryGenre: 'pop',
+    origin: 'us',
     songs: [
       { title: 'Good Time', tier: 5, subTier: 2, genres: ['pop'], year: 2012, features: ['Carly Rae Jepsen'] },
     ],
@@ -566,6 +598,7 @@ export const artists: Artist[] = [
   {
     name: 'BOYNEXTDOOR',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: '오늘만 I LOVE YOU', tier: 3, subTier: 3, genres: ['kpop'] },
     ],
@@ -573,6 +606,7 @@ export const artists: Artist[] = [
   {
     name: 'SEVENTEEN',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: '음악의 신', tier: 2, subTier: 1, genres: ['kpop'] },
     ],
@@ -580,6 +614,7 @@ export const artists: Artist[] = [
   {
     name: '혁오',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: '와리가리', tier: 2, subTier: 0, genres: ['kpop', 'rock'] },
     ],
@@ -587,6 +622,7 @@ export const artists: Artist[] = [
   {
     name: '정국',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: 'Standing Next to You', tier: 3, subTier: 2, genres: ['kpop'] },
     ],
@@ -594,6 +630,7 @@ export const artists: Artist[] = [
   {
     name: 'BTS',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: 'Dynamite', tier: 1, subTier: 0, genres: ['kpop'], year: 2020, album: 'BE' },
     ],
@@ -601,13 +638,16 @@ export const artists: Artist[] = [
   {
     name: 'JYJ',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: '찾았다', tier: 2, subTier: 3, genres: ['kpop'] },
     ],
   },
   {
+    // Korean indie rock / electronic duo. KAIST CS classmates.
     name: 'Peppertones',
-    primaryGenre: 'kpop',
+    primaryGenre: 'rock',
+    origin: 'kr',
     songs: [
       { title: 'Superfantastic', tier: 2, subTier: 1, genres: ['kpop'] },
     ],
@@ -615,6 +655,7 @@ export const artists: Artist[] = [
   {
     name: '신지',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: 'Always', tier: 1, subTier: 0, genres: ['kpop'] },
     ],
@@ -622,6 +663,7 @@ export const artists: Artist[] = [
   {
     name: 'NS 윤지',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: 'If You Love Me', tier: 4, subTier: 0, genres: ['kpop'], features: ['박재범'] },
     ],
@@ -629,6 +671,7 @@ export const artists: Artist[] = [
   {
     name: 'Hearts2Hearts',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: 'STYLE', tier: 2, subTier: 2, genres: ['kpop'] },
     ],
@@ -647,6 +690,7 @@ export const artists: Artist[] = [
   {
     name: 'Effie',
     primaryGenre: 'khiphop',
+    origin: 'kr',
     songs: [
       { title: '2025기침', tier: 2, subTier: 0, genres: ['khiphop'] },
       { title: 'down',     tier: 3, subTier: 1, genres: ['khiphop'] },
@@ -655,6 +699,7 @@ export const artists: Artist[] = [
   {
     name: 'EsDeeKid',
     primaryGenre: 'khiphop',
+    origin: 'kr',
     songs: [
       { title: '4 Raws', tier: 2, subTier: 1, genres: ['khiphop'] },
     ],
@@ -662,6 +707,7 @@ export const artists: Artist[] = [
   {
     name: '나우아임영',
     primaryGenre: 'khiphop',
+    origin: 'kr',
     songs: [
       { title: 'AH', tier: 3, subTier: 3, genres: ['khiphop'] },
     ],
@@ -669,6 +715,7 @@ export const artists: Artist[] = [
   {
     name: 'Jazzyfact',
     primaryGenre: 'khiphop',
+    origin: 'kr',
     songs: [
       { title: '하루종일', tier: 3, subTier: 3, genres: ['khiphop'] },
     ],
@@ -676,6 +723,7 @@ export const artists: Artist[] = [
   {
     name: 'SYSTEM SEOUL',
     primaryGenre: 'khiphop',
+    origin: 'kr',
     songs: [
       { title: 'SS', tier: 2, subTier: 1, genres: ['khiphop'] },
     ],
@@ -683,6 +731,7 @@ export const artists: Artist[] = [
   {
     name: 'Young B',
     primaryGenre: 'khiphop',
+    origin: 'kr',
     songs: [
       { title: '아침에', tier: 2, subTier: 0, genres: ['khiphop'], features: ['Bryn'] },
     ],
@@ -690,6 +739,7 @@ export const artists: Artist[] = [
   {
     name: 'Kid Milli',
     primaryGenre: 'khiphop',
+    origin: 'kr',
     songs: [
       { title: '25', tier: 2, subTier: 1, genres: ['khiphop'], features: ['Young B'] },
     ],
@@ -699,6 +749,7 @@ export const artists: Artist[] = [
   {
     name: 'V6',
     primaryGenre: 'jpop',
+    origin: 'jp',
     songs: [
       { title: 'Can do! Can go!', tier: 2, subTier: 2, genres: ['jpop'] },
       { title: 'Super Powers',    tier: 2, subTier: 1, genres: ['jpop'] },
@@ -707,6 +758,7 @@ export const artists: Artist[] = [
   {
     name: 'Buono!',
     primaryGenre: 'jpop',
+    origin: 'jp',
     songs: [
       { title: 'Kiss! Kiss! Kiss!', tier: 2, subTier: 2, genres: ['jpop'] },
     ],
@@ -714,6 +766,7 @@ export const artists: Artist[] = [
   {
     name: 'Kenshi Yonezu',
     primaryGenre: 'jpop',
+    origin: 'jp',
     songs: [
       { title: 'IRIS OUT', tier: 3, subTier: 2, genres: ['jpop'] },
     ],
@@ -721,6 +774,7 @@ export const artists: Artist[] = [
   {
     name: 'Number_i',
     primaryGenre: 'jpop',
+    origin: 'jp',
     songs: [
       { title: 'BON', tier: 1, subTier: 0, genres: ['jpop'] },
     ],
@@ -728,6 +782,7 @@ export const artists: Artist[] = [
   {
     name: 'EXILE',
     primaryGenre: 'jpop',
+    origin: 'jp',
     songs: [
       { title: 'Choo Choo Train', tier: 2, subTier: 2, genres: ['jpop'] },
     ],
@@ -735,6 +790,7 @@ export const artists: Artist[] = [
   {
     name: 'SEKAI NO OWARI',
     primaryGenre: 'jpop',
+    origin: 'jp',
     songs: [
       { title: 'ターコイズ', tier: 2, subTier: 2, genres: ['jpop'] },
       { title: 'RPG',        tier: 2, subTier: 1, genres: ['jpop'] },
@@ -743,6 +799,7 @@ export const artists: Artist[] = [
   {
     name: 'Official髭男dism',
     primaryGenre: 'jpop',
+    origin: 'jp',
     songs: [
       { title: '犬かキャットかで死ぬまで喧嘩しよう!', tier: 1, subTier: 2, genres: ['jpop'] },
     ],
@@ -752,6 +809,7 @@ export const artists: Artist[] = [
   {
     name: 'ClariS',
     primaryGenre: 'anime',
+    origin: 'jp',
     songs: [
       { title: 'Irony', tier: 3, subTier: 0, genres: ['anime'] },
     ],
@@ -759,6 +817,7 @@ export const artists: Artist[] = [
   {
     name: 'Hiroshi Kitadani',
     primaryGenre: 'anime',
+    origin: 'jp',
     songs: [
       { title: 'ウィーアー！', tier: 1, subTier: 0, genres: ['anime'] },
     ],
@@ -766,6 +825,7 @@ export const artists: Artist[] = [
   {
     name: '5050',
     primaryGenre: 'anime',
+    origin: 'jp',
     songs: [
       { title: 'Jungle P', tier: 1, subTier: 0, genres: ['anime'] },
     ],
@@ -775,6 +835,7 @@ export const artists: Artist[] = [
   {
     name: 'DJ Khaled',
     primaryGenre: 'hiphop',
+    origin: 'us',
     songs: [
       { title: 'POPSTAR', tier: 2, subTier: 2, genres: ['hiphop'], features: ['Drake'] },
     ],
@@ -782,6 +843,7 @@ export const artists: Artist[] = [
   {
     name: 'The Notorious B.I.G.',
     primaryGenre: 'hiphop',
+    origin: 'us',
     songs: [
       { title: 'Hypnotize', tier: 3, subTier: 1, genres: ['hiphop'], year: 1997, album: 'Life After Death' },
     ],
@@ -789,6 +851,7 @@ export const artists: Artist[] = [
   {
     name: 'Nas',
     primaryGenre: 'hiphop',
+    origin: 'us',
     songs: [
       { title: 'N.Y. State of Mind', tier: 3, subTier: 0, genres: ['hiphop'], year: 1994, album: 'Illmatic' },
     ],
@@ -798,6 +861,7 @@ export const artists: Artist[] = [
   {
     name: 'Sabrina Carpenter',
     primaryGenre: 'pop',
+    origin: 'us',
     songs: [
       { title: 'Espresso', tier: 2, subTier: 3, genres: ['pop'], year: 2024, album: 'Short n’ Sweet' },
     ],
@@ -805,6 +869,7 @@ export const artists: Artist[] = [
   {
     name: 'Dominic Fike',
     primaryGenre: 'pop',
+    origin: 'us',
     songs: [
       { title: 'Pasture Child', tier: 4, subTier: 3, genres: ['pop', 'rock'] },
     ],
@@ -820,6 +885,7 @@ export const artists: Artist[] = [
   {
     name: 'Chelsea Collins',
     primaryGenre: 'pop',
+    origin: 'us',
     songs: [
       { title: '07 Britney', tier: 3, subTier: 3, genres: ['pop'] },
     ],
@@ -837,6 +903,7 @@ export const artists: Artist[] = [
   {
     name: 'Redbone',
     primaryGenre: 'rock',
+    origin: 'us',
     songs: [
       { title: 'Come and Get Your Love', tier: 3, subTier: 3, genres: ['rock'], year: 1974, album: 'Wovoka' },
     ],
@@ -862,6 +929,7 @@ export const artists: Artist[] = [
   {
     name: 'SZA',
     primaryGenre: 'rnb',
+    origin: 'us',
     songs: [
       { title: 'Snooze',   tier: 2, subTier: 0, genres: ['rnb'], year: 2022, album: 'SOS' },
       { title: '30 For 30', tier: 3, subTier: 3, genres: ['rnb'], features: ['Kendrick Lamar'] },
@@ -879,6 +947,7 @@ export const artists: Artist[] = [
   {
     name: 'Jackson 5',
     primaryGenre: 'rnb',
+    origin: 'us',
     songs: [
       { title: 'I Want You Back', tier: 3, subTier: 2, genres: ['rnb'], year: 1969 },
     ],
@@ -886,6 +955,7 @@ export const artists: Artist[] = [
   {
     name: 'Bruno Mars',
     primaryGenre: 'rnb',
+    origin: 'us',
     songs: [
       { title: 'Skate', tier: 1, subTier: 3, genres: ['rnb', 'pop'], year: 2021, album: 'An Evening with Silk Sonic', features: ['Anderson .Paak'] },
     ],
@@ -893,6 +963,7 @@ export const artists: Artist[] = [
   {
     name: 'Anderson .Paak',
     primaryGenre: 'rnb',
+    origin: 'us',
     // No song entries yet — exists in the roster so the Silk Sonic
     // collaboration draws a feature bond from "Skate" to this planet.
     songs: [],
@@ -904,6 +975,7 @@ export const artists: Artist[] = [
   {
     name: 'G-DRAGON',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: 'Missing You', tier: 5, subTier: 2, genres: ['kpop'], features: ['김윤아'] },
     ],
@@ -911,11 +983,13 @@ export const artists: Artist[] = [
   {
     name: '박재범',
     primaryGenre: 'khiphop',
+    origin: 'kr',
     songs: [],
   },
   {
     name: 'Bryn',
     primaryGenre: 'khiphop',
+    origin: 'kr',
     songs: [],
   },
   {
@@ -928,6 +1002,7 @@ export const artists: Artist[] = [
   {
     name: 'Snoop Dogg',
     primaryGenre: 'hiphop',
+    origin: 'us',
     songs: [],
   },
 
@@ -935,6 +1010,7 @@ export const artists: Artist[] = [
   {
     name: 'KinKi Kids',
     primaryGenre: 'jpop',
+    origin: 'jp',
     songs: [
       { title: 'Amazing Love', tier: 4, subTier: 0, genres: ['jpop'] },
     ],
@@ -942,6 +1018,7 @@ export const artists: Artist[] = [
   {
     name: 'Noriyuki Makihara',
     primaryGenre: 'jpop',
+    origin: 'jp',
     songs: [
       { title: '冬がはじまるよ', tier: 4, subTier: 3, genres: ['jpop'] },
     ],
@@ -949,6 +1026,7 @@ export const artists: Artist[] = [
   {
     name: 'SMAP',
     primaryGenre: 'jpop',
+    origin: 'jp',
     songs: [
       { title: 'Dear WOMAN', tier: 1, subTier: 1, genres: ['jpop'] },
     ],
@@ -956,6 +1034,7 @@ export const artists: Artist[] = [
   {
     name: 'Gen Hoshino',
     primaryGenre: 'jpop',
+    origin: 'jp',
     songs: [
       { title: 'Week End', tier: 4, subTier: 3, genres: ['jpop'] },
     ],
@@ -963,6 +1042,7 @@ export const artists: Artist[] = [
   {
     name: 'D-51',
     primaryGenre: 'jpop',
+    origin: 'jp',
     songs: [
       { title: 'BRAND NEW WORLD', tier: 4, subTier: 3, genres: ['jpop', 'anime'] },
     ],
@@ -980,6 +1060,7 @@ export const artists: Artist[] = [
   {
     name: 'Hironobu Kageyama',
     primaryGenre: 'anime',
+    origin: 'jp',
     songs: [
       { title: 'HEATS 2021', tier: 3, subTier: 2, genres: ['anime'] },
     ],
@@ -989,6 +1070,7 @@ export const artists: Artist[] = [
   {
     name: 'NCT DREAM',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: 'Beatbox', tier: 3, subTier: 2, genres: ['kpop'] },
     ],
@@ -996,6 +1078,7 @@ export const artists: Artist[] = [
   {
     name: 'SS501',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: '애인만들기', tier: 3, subTier: 2, genres: ['kpop'] },
     ],
@@ -1003,6 +1086,7 @@ export const artists: Artist[] = [
   {
     name: 'Kep1er',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: 'WA DA DA', tier: 4, subTier: 3, genres: ['kpop'] },
     ],
@@ -1010,6 +1094,7 @@ export const artists: Artist[] = [
   {
     name: '구혜선',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: '기억상실증 (Flying Galaxy)', tier: 4, subTier: 2, genres: ['kpop'] },
     ],
@@ -1017,15 +1102,19 @@ export const artists: Artist[] = [
   {
     name: '볼빨간 사춘기',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: 'You(=I)', tier: 2, subTier: 2, genres: ['kpop'] },
     ],
   },
   {
+    // Bryan Cho (조휴일). Korean indie rock — multiple Korean Music Awards
+    // for Best Modern Rock Album. Seoul-based.
     name: '검정치마',
-    primaryGenre: 'kpop',
+    primaryGenre: 'rock',
+    origin: 'kr',
     songs: [
-      { title: 'Antifreeze', tier: 2, subTier: 3, genres: ['kpop', 'rock'] },
+      { title: 'Antifreeze', tier: 2, subTier: 3, genres: ['rock', 'kpop'] },
     ],
   },
 
@@ -1033,6 +1122,7 @@ export const artists: Artist[] = [
   {
     name: 'Green Day',
     primaryGenre: 'rock',
+    origin: 'us',
     songs: [
       { title: 'Basket Case', tier: 4, subTier: 3, genres: ['rock'], year: 1994, album: 'Dookie' },
     ],
@@ -1040,6 +1130,7 @@ export const artists: Artist[] = [
   {
     name: 'Katy Perry',
     primaryGenre: 'pop',
+    origin: 'us',
     songs: [
       { title: 'California Gurls', tier: 1, subTier: 0, genres: ['pop'], year: 2010, album: 'Teenage Dream', features: ['Snoop Dogg'] },
     ],
@@ -1049,6 +1140,7 @@ export const artists: Artist[] = [
   {
     name: 'STAYC',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: '색안경 (STEREOTYPE)', tier: 3, subTier: 0, genres: ['kpop'] },
     ],
@@ -1056,6 +1148,7 @@ export const artists: Artist[] = [
   {
     name: 'B.A.P',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: '대박사건 (Crash)', tier: 3, subTier: 0, genres: ['kpop'] },
     ],
@@ -1063,6 +1156,7 @@ export const artists: Artist[] = [
   {
     name: 'Red Velvet',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: 'Queendom', tier: 4, subTier: 3, genres: ['kpop'] },
     ],
@@ -1070,6 +1164,7 @@ export const artists: Artist[] = [
   {
     name: 'BEAST',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: '미운사람', tier: 3, subTier: 3, genres: ['kpop'] },
     ],
@@ -1077,6 +1172,7 @@ export const artists: Artist[] = [
   {
     name: 'IZ*ONE',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: 'Panorama', tier: 4, subTier: 3, genres: ['kpop'] },
     ],
@@ -1084,6 +1180,7 @@ export const artists: Artist[] = [
   {
     name: '소녀시대',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: 'I GOT A BOY', tier: 2, subTier: 3, genres: ['kpop'] },
     ],
@@ -1091,6 +1188,7 @@ export const artists: Artist[] = [
   {
     name: '박세아',
     primaryGenre: 'kpop',
+    origin: 'kr',
     songs: [
       { title: '희망', tier: 3, subTier: 3, genres: ['kpop'] },
     ],
@@ -1100,6 +1198,7 @@ export const artists: Artist[] = [
   {
     name: 'Melody.',
     primaryGenre: 'jpop',
+    origin: 'jp',
     songs: [
       { title: 'Realize', tier: 3, subTier: 2, genres: ['jpop'] },
     ],
@@ -1107,6 +1206,7 @@ export const artists: Artist[] = [
   {
     name: '레나 (LENA)',
     primaryGenre: 'jpop',
+    origin: 'jp',
     songs: [
       { title: 'TOK! TOK! TOK!', tier: 4, subTier: 2, genres: ['jpop'] },
     ],
@@ -1114,6 +1214,7 @@ export const artists: Artist[] = [
   {
     name: 'Ken Hirai',
     primaryGenre: 'jpop',
+    origin: 'jp',
     songs: [
       { title: 'Pop Star', tier: 3, subTier: 2, genres: ['jpop'] },
     ],
@@ -1121,6 +1222,7 @@ export const artists: Artist[] = [
   {
     name: 'Perfume',
     primaryGenre: 'jpop',
+    origin: 'jp',
     songs: [
       { title: 'Love The World', tier: 2, subTier: 2, genres: ['jpop'] },
     ],
@@ -1130,6 +1232,7 @@ export const artists: Artist[] = [
   {
     name: 'Fall Out Boy',
     primaryGenre: 'rock',
+    origin: 'us',
     songs: [
       { title: 'The Phoenix', tier: 4, subTier: 1, genres: ['rock'], year: 2013, album: 'Save Rock and Roll' },
     ],
@@ -1137,6 +1240,7 @@ export const artists: Artist[] = [
   {
     name: 'Boys Like Girls',
     primaryGenre: 'rock',
+    origin: 'us',
     songs: [
       { title: 'The Great Escape', tier: 4, subTier: 2, genres: ['rock'] },
     ],
@@ -1144,6 +1248,7 @@ export const artists: Artist[] = [
   {
     name: 'Billie Eilish',
     primaryGenre: 'pop',
+    origin: 'us',
     songs: [
       { title: 'bad guy', tier: 3, subTier: 1, genres: ['pop'], year: 2019, album: 'When We All Fall Asleep, Where Do We Go?' },
     ],
@@ -1151,6 +1256,7 @@ export const artists: Artist[] = [
   {
     name: 'Jonas Brothers',
     primaryGenre: 'pop',
+    origin: 'us',
     songs: [
       { title: 'Sucker', tier: 3, subTier: 1, genres: ['pop'], year: 2019, album: 'Happiness Begins' },
     ],
