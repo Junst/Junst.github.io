@@ -396,7 +396,7 @@ function forceSettle(planets: Planet[]): void {
         // bleed into neighbours. Feature pulls still drag collab
         // partners across the border, which is the only place we
         // want overlap to happen.
-        const boost = sameCountry ? 0 : 70
+        const boost = sameCountry ? 0 : 110
         const minD = Math.max(
           2 * Math.max(a.orbitR, b.orbitR) + 12 + boost,
           a.orbitR + b.orbitR + 18 + boost,
@@ -1344,6 +1344,56 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
     onSongOpen(m.ownerName, m.song)
   }, [onSongOpen])
 
+  // Compute centroid + radius for each group, then pairwise-clip the
+  // radii so no two territories ever overlap. Steps:
+  //   1. Centroid = mean of planet positions.
+  //   2. Tentative radius = 85th-percentile distance — outliers (e.g.
+  //      a Japan artist dragged by feat. toward Korea) don't blow up
+  //      the empire's reach. Wobble headroom (×0.78) baked in so the
+  //      animated boundary still doesn't cross.
+  //   3. Pairwise clip: if radius_A + radius_B exceeds centroid distance,
+  //      shave both proportionally so they meet at the midpoint.
+  function buildDisks<T extends string>(
+    groups: Map<T, Planet[]>,
+    extra: (k: T) => { color?: string; label?: string } = () => ({}),
+  ) {
+    const out: Array<{ k: T; cx: number; cz: number; r: number; color?: string; label?: string }> = []
+    for (const [k, list] of groups) {
+      if (list.length === 0) continue
+      let cx = 0, cz = 0
+      for (const p of list) { cx += p.x; cz += p.z }
+      cx /= list.length; cz /= list.length
+      const ds = list.map((p) => Math.hypot(p.x - cx, p.z - cz) + p.r * 1.4)
+      ds.sort((a, b) => a - b)
+      // 85th percentile (or max for very small clusters) — keeps the
+      // boundary tight to the empire's body even when one artist is
+      // pulled out toward a feat. partner.
+      const pctIdx = Math.max(0, Math.min(ds.length - 1, Math.floor(ds.length * 0.85)))
+      const baseR = ds[pctIdx] + 4
+      out.push({ k, cx, cz, r: baseR, ...extra(k) })
+    }
+    // Pairwise clip — guarantees no overlap. Wobble adds ~22% radius at
+    // peak, so reserve that headroom in the overlap test.
+    const HEADROOM = 1.22
+    for (let pass = 0; pass < 3; pass++) {
+      for (let i = 0; i < out.length; i++) {
+        for (let j = i + 1; j < out.length; j++) {
+          const A = out[i], B = out[j]
+          const dist = Math.hypot(A.cx - B.cx, A.cz - B.cz)
+          const overlap = (A.r + B.r) * HEADROOM - dist + 2 /* small gap */
+          if (overlap > 0) {
+            const total = A.r + B.r
+            const shareA = total > 0 ? A.r / total : 0.5
+            A.r -= overlap * shareA / HEADROOM
+            B.r -= overlap * (1 - shareA) / HEADROOM
+          }
+        }
+      }
+    }
+    for (const t of out) if (t.r < 4) t.r = 4
+    return out
+  }
+
   // Genre territory groupings — same algorithm as country, just keyed by
   // each planet's primary genre. Only used when viewMode === 'genre'.
   const genreDisks = useMemo(() => {
@@ -1352,24 +1402,10 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
       if (!groups.has(p.primaryGenre)) groups.set(p.primaryGenre, [])
       groups.get(p.primaryGenre)!.push(p)
     }
-    const out: Array<{ k: string; cx: number; cz: number; r: number; color: string; label: string }> = []
-    for (const [k, list] of groups) {
-      let cx = 0, cz = 0
-      for (const p of list) { cx += p.x; cz += p.z }
-      cx /= list.length; cz /= list.length
-      let r = 0
-      for (const p of list) {
-        // Hug planet bodies only, not the full song orbit — songs can
-        // float just outside the territory; what matters is that the
-        // empire's boundary doesn't include the giant empty space
-        // between an artist's centre and its outermost moon.
-        const d = Math.hypot(p.x - cx, p.z - cz) + p.r * 1.4
-        if (d > r) r = d
-      }
+    return buildDisks(groups, (k) => {
       const spec = genreFor(k)
-      out.push({ k, cx, cz, r: r + 2, color: spec.color, label: spec.label })
-    }
-    return out
+      return { color: spec.color, label: spec.label }
+    }) as Array<{ k: string; cx: number; cz: number; r: number; color: string; label: string }>
   }, [planets])
 
   // Country territory disks.
@@ -1379,23 +1415,7 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
       if (!groups.has(p.country)) groups.set(p.country, [])
       groups.get(p.country)!.push(p)
     }
-    const out: Array<{ k: string; cx: number; cz: number; r: number }> = []
-    for (const [k, list] of groups) {
-      let cx = 0, cz = 0
-      for (const p of list) { cx += p.x; cz += p.z }
-      cx /= list.length; cz /= list.length
-      let r = 0
-      for (const p of list) {
-        // Hug planet bodies only, not the full song orbit — songs can
-        // float just outside the territory; what matters is that the
-        // empire's boundary doesn't include the giant empty space
-        // between an artist's centre and its outermost moon.
-        const d = Math.hypot(p.x - cx, p.z - cz) + p.r * 1.4
-        if (d > r) r = d
-      }
-      out.push({ k, cx, cz, r: r + 2 })
-    }
-    return out
+    return buildDisks(groups) as Array<{ k: string; cx: number; cz: number; r: number }>
   }, [planets])
 
   return (
