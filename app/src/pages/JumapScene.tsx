@@ -91,7 +91,7 @@ function placeByCountry(): Planet[] {
     byCountry.get(c)!.push(a)
   }
   const countryKeys = COUNTRIES.map((c) => c.key).filter((k) => byCountry.has(k))
-  const ringR = 260
+  const ringR = 170
   const cCentres: Record<string, { x: number; z: number }> = {}
   if (countryKeys.length === 1) cCentres[countryKeys[0]] = { x: 0, z: 0 }
   else countryKeys.forEach((k, i) => {
@@ -102,38 +102,78 @@ function placeByCountry(): Planet[] {
   const planets: Planet[] = []
   for (const country of countryKeys) {
     const cc = cCentres[country]
-    const arts = byCountry.get(country) ?? []
-    const byGenre = new Map<string, Artist[]>()
-    for (const a of arts) {
-      const g = artistPrimaryGenre(a)
-      if (!byGenre.has(g)) byGenre.set(g, [])
-      byGenre.get(g)!.push(a)
-    }
-    const genreKeys = GENRES.map((g) => g.key).filter((k) => byGenre.has(k))
-    // Genre sub-centroids — each at a *random* angle around the country
-    // centre with a *random* radius, instead of a perfectly even ring.
-    // The seed includes both genre and country so the scatter is
-    // deterministic per render but unique per (country, genre) pair.
-    const gCentres: Record<string, { x: number; z: number }> = {}
-    genreKeys.forEach((g) => {
-      const baseAng = seed(g + country + 'gang') * Math.PI * 2
-      const baseR = 16 + seed(g + country + 'gr') * 28           // 16..44
-      gCentres[g] = { x: cc.x + Math.cos(baseAng) * baseR, z: cc.z + Math.sin(baseAng) * baseR }
-    })
-    for (const genre of genreKeys) {
-      const gc = gCentres[genre]
-      const cluster = sortArtists(byGenre.get(genre) ?? [])
-      const phase = cluster.length ? seed(cluster[0].name) * Math.PI * 2 : 0
-      cluster.forEach((a, i) => {
-        // Per-artist jitter: break the clean phyllotaxis spiral so the
-        // result looks more like a scatter than a sunflower. Force-settle
-        // afterwards keeps everyone properly spaced.
-        const angJitter = (seed(a.name + 'aj') - 0.5) * 0.9     // ±0.45 rad
-        const radJitter = 0.6 + seed(a.name + 'rj') * 0.9        // 0.6..1.5
-        const baseAng = i * GOLDEN + phase + angJitter
-        const lr = cluster.length === 1 ? 0 : Math.sqrt(i + 0.6) * 14 * radJitter
-        planets.push(newPlanet(a, gc.x + Math.cos(baseAng) * lr, gc.z + Math.sin(baseAng) * lr, country, genre))
-      })
+    const cluster = sortArtists(byCountry.get(country) ?? [])
+    // Poisson-disk-like scatter: pick a random spot inside the country's
+    // disk for each artist, rejecting candidates that fall too close to
+    // already-placed planets. The result is irregular and natural —
+    // tighter than phyllotaxis was, and never the same arc pattern.
+    const targetR = 16 + Math.sqrt(cluster.length) * 11
+    const placedHere: { x: number; z: number; r: number; genre: string }[] = []
+    for (const a of cluster) {
+      const r = bubbleRadius(a) * 0.10
+      const genre = artistPrimaryGenre(a)
+      let chosenX = cc.x
+      let chosenZ = cc.z
+      // Small bias toward neighbours of the same genre so jpop / anime
+      // still cluster softly inside Japan without being on rigid rings.
+      let biasX = cc.x
+      let biasZ = cc.z
+      let biasW = 0
+      for (const p of placedHere) {
+        if (p.genre === genre) {
+          biasX += p.x
+          biasZ += p.z
+          biasW += 1
+        }
+      }
+      if (biasW > 0) {
+        biasX /= biasW + 1
+        biasZ /= biasW + 1
+      } else {
+        biasX = cc.x
+        biasZ = cc.z
+      }
+      let bestScore = -Infinity
+      let bestX = cc.x
+      let bestZ = cc.z
+      for (let tries = 0; tries < 80; tries++) {
+        const angHash = seed(a.name + 'A' + tries)
+        const radHash = seed(a.name + 'R' + tries)
+        const ang = angHash * Math.PI * 2
+        const rad = targetR * Math.sqrt(radHash)
+        const x = cc.x + Math.cos(ang) * rad
+        const z = cc.z + Math.sin(ang) * rad
+        let minDistToOther = Infinity
+        for (const p of placedHere) {
+          const d = Math.hypot(x - p.x, z - p.z) - (p.r + r)
+          if (d < minDistToOther) minDistToOther = d
+        }
+        // Score: prefer candidates further from neighbours but also
+        // closer to the same-genre bias point. Hard-reject if it would
+        // overlap (minDistToOther < gap).
+        const gap = 5
+        if (minDistToOther < gap) continue
+        const genrePull = -Math.hypot(x - biasX, z - biasZ) * 0.35
+        const spreadPush = Math.min(minDistToOther, 18) * 2
+        const score = spreadPush + genrePull
+        if (score > bestScore) {
+          bestScore = score
+          bestX = x
+          bestZ = z
+        }
+      }
+      // bestX/bestZ are guaranteed because spreadPush + genrePull is finite
+      // once a non-rejected candidate is found; if zero candidates passed
+      // the gap test, fall back to country centre + tiny offset.
+      if (bestScore === -Infinity) {
+        const ang = seed(a.name + 'fb') * Math.PI * 2
+        bestX = cc.x + Math.cos(ang) * (targetR * 0.4)
+        bestZ = cc.z + Math.sin(ang) * (targetR * 0.4)
+      }
+      chosenX = bestX
+      chosenZ = bestZ
+      placedHere.push({ x: chosenX, z: chosenZ, r, genre })
+      planets.push(newPlanet(a, chosenX, chosenZ, country, genre))
     }
   }
   return planets
@@ -147,7 +187,7 @@ function placeByGenre(): Planet[] {
     byGenre.get(g)!.push(a)
   }
   const genreKeys = GENRES.map((g) => g.key).filter((k) => byGenre.has(k))
-  const ringR = 128
+  const ringR = 90
   const centres: Record<string, { x: number; z: number }> = {}
   if (genreKeys.length === 1) centres[genreKeys[0]] = { x: 0, z: 0 }
   else genreKeys.forEach((g, i) => {
@@ -158,22 +198,38 @@ function placeByGenre(): Planet[] {
   for (const genre of genreKeys) {
     const c = centres[genre]
     const cluster = sortArtists(byGenre.get(genre) ?? [])
-    const phase = cluster.length ? seed(cluster[0].name) * Math.PI * 2 : 0
-    cluster.forEach((a, i) => {
-      const angJitter = (seed(a.name + 'gaj') - 0.5) * 0.9
-      const radJitter = 0.6 + seed(a.name + 'grj') * 0.9
-      const ang = i * GOLDEN + phase + angJitter
-      const lr = cluster.length === 1 ? 0 : Math.sqrt(i + 0.6) * 16 * radJitter
-      planets.push(
-        newPlanet(
-          a,
-          c.x + Math.cos(ang) * lr,
-          c.z + Math.sin(ang) * lr,
-          countryOfArtist(a),
-          genre,
-        ),
-      )
-    })
+    const targetR = 16 + Math.sqrt(cluster.length) * 11
+    const placedHere: { x: number; z: number; r: number }[] = []
+    for (const a of cluster) {
+      const r = bubbleRadius(a) * 0.10
+      let bestScore = -Infinity
+      let bestX = c.x
+      let bestZ = c.z
+      for (let tries = 0; tries < 80; tries++) {
+        const angHash = seed(a.name + 'gA' + tries)
+        const radHash = seed(a.name + 'gR' + tries)
+        const ang = angHash * Math.PI * 2
+        const rad = targetR * Math.sqrt(radHash)
+        const x = c.x + Math.cos(ang) * rad
+        const z = c.z + Math.sin(ang) * rad
+        let minDistToOther = Infinity
+        for (const p of placedHere) {
+          const d = Math.hypot(x - p.x, z - p.z) - (p.r + r)
+          if (d < minDistToOther) minDistToOther = d
+        }
+        const gap = 5
+        if (minDistToOther < gap) continue
+        const score = Math.min(minDistToOther, 18) * 2
+        if (score > bestScore) { bestScore = score; bestX = x; bestZ = z }
+      }
+      if (bestScore === -Infinity) {
+        const ang = seed(a.name + 'gfb') * Math.PI * 2
+        bestX = c.x + Math.cos(ang) * (targetR * 0.4)
+        bestZ = c.z + Math.sin(ang) * (targetR * 0.4)
+      }
+      placedHere.push({ x: bestX, z: bestZ, r })
+      planets.push(newPlanet(a, bestX, bestZ, countryOfArtist(a), genre))
+    }
   }
   return planets
 }
@@ -340,7 +396,7 @@ function forceSettle(planets: Planet[]): void {
         // bleed into neighbours. Feature pulls still drag collab
         // partners across the border, which is the only place we
         // want overlap to happen.
-        const boost = sameCountry ? 0 : 160
+        const boost = sameCountry ? 0 : 70
         const minD = Math.max(
           2 * Math.max(a.orbitR, b.orbitR) + 12 + boost,
           a.orbitR + b.orbitR + 18 + boost,
@@ -1303,7 +1359,11 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
       cx /= list.length; cz /= list.length
       let r = 0
       for (const p of list) {
-        const d = Math.hypot(p.x - cx, p.z - cz) + p.orbitR
+        // Hug planet bodies only, not the full song orbit — songs can
+        // float just outside the territory; what matters is that the
+        // empire's boundary doesn't include the giant empty space
+        // between an artist's centre and its outermost moon.
+        const d = Math.hypot(p.x - cx, p.z - cz) + p.r * 1.4
         if (d > r) r = d
       }
       const spec = genreFor(k)
@@ -1326,7 +1386,11 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
       cx /= list.length; cz /= list.length
       let r = 0
       for (const p of list) {
-        const d = Math.hypot(p.x - cx, p.z - cz) + p.orbitR
+        // Hug planet bodies only, not the full song orbit — songs can
+        // float just outside the territory; what matters is that the
+        // empire's boundary doesn't include the giant empty space
+        // between an artist's centre and its outermost moon.
+        const d = Math.hypot(p.x - cx, p.z - cz) + p.r * 1.4
         if (d > r) r = d
       }
       out.push({ k, cx, cz, r: r + 2 })
