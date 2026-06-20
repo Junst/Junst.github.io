@@ -1547,11 +1547,18 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
       //  22 acts → 41
       //  38 acts → 65
       //  50 acts → 83
-      // Padding hugs the cluster — France (3 acts), Canada (4),
+      // Padding hugs the cluster — France (2 acts), Canada (4),
       // Sweden (1) etc. only get a couple px buffer; USA (~30) is
       // also brought down a notch.
       const pad = Math.max(2, list.length * 0.7)
-      const baseR = ds[pctIdx] + pad
+      // Hard cap on territory radius based on member count. Without
+      // this, a 2-act empire whose member gets dragged 30 px across
+      // the border by a feat. pull blows the 95th-percentile up to
+      // ~30 and the territory looks oversized compared to its 2 actual
+      // residents (France with Camille pulled toward Michael Giacchino
+      // is the canonical case).
+      const radiusCap = Math.max(14, 8 + Math.sqrt(list.length) * 13)
+      const baseR = Math.min(ds[pctIdx] + pad, radiusCap)
       out.push({ k, cx, cz, r: baseR, ...extra(k) })
     }
     // Pairwise clip — guarantees no overlap. Headroom covers the
