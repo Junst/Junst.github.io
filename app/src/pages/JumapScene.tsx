@@ -266,7 +266,7 @@ function placeByTier(): Planet[] {
 function buildLayout(mode: ViewMode = 'country'): { planets: Planet[]; moons: Moon[] } {
   const planets =
     mode === 'genre' ? placeByGenre() : mode === 'tier' ? placeByTier() : placeByCountry()
-  forceSettle(planets)
+  forceSettle(planets, mode)
 
   const moons: Moon[] = []
   if (mode === 'tier') {
@@ -346,7 +346,7 @@ function buildLayout(mode: ViewMode = 'country'): { planets: Planet[]; moons: Mo
   return { planets, moons }
 }
 
-function forceSettle(planets: Planet[]): void {
+function forceSettle(planets: Planet[], mode: ViewMode = 'country'): void {
   const n = planets.length
   if (n < 2) return
   const anchorX = planets.map((p) => p.x)
@@ -407,12 +407,15 @@ function forceSettle(planets: Planet[]): void {
         const dx = a.x - b.x
         const dz = a.z - b.z
         const d = Math.sqrt(dx * dx + dz * dz) || 0.01
-        const sameCountry = a.country === b.country
-        // Cross-country buffer — wide enough that territories don't
-        // bleed into neighbours. Feature pulls still drag collab
-        // partners across the border, which is the only place we
-        // want overlap to happen.
-        const boost = sameCountry ? 0 : 110
+        // The grouping that the territory layer is showing — country in
+        // Country mode, primary genre in Genre mode. Same-group pairs
+        // get no boost so they pack tightly inside their empire's
+        // boundary; cross-group pairs get pushed apart so the empires
+        // visually separate.
+        const sameGroup = mode === 'genre'
+          ? a.primaryGenre === b.primaryGenre
+          : a.country === b.country
+        const boost = sameGroup ? 0 : 110
         const minD = Math.max(
           2 * Math.max(a.orbitR, b.orbitR) + 12 + boost,
           a.orbitR + b.orbitR + 18 + boost,
@@ -432,7 +435,7 @@ function forceSettle(planets: Planet[]): void {
         if (collabs.has(key)) {
           const target = minD + COLLAB_TARGET_DELTA
           if (d > target) {
-            const pullStrength = sameCountry ? COLLAB_PULL : COLLAB_PULL * 3
+            const pullStrength = sameGroup ? COLLAB_PULL : COLLAB_PULL * 3
             const pull = (d - target) * pullStrength
             fx -= (dx / d) * pull
             fz -= (dz / d) * pull
@@ -1000,6 +1003,80 @@ function DragLoop({ dragRef }: { dragRef: React.RefObject<DragState | null> }) {
   return null
 }
 
+// Tier mode visual guides — one ring per tier band so the user can tell
+// at a glance which concentric circle a song belongs to. Computed from
+// the laid-out moons so the ring sits exactly where the songs do.
+function TierGuides({ moons }: { moons: Moon[] }) {
+  const tierRings = useMemo(() => {
+    // Group moons by song.tier, take the median radius of each group.
+    const byTier = new Map<number, number[]>()
+    for (const m of moons) {
+      const t = m.song.tier
+      const r = Math.hypot(m.x, m.z)
+      if (!byTier.has(t)) byTier.set(t, [])
+      byTier.get(t)!.push(r)
+    }
+    return Array.from(byTier.entries())
+      .map(([tier, rs]) => {
+        rs.sort((a, b) => a - b)
+        // Use the outer edge (90th pct) so the ring sits at the band's rim.
+        const outer = rs[Math.floor(rs.length * 0.9)]
+        return { tier, r: outer + 1.5 }
+      })
+      .sort((a, b) => a.tier - b.tier)
+  }, [moons])
+  const TIER_COLORS: Record<number, string> = {
+    1: '#7ec6ff',
+    2: '#ffe27a',
+    3: '#ff9b5e',
+    4: '#c47bff',
+    5: '#9aa3b2',
+  }
+  return (
+    <group position={[0, -1.6, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+      {tierRings.map(({ tier, r }) => {
+        const color = TIER_COLORS[tier] ?? '#9aa3b2'
+        return (
+          <group key={tier}>
+            {/* Faint solid disc rim */}
+            <mesh>
+              <ringGeometry args={[r - 0.6, r, 128]} />
+              <meshBasicMaterial color={color} transparent opacity={0.55} side={THREE.DoubleSide} />
+            </mesh>
+            {/* Soft outer glow */}
+            <mesh>
+              <ringGeometry args={[r, r + 2.2, 128]} />
+              <meshBasicMaterial
+                color={color}
+                transparent
+                opacity={0.18}
+                side={THREE.DoubleSide}
+                blending={THREE.AdditiveBlending}
+                depthWrite={false}
+              />
+            </mesh>
+            {/* Tier label floating just outside the ring */}
+            <group rotation={[Math.PI / 2, 0, 0]} position={[0, -r * 0 - r * 0, 0]}>
+              <Text
+                position={[r + 4, 3, 0]}
+                fontSize={3.6}
+                color={color}
+                anchorX="left"
+                anchorY="middle"
+                outlineWidth={0.18}
+                outlineColor="#0e1322"
+                rotation={[-Math.PI / 6, 0, 0]}
+              >
+                {`T${tier}`}
+              </Text>
+            </group>
+          </group>
+        )
+      })}
+    </group>
+  )
+}
+
 // --- Bonds: simple line segments ---------------------------------------------
 // Drawn as Line3 buffers; updated each frame from current drag offsets.
 
@@ -1471,6 +1548,7 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
       <Stars />
       <AtlasGround />
 
+      {viewMode === 'tier' && <TierGuides moons={moons} />}
       {viewMode === 'country' && countryDisks.map((c) => (
         <CountryTerritory key={c.k} k={c.k} cx={c.cx} cz={c.cz} r={c.r} />
       ))}
