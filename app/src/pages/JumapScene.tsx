@@ -373,7 +373,7 @@ function PlanetMesh({
   planet, onSelect, dragRef, dimmed,
 }: {
   planet: Planet
-  onSelect: (name: string) => void
+  onSelect: (name: string, clientX: number, clientY: number, pointerId: number) => void
   dragRef: React.RefObject<DragState | null>
   dimmed?: boolean
 }) {
@@ -390,7 +390,12 @@ function PlanetMesh({
   })
   const handleDown = useCallback((e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation()
-    onSelect(planet.name)
+    // Pass the native pointer coordinates straight through, instead of
+    // relying on window.__lastPointer (which on R3F's pointerdown order
+    // hadn't been updated yet — that's why mobile's first tap was
+    // silently dropped).
+    const nev = e.nativeEvent
+    onSelect(planet.name, nev.clientX, nev.clientY, nev.pointerId)
   }, [planet.name, onSelect])
   return (
     <group ref={groupRef} position={[planet.x, 0, planet.z]}>
@@ -822,18 +827,73 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
   }, [moons, search])
   const dragRef = useRef<DragState | null>(null)
   const [orbitEnabled, setOrbitEnabled] = useState(true)
+  // OrbitControls handle for camera tweening.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const orbitRef = useRef<any>(null)
+  // Camera tween target — set by the search-match effect, consumed by a
+  // per-frame lerp below until reached, then cleared. Null = no active
+  // camera animation.
+  const camTargetRef = useRef<{ x: number; z: number; dist: number } | null>(null)
 
-  const onPlanetDown = useCallback((name: string) => {
-    // Synthesize a custom event with the latest pointer position so the
-    // DragController can pick it up consistently.
-    const latest = (window as unknown as { __lastPointer?: { x: number; y: number; id: number } }).__lastPointer
-    if (!latest) return
-    const canvas = document.querySelector('canvas.jumap3d-canvas') as HTMLCanvasElement | null
-    if (!canvas) return
-    canvas.dispatchEvent(new CustomEvent('jumap-drag-start', {
-      detail: { name, clientX: latest.x, clientY: latest.y, pointerId: latest.id },
-    }))
-  }, [])
+  // When the search produces matches, compute a camera target so the user
+  // is flown into focus on the matched planets.
+  useEffect(() => {
+    if (!matchedPlanets || matchedPlanets.size === 0) {
+      camTargetRef.current = null
+      return
+    }
+    let cx = 0, cz = 0, count = 0
+    for (const p of planets) {
+      if (matchedPlanets.has(p.name)) { cx += p.x; cz += p.z; count++ }
+    }
+    if (count === 0) return
+    cx /= count
+    cz /= count
+    // Single planet → close orbit. Many planets → pull back to fit them.
+    const dist = count === 1 ? 22 : Math.min(220, 30 + count * 6)
+    camTargetRef.current = { x: cx, z: cz, dist }
+  }, [matchedPlanets, planets])
+
+  // Camera tween loop. Lerps OrbitControls target + camera position toward
+  // camTargetRef each frame until close enough, then stops touching the
+  // controls so the user can move freely again.
+  useFrame(() => {
+    const t = camTargetRef.current
+    const oc = orbitRef.current
+    if (!t || !oc) return
+    const LERP = 0.10
+    const dx = (t.x - oc.target.x) * LERP
+    const dz = (t.z - oc.target.z) * LERP
+    oc.target.x += dx
+    oc.target.z += dz
+    oc.object.position.x += dx
+    oc.object.position.z += dz
+    // Lerp camera distance to the target distance, preserving the current
+    // viewing angle.
+    const dir = new THREE.Vector3().subVectors(oc.object.position, oc.target)
+    const curDist = dir.length()
+    if (curDist > 0.1) {
+      const newDist = curDist + (t.dist - curDist) * LERP
+      dir.setLength(newDist)
+      oc.object.position.copy(oc.target).add(dir)
+    }
+    oc.update()
+    // Done? Within 0.3 viewBox-units of target and matching distance.
+    if (Math.abs(t.x - oc.target.x) < 0.3 && Math.abs(t.z - oc.target.z) < 0.3 && Math.abs(curDist - t.dist) < 0.6) {
+      camTargetRef.current = null
+    }
+  })
+
+  const onPlanetDown = useCallback(
+    (name: string, clientX: number, clientY: number, pointerId: number) => {
+      const canvas = document.querySelector('canvas.jumap3d-canvas') as HTMLCanvasElement | null
+      if (!canvas) return
+      canvas.dispatchEvent(new CustomEvent('jumap-drag-start', {
+        detail: { name, clientX, clientY, pointerId },
+      }))
+    },
+    [],
+  )
   const onMoonOpen = useCallback((m: Moon) => {
     onSongOpen(m.ownerName, m.song)
   }, [onSongOpen])
@@ -908,13 +968,14 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
         onArtistClick={onArtistOpen}
       />
       <OrbitControls
+        ref={orbitRef}
         enabled={orbitEnabled}
         enableDamping
         dampingFactor={0.12}
         // Atlas tilt: look down from above; restrict so we can't flip under.
         minPolarAngle={0.2}
         maxPolarAngle={Math.PI / 2.2}
-        minDistance={40}
+        minDistance={18}
         maxDistance={520}
         // Pan in world units instead of screen pixels.
         screenSpacePanning={false}
@@ -924,17 +985,6 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
 }
 
 export function JumapScene({ onSongOpen, onArtistOpen, viewMode, searchQuery }: SceneProps) {
-  // Track last pointer at document level so a planet pointerdown handler
-  // can know its client coords (R3F's event already gives us this; we
-  // just shuttle it through window.__lastPointer for the custom event).
-  useEffect(() => {
-    function track(ev: PointerEvent) {
-      (window as unknown as { __lastPointer: { x: number; y: number; id: number } }).__lastPointer =
-        { x: ev.clientX, y: ev.clientY, id: ev.pointerId }
-    }
-    window.addEventListener('pointerdown', track)
-    return () => window.removeEventListener('pointerdown', track)
-  }, [])
   return (
     <Canvas
       className="jumap3d-canvas"
