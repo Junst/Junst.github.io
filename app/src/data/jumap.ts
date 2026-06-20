@@ -678,6 +678,7 @@ export const artists: Artist[] = [
     origin: 'kr',
     songs: [
       { title: 'Dynamite', tier: 1, subTier: 0, genres: ['kpop'], year: 2020, album: 'BE' },
+      { title: 'Butter',   tier: 3, subTier: 1, genres: ['kpop'], year: 2021 },
     ],
   },
   {
@@ -1665,6 +1666,42 @@ export const artists: Artist[] = [
     origin: 'kr',
     songs: [
       { title: '겁쟁이', tier: 4, subTier: 1, genres: ['rock'] },
+    ],
+  },
+  {
+    // JYP K-pop girl group, debuted 2019.
+    name: 'ITZY',
+    primaryGenre: 'kpop',
+    origin: 'kr',
+    songs: [
+      { title: '달라달라', tier: 3, subTier: 2, genres: ['kpop'], year: 2019, album: 'IT’z Different' },
+    ],
+  },
+  {
+    // Korean indie rock band — "Jannabi".
+    name: '잔나비',
+    primaryGenre: 'rock',
+    origin: 'kr',
+    songs: [
+      { title: '주저하는 연인들을 위해', tier: 3, subTier: 0, genres: ['rock'], year: 2019, album: '전설' },
+    ],
+  },
+  {
+    // BLACKPINK's Rosé (Roseanne Park).
+    name: 'ROSÉ',
+    primaryGenre: 'kpop',
+    origin: 'kr',
+    songs: [
+      { title: 'APT.', tier: 5, subTier: 2, genres: ['kpop', 'pop'], year: 2024, features: ['Bruno Mars'] },
+    ],
+  },
+  {
+    // Korean R&B / soul ballad group from early 2000s.
+    name: '프리스타일',
+    primaryGenre: 'rnb',
+    origin: 'kr',
+    songs: [
+      { title: 'Y', tier: 4, subTier: 2, genres: ['rnb', 'kpop'] },
     ],
   },
 ]
