@@ -424,11 +424,11 @@ function PlanetMesh({
       <Text
         position={[0, planet.r + 1.6, 0]}
         fontSize={1.5}
-        color="#1a1a1a"
+        color="#f4f0e6"
         anchorX="center"
         anchorY="middle"
-        outlineWidth={0.12}
-        outlineColor="#ffffff"
+        outlineWidth={0.18}
+        outlineColor="#0e1322"
         fillOpacity={dimmed ? 0.25 : 1}
       >
         {planet.name}
@@ -475,6 +475,46 @@ function MoonMesh({
   )
 }
 
+// Far-away starfield — 2500 fixed points on the inside of a large sphere.
+// Render once, no animations. Uses Points + PointsMaterial with vertex
+// colours so we can dust the field with a handful of brighter highlights.
+function Stars() {
+  const { positions, colors } = useMemo(() => {
+    const N = 2500
+    const pos = new Float32Array(N * 3)
+    const col = new Float32Array(N * 3)
+    for (let i = 0; i < N; i++) {
+      // Random direction (uniform on unit sphere)
+      const u = Math.random() * 2 - 1
+      const t = Math.random() * Math.PI * 2
+      const s = Math.sqrt(1 - u * u)
+      const r = 700 + Math.random() * 100
+      pos[i * 3] = s * Math.cos(t) * r
+      pos[i * 3 + 1] = u * r * 0.6 + 40 // bias upward, atlas plane below
+      pos[i * 3 + 2] = s * Math.sin(t) * r
+      // Mostly faint white, sprinkle a few warm + cool tinted bright ones.
+      const bright = Math.random() < 0.05 ? 1 : 0.4 + Math.random() * 0.35
+      let cr = bright, cg = bright, cb = bright
+      const tint = Math.random()
+      if (tint < 0.08) { cr *= 1; cg *= 0.85; cb *= 0.6 } // warm
+      else if (tint < 0.16) { cr *= 0.7; cg *= 0.85; cb *= 1 } // cool
+      col[i * 3] = cr
+      col[i * 3 + 1] = cg
+      col[i * 3 + 2] = cb
+    }
+    return { positions: pos, colors: col }
+  }, [])
+  return (
+    <points>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" count={positions.length / 3} array={positions} itemSize={3} />
+        <bufferAttribute attach="attributes-color" count={colors.length / 3} array={colors} itemSize={3} />
+      </bufferGeometry>
+      <pointsMaterial size={1.4} vertexColors transparent opacity={0.85} sizeAttenuation={false} />
+    </points>
+  )
+}
+
 function CountryDisk({ k, cx, cz, r }: { k: string; cx: number; cz: number; r: number }) {
   const spec = countryFor(k)
   return (
@@ -497,7 +537,7 @@ function CountryDisk({ k, cx, cz, r }: { k: string; cx: number; cz: number; r: n
         anchorX="center"
         anchorY="middle"
         outlineWidth={0.3}
-        outlineColor="#ffffff"
+        outlineColor="#0e1322"
         rotation={[-Math.PI / 6, 0, 0]}
       >
         {spec.label}
@@ -667,6 +707,13 @@ function Bonds({
 // --- Pointer-to-plane drag controller ----------------------------------------
 // Sits inside the Canvas so it can use the live camera / DOM events.
 
+// Pending-grab handle shared between PlanetMesh's pointerdown handler and
+// the DragController. Kept as a module-level ref-like singleton (assigned
+// from SceneInner) so we don't have to thread it through React props and
+// can't accidentally lose it to a stale closure.
+interface PendingGrab { name: string; pid: number; startX: number; startY: number }
+const pendingGrabRef: { current: PendingGrab | null } = { current: null }
+
 function DragController({
   planets, dragRef, setOrbitEnabled, onArtistClick,
 }: {
@@ -683,15 +730,7 @@ function DragController({
 
   useEffect(() => {
     const canvas = gl.domElement
-    // Click vs drag is disambiguated by movement distance. Until the
-    // pointer crosses ~6 client-px from where it landed, we treat the
-    // gesture as a potential click on the artist — no drag state, no
-    // orbit-controls lock. Once it crosses the threshold, we promote
-    // the pending grab to an active drag.
     const CLICK_THRESHOLD = 6
-    let pending:
-      | { name: string; pid: number; startX: number; startY: number }
-      | null = null
     let activeId: number | null = null
 
     function pointerToWorld(clientX: number, clientY: number): { x: number; z: number } {
@@ -735,17 +774,15 @@ function DragController({
       ;(dragRef.current as DragState & { grabDx: number; grabDz: number }).grabDz = grabDz
     }
     function onMove(ev: PointerEvent) {
-      // Promotion phase
+      const pending = pendingGrabRef.current
       if (pending && pending.pid === ev.pointerId) {
         const dx = ev.clientX - pending.startX
         const dy = ev.clientY - pending.startY
         if (Math.hypot(dx, dy) > CLICK_THRESHOLD) {
-          const p = pending
-          pending = null
-          promoteToDrag(p.name, ev.clientX, ev.clientY, p.pid)
+          pendingGrabRef.current = null
+          promoteToDrag(pending.name, ev.clientX, ev.clientY, pending.pid)
         }
       }
-      // Active drag phase
       const ds = dragRef.current as (DragState & { grabDx?: number; grabDz?: number }) | null
       if (!ds || activeId !== ev.pointerId) return
       ev.preventDefault()
@@ -754,10 +791,10 @@ function DragController({
       ds.tz = t.z - (ds.grabDz ?? 0)
     }
     function onUp(ev: PointerEvent) {
-      // Pending → click: open the artist modal.
+      const pending = pendingGrabRef.current
       if (pending && pending.pid === ev.pointerId) {
         const name = pending.name
-        pending = null
+        pendingGrabRef.current = null
         onArtistClick(name)
         return
       }
@@ -766,23 +803,10 @@ function DragController({
       setOrbitEnabled(true)
       if (dragRef.current) dragRef.current = { ...dragRef.current, grabbed: '' }
     }
-    function onCustom(ev: Event) {
-      const e = ev as CustomEvent<{ name: string; clientX: number; clientY: number; pointerId: number }>
-      // Park a pending grab. Don't disable OrbitControls yet — we still
-      // don't know if this is a click or a drag.
-      pending = {
-        name: e.detail.name,
-        pid: e.detail.pointerId,
-        startX: e.detail.clientX,
-        startY: e.detail.clientY,
-      }
-    }
-    canvas.addEventListener('jumap-drag-start' as keyof HTMLElementEventMap, onCustom as EventListener)
     document.addEventListener('pointermove', onMove, { passive: false })
     document.addEventListener('pointerup', onUp)
     document.addEventListener('pointercancel', onUp)
     return () => {
-      canvas.removeEventListener('jumap-drag-start' as keyof HTMLElementEventMap, onCustom as EventListener)
       document.removeEventListener('pointermove', onMove)
       document.removeEventListener('pointerup', onUp)
       document.removeEventListener('pointercancel', onUp)
@@ -886,11 +910,12 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
 
   const onPlanetDown = useCallback(
     (name: string, clientX: number, clientY: number, pointerId: number) => {
-      const canvas = document.querySelector('canvas.jumap3d-canvas') as HTMLCanvasElement | null
-      if (!canvas) return
-      canvas.dispatchEvent(new CustomEvent('jumap-drag-start', {
-        detail: { name, clientX, clientY, pointerId },
-      }))
+      // Park a pending grab on the module-level ref. DragController's
+      // document-level pointermove/up listeners will read it, no event
+      // dispatch needed — that path was unreliable on Safari (R3F's
+      // synthesised events fire before any window/canvas listener could
+      // see them).
+      pendingGrabRef.current = { name, pid: pointerId, startX: clientX, startY: clientY }
     },
     [],
   )
@@ -922,15 +947,36 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
 
   return (
     <>
-      {/* Lighting */}
-      <hemisphereLight args={[0xffffff, 0x8898a8, 0.55]} />
-      <directionalLight position={[60, 120, 80]} intensity={0.85} castShadow={false} />
-      <pointLight position={[-80, 60, -40]} intensity={0.3} color="#ffe0c4" />
+      {/* Atmospheric background — fog so far-away things fade into the
+          ambient colour instead of hitting a hard plane edge. */}
+      <color attach="background" args={['#0e1322']} />
+      <fog attach="fog" args={['#0e1322', 220, 900]} />
 
-      {/* Ground gradient */}
+      {/* Lighting */}
+      <hemisphereLight args={[0xffffff, 0x40425a, 0.45]} />
+      <directionalLight position={[60, 120, 80]} intensity={0.95} castShadow={false} />
+      <pointLight position={[-120, 60, -80]} intensity={0.45} color="#9fb8ff" />
+      <pointLight position={[120, 40, 120]} intensity={0.35} color="#ffb38a" />
+
+      {/* Distant star backdrop — random points on a huge sphere. The
+          points are 99% transparent so they read as faint dust except
+          for the brightest few. */}
+      <Stars />
+      {/* Soft warm horizon disk just above the atlas plane so the
+          background doesn't read as a black void on bottom. */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -6, 0]}>
+        <ringGeometry args={[160, 700, 96, 1]} />
+        <meshBasicMaterial color="#1c1f30" transparent opacity={0.6} side={THREE.DoubleSide} />
+      </mesh>
+      {/* The atlas surface — a textured-feeling dark plane the planets
+          sit on. We use a radial gradient via a custom canvas texture. */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2, 0]}>
-        <planeGeometry args={[800, 800]} />
-        <meshBasicMaterial color="#f6f3ee" />
+        <circleGeometry args={[420, 96]} />
+        <meshBasicMaterial color="#161a2a" transparent opacity={0.92} />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.9, 0]}>
+        <ringGeometry args={[415, 420, 96]} />
+        <meshBasicMaterial color="#3a4670" transparent opacity={0.55} side={THREE.DoubleSide} />
       </mesh>
 
       {countryDisks.map((c) => (

@@ -899,8 +899,9 @@ html[data-theme="dark"] .jumap-back { background: rgba(20,20,20,0.7); }
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  /* Deep-space fallback under the canvas so any momentary gap blends in. */
   background:
-    radial-gradient(ellipse at 50% 30%, #fff7ec 0%, #f1ece1 60%, #e5dccf 100%);
+    radial-gradient(ellipse at 50% 40%, #1a2240 0%, #0e1322 70%, #060912 100%);
 }
 .jumap3d-stage {
   position: absolute;
@@ -937,8 +938,11 @@ html[data-theme="dark"] .jumap-back { background: rgba(20,20,20,0.7); }
 }
 .jumap3d-view-modes {
   position: absolute;
-  top: 18px;
-  left: 18px;
+  /* The persistent SubpageHomeBar lives at top: 14px / left: 16px and is
+     roughly 110px wide on Mac — push the view-mode pills past it so they
+     don't sit underneath. */
+  top: 14px;
+  left: 140px;
   display: inline-flex;
   gap: 4px;
   padding: 4px;

@@ -72,10 +72,6 @@ export function JumapPage3D() {
         )}
       </div>
 
-      <div className="jumap3d-help" aria-hidden="true">
-        Click planet · Click moon · Drag to move · Right-drag rotates · Scroll zooms
-      </div>
-
       {openSong && (
         <SongModal
           primaryArtist={openSong.primaryArtist}
