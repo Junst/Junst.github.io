@@ -91,13 +91,27 @@ function placeByCountry(): Planet[] {
     byCountry.get(c)!.push(a)
   }
   const countryKeys = COUNTRIES.map((c) => c.key).filter((k) => byCountry.has(k))
-  const ringR = 320
+  // Auto-size super-ring + size-weighted angular slices, same recipe
+  // as placeByGenre. Empire radius estimate is just the planet sprawl
+  // (Poisson-disk targetR); the territory pad gets added at draw time.
+  const empireR = countryKeys.map((k) => {
+    const n = (byCountry.get(k) ?? []).length
+    return 16 + Math.sqrt(n) * 11
+  })
+  const gapFactor = 1.45
+  const totalCircum = empireR.reduce((s, r) => s + 2 * r * gapFactor, 0)
+  const ringR = Math.max(80, totalCircum / (2 * Math.PI))
+  const totalWeight = empireR.reduce((s, r) => s + r, 0)
   const cCentres: Record<string, { x: number; z: number }> = {}
   if (countryKeys.length === 1) cCentres[countryKeys[0]] = { x: 0, z: 0 }
-  else countryKeys.forEach((k, i) => {
-    const ang = (i / countryKeys.length) * Math.PI * 2 - Math.PI / 2
-    cCentres[k] = { x: Math.cos(ang) * ringR, z: Math.sin(ang) * ringR }
-  })
+  else {
+    let cumulative = 0
+    countryKeys.forEach((k, i) => {
+      cumulative += empireR[i]
+      const ang = (cumulative - empireR[i]) / totalWeight * Math.PI * 2 - Math.PI / 2
+      cCentres[k] = { x: Math.cos(ang) * ringR, z: Math.sin(ang) * ringR }
+    })
+  }
 
   const planets: Planet[] = []
   for (const country of countryKeys) {
@@ -187,13 +201,33 @@ function placeByGenre(): Planet[] {
     byGenre.get(g)!.push(a)
   }
   const genreKeys = GENRES.map((g) => g.key).filter((k) => byGenre.has(k))
-  const ringR = 120
+  // Per-genre estimated empire radius (planet sprawl only — pad is
+  // added later in territory rendering). sqrt(n) reflects 2D packing
+  // density; the constant matches the Poisson-disk targetR formula.
+  const empireR = genreKeys.map((g) => {
+    const n = (byGenre.get(g) ?? []).length
+    return 16 + Math.sqrt(n) * 11
+  })
+  // Super-ring radius is whatever is needed to fit every empire on a
+  // circle with a 35% inter-empire gap. Total circumference = Σ
+  // 2·r·gap_factor, so radius = circumference / (2π).
+  const gapFactor = 1.35
+  const totalCircum = empireR.reduce((s, r) => s + 2 * r * gapFactor, 0)
+  const ringR = Math.max(60, totalCircum / (2 * Math.PI))
+  // Centroids are placed with angles weighted by each empire's radius
+  // — big genres get more angular room than small ones. So jpop /
+  // kpop / pop don't sit elbow-to-elbow with anime / edm.
+  const totalWeight = empireR.reduce((s, r) => s + r, 0)
   const centres: Record<string, { x: number; z: number }> = {}
   if (genreKeys.length === 1) centres[genreKeys[0]] = { x: 0, z: 0 }
-  else genreKeys.forEach((g, i) => {
-    const ang = (i / genreKeys.length) * Math.PI * 2 - Math.PI / 2
-    centres[g] = { x: Math.cos(ang) * ringR, z: Math.sin(ang) * ringR }
-  })
+  else {
+    let cumulative = 0
+    genreKeys.forEach((g, i) => {
+      cumulative += empireR[i]
+      const ang = (cumulative - empireR[i]) / totalWeight * Math.PI * 2 - Math.PI / 2
+      centres[g] = { x: Math.cos(ang) * ringR, z: Math.sin(ang) * ringR }
+    })
+  }
   const planets: Planet[] = []
   for (const genre of genreKeys) {
     const c = centres[genre]
