@@ -1547,7 +1547,11 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
       //  22 acts → 41
       //  38 acts → 65
       //  50 acts → 83
-      const pad = 6 + list.length * 1.55
+      // Padding shrunk so small empires (CA / FR / NL / NZ etc.) hug
+      // their handful of artists tightly. Big empires still grow but
+      // the curve is flatter at low n so 3-act countries don't end up
+      // with half-empty territory blobs.
+      const pad = 2 + list.length * 0.95
       const baseR = ds[pctIdx] + pad
       out.push({ k, cx, cz, r: baseR, ...extra(k) })
     }
@@ -1594,32 +1598,78 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
   // is jpop, that side is kpop" without splitting the empire.
   const subGenreHalos = useMemo(() => {
     if (viewMode !== 'genre') return []
-    const groups = new Map<string, Planet[]>()
+    // Sub-genre halos rendered as CountryTerritory-style wobbly blobs
+    // (same animated rim as country/family) so they breathe rather
+    // than sitting as static circles. We also clip each sub-genre's
+    // radius against (a) its family's outer rim and (b) every other
+    // sub-genre inside the same family — so jpop's halo can't bleed
+    // out into the rock empire next door, or eat its sibling kpop.
+    const byGenre = new Map<string, Planet[]>()
+    const byFamily = new Map<string, Planet[]>()
     for (const p of planets) {
-      if (!groups.has(p.primaryGenre)) groups.set(p.primaryGenre, [])
-      groups.get(p.primaryGenre)!.push(p)
+      const g = p.primaryGenre
+      if (!byGenre.has(g)) byGenre.set(g, [])
+      byGenre.get(g)!.push(p)
+      const f = familyOfGenre(g)
+      if (!byFamily.has(f)) byFamily.set(f, [])
+      byFamily.get(f)!.push(p)
     }
-    const out: Array<{ k: string; cx: number; cz: number; r: number; color: string }> = []
-    for (const [k, list] of groups) {
-      if (familyOfGenre(k) === k && list.length === groups.get(k)!.length) {
-        // Single-genre family — skip the halo, the outer blob is already
-        // this colour.
-        const fam = familyOfGenre(k)
-        const famMembers = Array.from(groups.entries())
-          .filter(([gk]) => familyOfGenre(gk) === fam)
-          .reduce((s, [, l]) => s + l.length, 0)
-        if (famMembers === list.length) continue
-      }
+
+    // Family centroid + radius cap, computed the same way as the outer
+    // family territory so we can clip sub-genres against it exactly.
+    const famInfo = new Map<string, { cx: number; cz: number; r: number }>()
+    for (const [f, list] of byFamily) {
       let cx = 0, cz = 0
       for (const p of list) { cx += p.x; cz += p.z }
       cx /= list.length; cz /= list.length
-      let r = 0
-      for (const p of list) {
-        const d = Math.hypot(p.x - cx, p.z - cz) + p.r * 1.4
-        if (d > r) r = d
-      }
-      out.push({ k, cx, cz, r: r + 6, color: genreFor(k).color })
+      const ds = list.map((p) => Math.hypot(p.x - cx, p.z - cz) + p.r * 1.4)
+      ds.sort((a, b) => a - b)
+      const pctIdx = Math.max(0, Math.min(ds.length - 1, Math.floor(ds.length * 0.95)))
+      const pad = 2 + list.length * 0.95
+      famInfo.set(f, { cx, cz, r: ds[pctIdx] + pad })
     }
+
+    const out: Array<{ k: string; cx: number; cz: number; r: number; color: string; label?: string }> = []
+    for (const [g, list] of byGenre) {
+      const fam = familyOfGenre(g)
+      // If this genre IS its family (anime / rock / rnb / edm), the
+      // outer blob already shows it — skip the inner halo.
+      const familySize = byFamily.get(fam)?.length ?? 0
+      if (familySize === list.length) continue
+      let cx = 0, cz = 0
+      for (const p of list) { cx += p.x; cz += p.z }
+      cx /= list.length; cz /= list.length
+      const ds = list.map((p) => Math.hypot(p.x - cx, p.z - cz) + p.r * 1.4)
+      ds.sort((a, b) => a - b)
+      const pctIdx = Math.max(0, Math.min(ds.length - 1, Math.floor(ds.length * 0.95)))
+      const subPad = 2 + list.length * 0.6
+      let r = ds[pctIdx] + subPad
+      // Clip against family rim — wobble peaks add ~30% so reserve that.
+      const fi = famInfo.get(fam)!
+      const distToFamCentre = Math.hypot(cx - fi.cx, cz - fi.cz)
+      const maxToFamRim = (fi.r / 1.30) - distToFamCentre - 4
+      if (r > maxToFamRim) r = Math.max(maxToFamRim, 4)
+      out.push({ k: g, cx, cz, r, color: genreFor(g).color, label: genreFor(g).label })
+    }
+    // Pairwise clip within family so sibling sub-genres don't overlap.
+    const HEAD = 1.30
+    for (let pass = 0; pass < 3; pass++) {
+      for (let i = 0; i < out.length; i++) {
+        for (let j = i + 1; j < out.length; j++) {
+          const A = out[i], B = out[j]
+          if (familyOfGenre(A.k) !== familyOfGenre(B.k)) continue
+          const dist = Math.hypot(A.cx - B.cx, A.cz - B.cz)
+          const overlap = (A.r + B.r) * HEAD - dist + 2
+          if (overlap > 0) {
+            const total = A.r + B.r
+            const shareA = total > 0 ? A.r / total : 0.5
+            A.r -= overlap * shareA / HEAD
+            B.r -= overlap * (1 - shareA) / HEAD
+          }
+        }
+      }
+    }
+    for (const o of out) if (o.r < 4) o.r = 4
     return out
   }, [planets, viewMode])
 
@@ -1667,14 +1717,15 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
         />
       ))}
       {viewMode === 'genre' && subGenreHalos.map((h) => (
-        <mesh
+        <CountryTerritory
           key={'sh-' + h.k}
-          position={[h.cx, -1.1, h.cz]}
-          rotation={[-Math.PI / 2, 0, 0]}
-        >
-          <circleGeometry args={[h.r, 64]} />
-          <meshBasicMaterial color={h.color} transparent opacity={0.18} depthWrite={false} />
-        </mesh>
+          k={'sub-' + h.k}
+          cx={h.cx}
+          cz={h.cz}
+          r={h.r}
+          color={h.color}
+          label={h.label}
+        />
       ))}
 
       {viewMode !== 'tier' && planets.map((p) => (
@@ -1733,7 +1784,7 @@ export function JumapScene({ onSongOpen, onArtistOpen, viewMode, searchQuery }: 
       className="jumap3d-canvas"
       // dpr capped on mobile for fps
       dpr={[1, typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches ? 1.4 : 2]}
-      camera={{ position: [0, 180, 200], fov: 35, near: 0.1, far: 3500 }}
+      camera={{ position: [0, 750, 950], fov: 35, near: 0.1, far: 3500 }}
       gl={{ antialias: true, powerPreference: 'high-performance' }}
       style={{ background: 'transparent' }}
     >

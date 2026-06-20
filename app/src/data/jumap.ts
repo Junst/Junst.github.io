@@ -275,7 +275,23 @@ export const artists: Artist[] = [
       { title: 'Endless Game',     tier: 3, subTier: 1, genres: ['jpop'] },
       { title: 'Your Eyes',        tier: 4, subTier: 2, genres: ['jpop'] },
       { title: '身長差のない恋人',  tier: 1, subTier: 2, genres: ['jpop'] },
-      { title: 'Crazy Moon~キミ・ハ・ムテキ~', tier: 2, subTier: 3, genres: ['jpop'] },
+      { title: 'Crazy Moon~キミ・ハ・ムテキ~', tier: 1, subTier: 1, genres: ['jpop'] },
+      { title: 'ココロチラリ',                    tier: 1, subTier: 1, genres: ['jpop'] },
+      { title: '言葉より大切なもの',              tier: 1, subTier: 1, genres: ['jpop'] },
+      { title: 'サクラ咲ケ',                     tier: 2, subTier: 3, genres: ['jpop'] },
+      { title: '優しくって少しバカ',              tier: 2, subTier: 3, genres: ['jpop'] },
+      { title: '遠くまで',                       tier: 2, subTier: 3, genres: ['jpop'] },
+      { title: 'パレット',                       tier: 2, subTier: 1, genres: ['jpop'] },
+      { title: '果てない空',                     tier: 3, subTier: 1, genres: ['jpop'] },
+      { title: 'COOL & SOUL',                   tier: 3, subTier: 2, genres: ['jpop'] },
+      { title: 'Love Wonderland',                tier: 3, subTier: 2, genres: ['jpop'] },
+      { title: '明日の記憶',                     tier: 3, subTier: 2, genres: ['jpop'] },
+      { title: '愛を叫べ',                       tier: 3, subTier: 1, genres: ['jpop'] },
+      { title: 'ever',                           tier: 3, subTier: 2, genres: ['jpop'] },
+      { title: 'ワイルド アット ハート',          tier: 3, subTier: 0, genres: ['jpop'] },
+      { title: 'P・A・R・A・D・O・X',             tier: 2, subTier: 2, genres: ['jpop'] },
+      { title: '光',                             tier: 1, subTier: 0, genres: ['jpop'] },
+      { title: 'Song for you',                   tier: 1, subTier: 2, genres: ['jpop'] },
       { title: 'BRAVE',            tier: 2, subTier: 2, genres: ['jpop'] },
       { title: 'FUNKY',                  tier: 2, subTier: 3, genres: ['jpop'] },
       { title: 'サヨナラのあとで',        tier: 2, subTier: 3, genres: ['jpop'] },
@@ -607,6 +623,54 @@ export const artists: Artist[] = [
     memberOf: ['ARASHI'],
     songs: [
       { title: 'come again *Reloaded', tier: 1, subTier: 0, genres: ['jpop'], features: ['m-flo'] },
+      { title: 'Rolling days',         tier: 2, subTier: 2, genres: ['jpop'] },
+      { title: 'このままもっと',          tier: 2, subTier: 3, genres: ['jpop'] },
+      { title: 'Come Back',             tier: 2, subTier: 0, genres: ['jpop'], features: ['Jun Matsumoto'] },
+    ],
+  },
+  {
+    // ARASHI member — Jun Matsumoto (Matsujun).
+    name: 'Jun Matsumoto',
+    primaryGenre: 'jpop',
+    origin: 'jp',
+    memberOf: ['ARASHI'],
+    songs: [],
+  },
+  {
+    // ARASHI member — Kazunari Ninomiya.
+    name: 'Kazunari Ninomiya',
+    primaryGenre: 'jpop',
+    origin: 'jp',
+    memberOf: ['ARASHI'],
+    songs: [
+      { title: '夜の影', tier: 1, subTier: 1, genres: ['jpop'], features: ['Satoshi Ohno', 'Jun Matsumoto'] },
+    ],
+  },
+  {
+    // ARASHI member — Satoshi Ohno (leader).
+    name: 'Satoshi Ohno',
+    primaryGenre: 'jpop',
+    origin: 'jp',
+    memberOf: ['ARASHI'],
+    songs: [],
+  },
+  {
+    // ARASHI member — Masaki Aiba.
+    name: 'Masaki Aiba',
+    primaryGenre: 'jpop',
+    origin: 'jp',
+    memberOf: ['ARASHI'],
+    songs: [
+      { title: 'Friendship', tier: 2, subTier: 2, genres: ['jpop'] },
+    ],
+  },
+  {
+    // Naniwa Danshi — Kansai-based J-pop group (Johnny's/STARTO).
+    name: 'なにわ男子',
+    primaryGenre: 'jpop',
+    origin: 'jp',
+    songs: [
+      { title: '初心LOVE（うぶらぶ）', tier: 2, subTier: 1, genres: ['jpop'] },
     ],
   },
   {
@@ -1130,7 +1194,7 @@ export const artists: Artist[] = [
     primaryGenre: 'kpop',
     origin: 'kr',
     songs: [
-      { title: '애인만들기', tier: 3, subTier: 2, genres: ['kpop'] },
+      { title: '애인만들기', tier: 1, subTier: 0, genres: ['kpop'] },
     ],
   },
   {
@@ -1766,19 +1830,13 @@ export const artists: Artist[] = [
     primaryGenre: 'khiphop',
     origin: 'kr',
     songs: [
-      { title: '돌림판', tier: 2, subTier: 1, genres: ['khiphop'], features: ['신빠람', '이박사'] },
+      { title: '돌림판', tier: 2, subTier: 1, genres: ['khiphop'], features: ['신빠람 이박사'] },
     ],
   },
   {
-    name: '신빠람',
+    // 신빠람 이박사 — 한 사람.
+    name: '신빠람 이박사',
     primaryGenre: 'khiphop',
-    origin: 'kr',
-    songs: [],
-  },
-  {
-    // Korean trot/comedy singer Lee Yong-seok aka "Dr. Lee".
-    name: '이박사',
-    primaryGenre: 'pop',
     origin: 'kr',
     songs: [],
   },
