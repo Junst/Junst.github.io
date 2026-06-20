@@ -914,11 +914,11 @@ html[data-theme="dark"] .jumap-back { background: rgba(20,20,20,0.7); }
 }
 .jumap3d-help {
   position: absolute;
-  top: 14px;
+  bottom: 14px;
   left: 50%;
   transform: translateX(-50%);
   font-family: var(--font-sans);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -930,9 +930,79 @@ html[data-theme="dark"] .jumap-back { background: rgba(20,20,20,0.7); }
   border: 1px solid rgba(0,0,0,0.06);
   pointer-events: none;
   z-index: 6;
+  max-width: 92vw;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.jumap3d-view-modes {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  background: rgba(255,255,255,0.82);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  z-index: 6;
+}
+.jumap3d-search {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255,255,255,0.82);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  z-index: 6;
+}
+.jumap3d-search input {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  color: var(--text);
+  padding: 8px 14px;
+  outline: none;
+  width: 220px;
+}
+.jumap3d-search input::placeholder { color: var(--text-muted); }
+.jumap3d-search-clear {
+  appearance: none;
+  border: 0;
+  background: rgba(0,0,0,0.06);
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  margin-right: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  color: var(--text);
 }
 @media (max-width: 640px) {
-  .jumap3d-help { font-size: 0.62rem; padding: 4px 10px; }
+  .jumap3d-help { font-size: 0.6rem; padding: 4px 10px; bottom: 10px; }
+  .jumap3d-view-modes { top: 10px; left: 10px; padding: 3px; }
+  .jumap-mode-btn { font-size: 0.66rem; padding: 5px 10px; }
+  .jumap3d-search { top: 10px; right: 10px; }
+  .jumap3d-search input { font-size: 0.74rem; width: 140px; padding: 6px 10px; }
+}
+@media (prefers-color-scheme: dark) {
+  .jumap3d-view-modes,
+  .jumap3d-search {
+    background: rgba(28,28,30,0.78);
+    border-color: rgba(255,255,255,0.08);
+  }
+  .jumap3d-search-clear { background: rgba(255,255,255,0.1); }
 }
 
 /* Pseudo-3D: tilt the SVG content with a stronger CSS perspective so the

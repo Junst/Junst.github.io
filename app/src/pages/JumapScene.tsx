@@ -65,8 +65,24 @@ function estimateOrbitR(a: Artist): number {
   return r + 3.2 + Math.sqrt(lastI + 0.5) * 4.0 + 2.4
 }
 
-function buildLayout(): { planets: Planet[]; moons: Moon[] } {
-  // Place artists by country first, with genre sub-rings inside.
+export type ViewMode = 'country' | 'genre' | 'tier'
+
+function newPlanet(a: Artist, x: number, z: number, country: string, genre: string): Planet {
+  return {
+    name: a.name,
+    artist: a,
+    x,
+    z,
+    r: bubbleRadius(a) * 0.10,
+    country,
+    primaryGenre: genre,
+    faceUrl: artistFaceFor(a, albumArtFor, artistPhotoFor),
+    orbitR: estimateOrbitR(a),
+    tier: bestTier(a),
+  }
+}
+
+function placeByCountry(): Planet[] {
   const byCountry = new Map<string, Artist[]>()
   for (const a of artists) {
     const c = countryOfGenre(artistPrimaryGenre(a))
@@ -107,27 +123,84 @@ function buildLayout(): { planets: Planet[]; moons: Moon[] } {
       cluster.forEach((a, i) => {
         const ang = i * GOLDEN + phase
         const lr = cluster.length === 1 ? 0 : Math.sqrt(i + 0.6) * 13
-        const r = bubbleRadius(a) * 0.10
-        planets.push({
-          name: a.name,
-          artist: a,
-          x: gc.x + Math.cos(ang) * lr,
-          z: gc.z + Math.sin(ang) * lr,
-          r,
-          country,
-          primaryGenre: genre,
-          faceUrl: artistFaceFor(a, albumArtFor, artistPhotoFor),
-          orbitR: estimateOrbitR(a),
-          tier: bestTier(a),
-        })
+        planets.push(newPlanet(a, gc.x + Math.cos(ang) * lr, gc.z + Math.sin(ang) * lr, country, genre))
       })
     }
   }
+  return planets
+}
 
-  // Settle: artist-only repulsion + anchor pull
+function placeByGenre(): Planet[] {
+  const byGenre = new Map<string, Artist[]>()
+  for (const a of artists) {
+    const g = artistPrimaryGenre(a)
+    if (!byGenre.has(g)) byGenre.set(g, [])
+    byGenre.get(g)!.push(a)
+  }
+  const genreKeys = GENRES.map((g) => g.key).filter((k) => byGenre.has(k))
+  const ringR = 130
+  const centres: Record<string, { x: number; z: number }> = {}
+  if (genreKeys.length === 1) centres[genreKeys[0]] = { x: 0, z: 0 }
+  else genreKeys.forEach((g, i) => {
+    const ang = (i / genreKeys.length) * Math.PI * 2 - Math.PI / 2
+    centres[g] = { x: Math.cos(ang) * ringR, z: Math.sin(ang) * ringR }
+  })
+  const planets: Planet[] = []
+  for (const genre of genreKeys) {
+    const c = centres[genre]
+    const cluster = sortArtists(byGenre.get(genre) ?? [])
+    const phase = cluster.length ? seed(cluster[0].name) * Math.PI * 2 : 0
+    cluster.forEach((a, i) => {
+      const ang = i * GOLDEN + phase
+      const lr = cluster.length === 1 ? 0 : Math.sqrt(i + 0.6) * 15
+      planets.push(
+        newPlanet(
+          a,
+          c.x + Math.cos(ang) * lr,
+          c.z + Math.sin(ang) * lr,
+          countryOfGenre(artistPrimaryGenre(a)),
+          genre,
+        ),
+      )
+    })
+  }
+  return planets
+}
+
+function placeByTier(): Planet[] {
+  // Best-tier artists at the centre, each higher tier on a wider ring.
+  const byTier = new Map<number, Artist[]>()
+  for (const a of artists) {
+    const t = bestTier(a)
+    if (!byTier.has(t)) byTier.set(t, [])
+    byTier.get(t)!.push(a)
+  }
+  const tiers = Array.from(byTier.keys()).sort((a, b) => a - b)
+  const ringStep = 55
+  const planets: Planet[] = []
+  for (const tier of tiers) {
+    const cluster = sortArtists(byTier.get(tier) ?? [])
+    const ringR = (tier - 1) * ringStep + 12
+    const phase = cluster.length ? seed(cluster[0].name) * Math.PI * 2 : 0
+    cluster.forEach((a, i) => {
+      const ang =
+        cluster.length === 1
+          ? phase
+          : (i / cluster.length) * Math.PI * 2 + phase
+      const genre = artistPrimaryGenre(a)
+      planets.push(
+        newPlanet(a, Math.cos(ang) * ringR, Math.sin(ang) * ringR, countryOfGenre(genre), genre),
+      )
+    })
+  }
+  return planets
+}
+
+function buildLayout(mode: ViewMode = 'country'): { planets: Planet[]; moons: Moon[] } {
+  const planets =
+    mode === 'genre' ? placeByGenre() : mode === 'tier' ? placeByTier() : placeByCountry()
   forceSettle(planets)
 
-  // Place moons around each planet
   const moons: Moon[] = []
   for (const p of planets) {
     const songs = [...p.artist.songs].sort(
@@ -240,7 +313,7 @@ function forceSettle(planets: Planet[]): void {
 
 function Sphere({
   position, radius, color, faceUrl, onPointerDown, onPointerOver, onPointerOut,
-  emissive = 0,
+  emissive = 0, dimmed = false,
 }: {
   position: [number, number, number]
   radius: number
@@ -250,6 +323,9 @@ function Sphere({
   onPointerOver?: (e: ThreeEvent<PointerEvent>) => void
   onPointerOut?: (e: ThreeEvent<PointerEvent>) => void
   emissive?: number
+  /** Search-dim flag: lower the material's opacity + kill emissive so
+   *  non-matches read as background while matches stay bright. */
+  dimmed?: boolean
 }) {
   // Lazy texture — when faceUrl resolves, swap onto the sphere.
   const tex = faceUrl ? useTexture(faceUrl) : null
@@ -257,6 +333,9 @@ function Sphere({
     tex.colorSpace = THREE.SRGBColorSpace
     tex.anisotropy = 4
   }
+  const opacity = dimmed ? 0.18 : 1
+  const transparent = dimmed
+  const em = dimmed ? 0 : emissive
   return (
     <mesh
       position={position}
@@ -271,7 +350,9 @@ function Sphere({
           roughness={0.55}
           metalness={0.05}
           emissive={new THREE.Color(color)}
-          emissiveIntensity={emissive}
+          emissiveIntensity={em}
+          transparent={transparent}
+          opacity={opacity}
         />
       ) : (
         <meshStandardMaterial
@@ -279,7 +360,9 @@ function Sphere({
           roughness={0.45}
           metalness={0.1}
           emissive={new THREE.Color(color)}
-          emissiveIntensity={emissive + 0.12}
+          emissiveIntensity={em + (dimmed ? 0 : 0.12)}
+          transparent={transparent}
+          opacity={opacity}
         />
       )}
     </mesh>
@@ -287,11 +370,12 @@ function Sphere({
 }
 
 function PlanetMesh({
-  planet, onSelect, dragRef,
+  planet, onSelect, dragRef, dimmed,
 }: {
   planet: Planet
   onSelect: (name: string) => void
   dragRef: React.RefObject<DragState | null>
+  dimmed?: boolean
 }) {
   const groupRef = useRef<THREE.Group>(null)
   const [hover, setHover] = useState(false)
@@ -313,7 +397,12 @@ function PlanetMesh({
       {/* Soft glow ring under the planet — sells the "floating" feel. */}
       <mesh position={[0, -planet.r * 0.95, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <ringGeometry args={[planet.r * 1.05, planet.r * 2.4, 64]} />
-        <meshBasicMaterial color={genre.color} transparent opacity={hover ? 0.32 : 0.18} side={THREE.DoubleSide} />
+        <meshBasicMaterial
+          color={genre.color}
+          transparent
+          opacity={dimmed ? 0.05 : hover ? 0.32 : 0.18}
+          side={THREE.DoubleSide}
+        />
       </mesh>
       <Sphere
         position={[0, 0, 0]}
@@ -321,6 +410,7 @@ function PlanetMesh({
         color={genre.color}
         faceUrl={planet.faceUrl}
         emissive={hover ? 0.35 : 0.1}
+        dimmed={dimmed}
         onPointerDown={handleDown}
         onPointerOver={(e) => { e.stopPropagation(); setHover(true) }}
         onPointerOut={() => setHover(false)}
@@ -334,6 +424,7 @@ function PlanetMesh({
         anchorY="middle"
         outlineWidth={0.12}
         outlineColor="#ffffff"
+        fillOpacity={dimmed ? 0.25 : 1}
       >
         {planet.name}
       </Text>
@@ -342,11 +433,12 @@ function PlanetMesh({
 }
 
 function MoonMesh({
-  moon, onOpen, dragRef,
+  moon, onOpen, dragRef, dimmed,
 }: {
   moon: Moon
   onOpen: (m: Moon) => void
   dragRef: React.RefObject<DragState | null>
+  dimmed?: boolean
 }) {
   const groupRef = useRef<THREE.Group>(null)
   const [hover, setHover] = useState(false)
@@ -369,6 +461,7 @@ function MoonMesh({
         color={genreFor((moon.song.genres[0] || 'other').toLowerCase()).color}
         faceUrl={art}
         emissive={hover ? 0.4 : 0.15}
+        dimmed={dimmed}
         onPointerDown={(e) => { e.stopPropagation(); onOpen(moon) }}
         onPointerOver={(e) => { e.stopPropagation(); setHover(true) }}
         onPointerOut={() => setHover(false)}
@@ -698,10 +791,35 @@ function DragController({
 interface SceneProps {
   onSongOpen: (artist: string, song: Song) => void
   onArtistOpen: (name: string) => void
+  viewMode?: ViewMode
+  searchQuery?: string
 }
 
-function SceneInner({ onSongOpen, onArtistOpen }: SceneProps) {
-  const { planets, moons } = useMemo(() => buildLayout(), [])
+function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuery = '' }: SceneProps) {
+  const { planets, moons } = useMemo(() => buildLayout(viewMode), [viewMode])
+  // Precompute search matches once per (planets, moons, query) so the
+  // per-mesh memo can just look up a boolean.
+  const search = searchQuery.trim().toLowerCase()
+  const matchedPlanets = useMemo(() => {
+    if (!search) return null
+    const set = new Set<string>()
+    for (const p of planets) {
+      if (p.name.toLowerCase().includes(search)) { set.add(p.name); continue }
+      for (const s of p.artist.songs) {
+        if (s.title.toLowerCase().includes(search)) { set.add(p.name); break }
+      }
+    }
+    return set
+  }, [planets, search])
+  const matchedMoons = useMemo(() => {
+    if (!search) return null
+    const set = new Set<string>()
+    for (const m of moons) {
+      if (m.song.title.toLowerCase().includes(search)) set.add(m.id)
+      else if (m.ownerName.toLowerCase().includes(search)) set.add(m.id)
+    }
+    return set
+  }, [moons, search])
   const dragRef = useRef<DragState | null>(null)
   const [orbitEnabled, setOrbitEnabled] = useState(true)
 
@@ -760,12 +878,24 @@ function SceneInner({ onSongOpen, onArtistOpen }: SceneProps) {
       ))}
 
       {planets.map((p) => (
-        <PlanetMesh key={p.name} planet={p} onSelect={onPlanetDown} dragRef={dragRef} />
+        <PlanetMesh
+          key={p.name}
+          planet={p}
+          onSelect={onPlanetDown}
+          dragRef={dragRef}
+          dimmed={matchedPlanets ? !matchedPlanets.has(p.name) : false}
+        />
       ))}
 
       <Suspense fallback={null}>
         {moons.map((m) => (
-          <MoonMesh key={m.id} moon={m} onOpen={onMoonOpen} dragRef={dragRef} />
+          <MoonMesh
+            key={m.id}
+            moon={m}
+            onOpen={onMoonOpen}
+            dragRef={dragRef}
+            dimmed={matchedMoons ? !matchedMoons.has(m.id) : false}
+          />
         ))}
       </Suspense>
 
@@ -793,7 +923,7 @@ function SceneInner({ onSongOpen, onArtistOpen }: SceneProps) {
   )
 }
 
-export function JumapScene({ onSongOpen, onArtistOpen }: SceneProps) {
+export function JumapScene({ onSongOpen, onArtistOpen, viewMode, searchQuery }: SceneProps) {
   // Track last pointer at document level so a planet pointerdown handler
   // can know its client coords (R3F's event already gives us this; we
   // just shuttle it through window.__lastPointer for the custom event).
@@ -814,7 +944,12 @@ export function JumapScene({ onSongOpen, onArtistOpen }: SceneProps) {
       gl={{ antialias: true, powerPreference: 'high-performance' }}
       style={{ background: 'transparent' }}
     >
-      <SceneInner onSongOpen={onSongOpen} onArtistOpen={onArtistOpen} />
+      <SceneInner
+        onSongOpen={onSongOpen}
+        onArtistOpen={onArtistOpen}
+        viewMode={viewMode}
+        searchQuery={searchQuery}
+      />
     </Canvas>
   )
 }
