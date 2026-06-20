@@ -41,6 +41,11 @@ export interface Artist {
    *  Country view. Lets us split "Western" into US / UK / Canada / etc.
    *  Falls back to countryOfGenre() when omitted. */
   origin?: string
+  /** Groups this artist is a member of (e.g. Sho Sakurai memberOf ['ARASHI'],
+   *  Lilas memberOf ['YOASOBI']). Each name must match an Artist.name in
+   *  the roster so a "member" bond can be drawn from solo planet to group
+   *  planet — a distinct style from `features`. */
+  memberOf?: string[]
   // Optional artist portrait (Wikipedia Commons URL or any hot-linkable
   // image). If absent, the bubble falls back to the artist's top song's
   // album art via the album-art lookup.
@@ -64,16 +69,21 @@ export interface CountrySpec {
   label: string
   color: string
 }
+// Vivid, well-separated hues so adjacent territories read as visibly
+// different at a glance. They're still toned-down enough that an
+// additive-blend overlap looks like a colour mix rather than two
+// washed-out clouds bleeding into the same beige.
 export const COUNTRIES: CountrySpec[] = [
-  { key: 'jp',    label: 'Japan',     color: '#ffd6db' },
-  { key: 'kr',    label: 'Korea',     color: '#cfe6ff' },
-  { key: 'us',    label: 'USA',       color: '#fff1c4' },
-  { key: 'uk',    label: 'UK',        color: '#d8d4ff' },
-  { key: 'ca',    label: 'Canada',    color: '#ffe4d0' },
-  { key: 'au',    label: 'Australia', color: '#fde2a8' },
-  { key: 'nz',    label: 'New Zealand', color: '#c4e8d0' },
-  { key: 'tw',    label: 'Taiwan',    color: '#d5f4e0' },
-  { key: 'other', label: 'Other',     color: '#ececec' },
+  { key: 'jp',    label: 'Japan',       color: '#ff6d8d' },  // coral pink
+  { key: 'kr',    label: 'Korea',       color: '#5aa3ff' },  // sky blue
+  { key: 'us',    label: 'USA',         color: '#ffcb52' },  // golden
+  { key: 'uk',    label: 'UK',          color: '#9b7fff' },  // violet
+  { key: 'ca',    label: 'Canada',      color: '#ff8a4c' },  // orange
+  { key: 'au',    label: 'Australia',   color: '#e6c93a' },  // amber
+  { key: 'nz',    label: 'New Zealand', color: '#5ed896' },  // mint
+  { key: 'tw',    label: 'Taiwan',      color: '#5fd9c4' },  // teal
+  { key: 'nl',    label: 'Netherlands', color: '#ff7a5a' },  // persimmon
+  { key: 'other', label: 'Other',       color: '#a4abb6' },
 ]
 const COUNTRY_LOOKUP = Object.fromEntries(COUNTRIES.map((c) => [c.key, c]))
 export function countryFor(key: string): CountrySpec {
@@ -231,7 +241,10 @@ export const artists: Artist[] = [
       { title: 'Summer Splash!',   tier: 3, genres: ['jpop'] },
       { title: 'Green Light',      tier: 3, subTier: 2, genres: ['jpop'] },
       { title: 'Whenever you call', tier: 4, subTier: 2, genres: ['jpop'] },
+      { title: 'IN THE SUMMER',     tier: 4, subTier: 2, genres: ['jpop'] },
       { title: 'Raise Your Hands', tier: 4, genres: ['jpop'] },
+      { title: 'DANGAN-LINER',     tier: 3, subTier: 1, genres: ['jpop'] },
+      { title: 'Turning Up (R3HAB Remix)', tier: 3, subTier: 0, genres: ['jpop', 'edm'], features: ['R3HAB'] },
       { title: 'Face Down : Reborn', tier: 5, subTier: 1, genres: ['jpop'] },
     ],
   },
@@ -249,7 +262,8 @@ export const artists: Artist[] = [
     primaryGenre: 'jpop',
     songs: [
       // year / album: please confirm
-      { title: 'Muah Muah', tier: 2, genres: ['jpop'] },
+      { title: 'Muah Muah',  tier: 2, genres: ['jpop'] },
+      { title: 'White Love', tier: 3, subTier: 2, genres: ['jpop'] },
     ],
   },
   {
@@ -257,6 +271,14 @@ export const artists: Artist[] = [
     primaryGenre: 'jpop',
     songs: [
       { title: 'Real Face', tier: 3, genres: ['jpop'], year: 2006, album: 'Best of KAT-TUN' },
+    ],
+  },
+  {
+    name: 'timelesz',
+    primaryGenre: 'jpop',
+    origin: 'jp',
+    songs: [
+      { title: 'ぎゅっと', tier: 2, subTier: 1, genres: ['jpop'] },
     ],
   },
   {
@@ -276,6 +298,7 @@ export const artists: Artist[] = [
       { title: 'Magnetic',                          tier: 1, genres: ['kpop'], year: 2024, album: 'SUPER REAL ME' },
       { title: '빌려온 고양이 (Do the Dance)',       tier: 2, subTier: 2, genres: ['kpop'] },
       { title: 'Almond Chocolate',                  tier: 3, subTier: 2, genres: ['kpop'] },
+      { title: "It's Me",                           tier: 5, subTier: 0, genres: ['kpop'] },
     ],
   },
   {
@@ -312,8 +335,9 @@ export const artists: Artist[] = [
     primaryGenre: 'hiphop',
     origin: 'ca',
     songs: [
-      { title: 'Nokia',      tier: 2, genres: ['hiphop'] },
-      { title: "God's Plan", tier: 3, genres: ['hiphop'] },
+      { title: 'Nokia',             tier: 2, genres: ['hiphop'] },
+      { title: '2 Hard 4 The Radio', tier: 2, subTier: 2, genres: ['hiphop'] },
+      { title: "God's Plan",        tier: 3, genres: ['hiphop'] },
     ],
   },
   {
@@ -449,9 +473,90 @@ export const artists: Artist[] = [
     name: 'TVXQ',
     primaryGenre: 'kpop',
     songs: [
-      { title: '풍선',   tier: 1, subTier: 0, genres: ['kpop'] },
-      { title: 'Tonight', tier: 3, subTier: 3, genres: ['kpop'] },
-      { title: '믿어요',  tier: 3, subTier: 3, genres: ['kpop'] },
+      { title: '풍선',           tier: 1, subTier: 0, genres: ['kpop'] },
+      { title: 'Show Me Your Love', tier: 2, subTier: 2, genres: ['kpop'], features: ['Super Junior'] },
+      { title: 'Tonight',         tier: 3, subTier: 3, genres: ['kpop'] },
+      { title: '믿어요',          tier: 3, subTier: 3, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: 'Super Junior',
+    primaryGenre: 'kpop',
+    songs: [],
+  },
+  {
+    name: 'PSY',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: '강남스타일', tier: 4, subTier: 1, genres: ['kpop'], year: 2012, album: '강남스타일' },
+    ],
+  },
+  {
+    name: 'Wonder Girls',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: 'Tell Me', tier: 2, subTier: 1, genres: ['kpop'], year: 2007 },
+    ],
+  },
+  {
+    name: 'ZICO',
+    primaryGenre: 'kpop',
+    songs: [
+      { title: 'DUET', tier: 2, subTier: 1, genres: ['kpop'], features: ['Lilas'] },
+    ],
+  },
+  {
+    name: 'Lilas',
+    primaryGenre: 'jpop',
+    origin: 'jp',
+    // Member of YOASOBI — special bond drawn to the group planet.
+    memberOf: ['YOASOBI'],
+    songs: [],
+  },
+  {
+    name: 'YOASOBI',
+    primaryGenre: 'jpop',
+    origin: 'jp',
+    songs: [],
+  },
+  {
+    name: 'Sho Sakurai',
+    primaryGenre: 'jpop',
+    origin: 'jp',
+    // Member of ARASHI — special bond drawn to ARASHI planet.
+    memberOf: ['ARASHI'],
+    songs: [
+      { title: 'come again *Reloaded', tier: 1, subTier: 0, genres: ['jpop'], features: ['m-flo'] },
+    ],
+  },
+  {
+    name: 'm-flo',
+    primaryGenre: 'jpop',
+    origin: 'jp',
+    songs: [
+      { title: 'tell me tell me', tier: 2, subTier: 3, genres: ['jpop'], features: ['Sik-K', 'eill', 'Taichi Mukai'] },
+    ],
+  },
+  {
+    name: 'Lady Gaga',
+    primaryGenre: 'pop',
+    songs: [
+      { title: 'Rain On Me', tier: 2, subTier: 2, genres: ['pop'], year: 2020, album: 'Chromatica', features: ['Ariana Grande'] },
+    ],
+  },
+  {
+    name: 'Carly Rae Jepsen',
+    primaryGenre: 'pop',
+    origin: 'ca',
+    songs: [
+      { title: 'Call Me Maybe', tier: 3, subTier: 1, genres: ['pop'], year: 2011 },
+    ],
+  },
+  {
+    name: 'Owl City',
+    primaryGenre: 'pop',
+    songs: [
+      { title: 'Good Time', tier: 5, subTier: 2, genres: ['pop'], year: 2012, features: ['Carly Rae Jepsen'] },
     ],
   },
   {
@@ -793,7 +898,9 @@ export const artists: Artist[] = [
   {
     name: 'G-DRAGON',
     primaryGenre: 'kpop',
-    songs: [],
+    songs: [
+      { title: 'Missing You', tier: 5, subTier: 2, genres: ['kpop'], features: ['김윤아'] },
+    ],
   },
   {
     name: '박재범',
@@ -1047,6 +1154,152 @@ export const artists: Artist[] = [
     songs: [
       { title: 'Sorry', tier: 2, subTier: 0, genres: ['pop'], year: 2015, album: 'Purpose' },
     ],
+  },
+
+  // ===== Fourth batch =====
+  // Japan
+  {
+    name: 'eill',
+    primaryGenre: 'jpop',
+    origin: 'jp',
+    songs: [],
+  },
+  {
+    name: 'Taichi Mukai',
+    primaryGenre: 'jpop',
+    origin: 'jp',
+    songs: [],
+  },
+  {
+    name: 'Hikaru Utada',
+    primaryGenre: 'jpop',
+    origin: 'jp',
+    songs: [
+      { title: 'Distance (M-flo Remix)', tier: 2, subTier: 0, genres: ['jpop'], features: ['m-flo'] },
+    ],
+  },
+  {
+    name: 'Kalen Anzai',
+    primaryGenre: 'jpop',
+    origin: 'jp',
+    songs: [
+      { title: 'come again', tier: 2, subTier: 2, genres: ['jpop'], features: ['CAELAN'] },
+    ],
+  },
+  {
+    name: 'CAELAN',
+    primaryGenre: 'jpop',
+    origin: 'jp',
+    memberOf: ['INTERSECTION'],
+    songs: [],
+  },
+  {
+    name: 'INTERSECTION',
+    primaryGenre: 'jpop',
+    origin: 'jp',
+    songs: [],
+  },
+
+  // Korea
+  {
+    name: 'Epik High',
+    primaryGenre: 'khiphop',
+    origin: 'kr',
+    songs: [
+      { title: 'Love Love Love', tier: 1, subTier: 0, genres: ['khiphop'], features: ['융진'] },
+    ],
+  },
+  {
+    name: '융진',
+    primaryGenre: 'kpop',
+    origin: 'kr',
+    memberOf: ['Casker'],
+    songs: [],
+  },
+  {
+    name: 'Casker',
+    primaryGenre: 'kpop',
+    origin: 'kr',
+    songs: [],
+  },
+  {
+    name: 'House Rulez',
+    primaryGenre: 'kpop',
+    origin: 'kr',
+    songs: [
+      { title: 'Do It!', tier: 4, subTier: 1, genres: ['kpop'], features: ['이윤정'] },
+    ],
+  },
+  {
+    name: '이윤정',
+    primaryGenre: 'kpop',
+    origin: 'kr',
+    songs: [],
+  },
+  {
+    name: 'Heize',
+    primaryGenre: 'rnb',
+    origin: 'kr',
+    songs: [
+      { title: 'And July', tier: 3, subTier: 2, genres: ['rnb', 'kpop'], features: ['DEAN', 'DJ Friz'] },
+    ],
+  },
+  {
+    name: 'DJ Friz',
+    primaryGenre: 'khiphop',
+    origin: 'kr',
+    songs: [],
+  },
+  {
+    name: '거북이',
+    primaryGenre: 'kpop',
+    origin: 'kr',
+    songs: [
+      { title: '비행기', tier: 5, subTier: 2, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: '김윤아',
+    primaryGenre: 'rock',
+    origin: 'kr',
+    memberOf: ['자우림'],
+    songs: [],
+  },
+  {
+    name: '자우림',
+    primaryGenre: 'rock',
+    origin: 'kr',
+    songs: [],
+  },
+  {
+    name: 'CORTIS',
+    primaryGenre: 'kpop',
+    origin: 'kr',
+    songs: [
+      { title: 'REDRED', tier: 3, subTier: 2, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: '마이티 마우스',
+    primaryGenre: 'khiphop',
+    origin: 'kr',
+    songs: [
+      { title: '톡톡 (Tok Tok)', tier: 2, subTier: 1, genres: ['khiphop'], features: ['소야'] },
+    ],
+  },
+  {
+    name: '소야',
+    primaryGenre: 'kpop',
+    origin: 'kr',
+    songs: [],
+  },
+
+  // Netherlands
+  {
+    name: 'R3HAB',
+    primaryGenre: 'edm',
+    origin: 'nl',
+    songs: [],
   },
 ]
 

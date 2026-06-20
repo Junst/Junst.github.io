@@ -91,7 +91,7 @@ function placeByCountry(): Planet[] {
     byCountry.get(c)!.push(a)
   }
   const countryKeys = COUNTRIES.map((c) => c.key).filter((k) => byCountry.has(k))
-  const ringR = 78
+  const ringR = 260
   const cCentres: Record<string, { x: number; z: number }> = {}
   if (countryKeys.length === 1) cCentres[countryKeys[0]] = { x: 0, z: 0 }
   else countryKeys.forEach((k, i) => {
@@ -110,21 +110,29 @@ function placeByCountry(): Planet[] {
       byGenre.get(g)!.push(a)
     }
     const genreKeys = GENRES.map((g) => g.key).filter((k) => byGenre.has(k))
-    const innerR = 26
+    // Genre sub-centroids — each at a *random* angle around the country
+    // centre with a *random* radius, instead of a perfectly even ring.
+    // The seed includes both genre and country so the scatter is
+    // deterministic per render but unique per (country, genre) pair.
     const gCentres: Record<string, { x: number; z: number }> = {}
-    if (genreKeys.length === 1) gCentres[genreKeys[0]] = cc
-    else genreKeys.forEach((g, i) => {
-      const ang = (i / genreKeys.length) * Math.PI * 2 - Math.PI / 2
-      gCentres[g] = { x: cc.x + Math.cos(ang) * innerR, z: cc.z + Math.sin(ang) * innerR }
+    genreKeys.forEach((g) => {
+      const baseAng = seed(g + country + 'gang') * Math.PI * 2
+      const baseR = 16 + seed(g + country + 'gr') * 28           // 16..44
+      gCentres[g] = { x: cc.x + Math.cos(baseAng) * baseR, z: cc.z + Math.sin(baseAng) * baseR }
     })
     for (const genre of genreKeys) {
       const gc = gCentres[genre]
       const cluster = sortArtists(byGenre.get(genre) ?? [])
       const phase = cluster.length ? seed(cluster[0].name) * Math.PI * 2 : 0
       cluster.forEach((a, i) => {
-        const ang = i * GOLDEN + phase
-        const lr = cluster.length === 1 ? 0 : Math.sqrt(i + 0.6) * 13
-        planets.push(newPlanet(a, gc.x + Math.cos(ang) * lr, gc.z + Math.sin(ang) * lr, country, genre))
+        // Per-artist jitter: break the clean phyllotaxis spiral so the
+        // result looks more like a scatter than a sunflower. Force-settle
+        // afterwards keeps everyone properly spaced.
+        const angJitter = (seed(a.name + 'aj') - 0.5) * 0.9     // ±0.45 rad
+        const radJitter = 0.6 + seed(a.name + 'rj') * 0.9        // 0.6..1.5
+        const baseAng = i * GOLDEN + phase + angJitter
+        const lr = cluster.length === 1 ? 0 : Math.sqrt(i + 0.6) * 14 * radJitter
+        planets.push(newPlanet(a, gc.x + Math.cos(baseAng) * lr, gc.z + Math.sin(baseAng) * lr, country, genre))
       })
     }
   }
@@ -139,7 +147,7 @@ function placeByGenre(): Planet[] {
     byGenre.get(g)!.push(a)
   }
   const genreKeys = GENRES.map((g) => g.key).filter((k) => byGenre.has(k))
-  const ringR = 92
+  const ringR = 128
   const centres: Record<string, { x: number; z: number }> = {}
   if (genreKeys.length === 1) centres[genreKeys[0]] = { x: 0, z: 0 }
   else genreKeys.forEach((g, i) => {
@@ -152,8 +160,10 @@ function placeByGenre(): Planet[] {
     const cluster = sortArtists(byGenre.get(genre) ?? [])
     const phase = cluster.length ? seed(cluster[0].name) * Math.PI * 2 : 0
     cluster.forEach((a, i) => {
-      const ang = i * GOLDEN + phase
-      const lr = cluster.length === 1 ? 0 : Math.sqrt(i + 0.6) * 15
+      const angJitter = (seed(a.name + 'gaj') - 0.5) * 0.9
+      const radJitter = 0.6 + seed(a.name + 'grj') * 0.9
+      const ang = i * GOLDEN + phase + angJitter
+      const lr = cluster.length === 1 ? 0 : Math.sqrt(i + 0.6) * 16 * radJitter
       planets.push(
         newPlanet(
           a,
@@ -326,10 +336,11 @@ function forceSettle(planets: Planet[]): void {
         const dz = a.z - b.z
         const d = Math.sqrt(dx * dx + dz * dz) || 0.01
         const sameCountry = a.country === b.country
-        // Cross-country buffer trimmed (was 38) so neighbouring territories
-        // breathe close to each other instead of being shoved into wide
-        // dead space between them.
-        const boost = sameCountry ? 0 : 10
+        // Cross-country buffer — wide enough that territories don't
+        // bleed into neighbours. Feature pulls still drag collab
+        // partners across the border, which is the only place we
+        // want overlap to happen.
+        const boost = sameCountry ? 0 : 160
         const minD = Math.max(
           2 * Math.max(a.orbitR, b.orbitR) + 12 + boost,
           a.orbitR + b.orbitR + 18 + boost,
@@ -341,13 +352,16 @@ function forceSettle(planets: Planet[]): void {
         }
         // Collab pull — if i and j are tied by any featuring, draw them
         // toward a comfortable distance just past their min-separation.
+        // Cross-country pairs feel a 3× stronger pull so a feat. across
+        // borders actually drags the planet toward the partner's country
+        // (e.g. JENNIE ↔ Dominic Fike — KR feat. US — pulls JENNIE
+        // toward the US side instead of staying parked in Korea).
         const key = i < j ? `${i}|${j}` : `${j}|${i}`
         if (collabs.has(key)) {
           const target = minD + COLLAB_TARGET_DELTA
-          // If currently farther than the target, pull inward; never push
-          // inside the min separation (that's the repulsion's job above).
           if (d > target) {
-            const pull = (d - target) * COLLAB_PULL
+            const pullStrength = sameCountry ? COLLAB_PULL : COLLAB_PULL * 3
+            const pull = (d - target) * pullStrength
             fx -= (dx / d) * pull
             fz -= (dz / d) * pull
           }
@@ -695,6 +709,25 @@ function CountryTerritory({
   const lineRef = useRef<THREE.LineLoop>(null)
   // Per-country deterministic phase.
   const phase = useMemo(() => seed(k) * Math.PI * 2, [k])
+  // Per-territory irregularity (static shape) — eccentricity, major-axis
+  // tilt, lobe count (2–6 so adjacent territories look genuinely
+  // different, not all "circles with 4 bumps").
+  const ellipse = useMemo(() => 0.16 + seed(k + 'ecc') * 0.28, [k])   // 0.16..0.44
+  const axisAng = useMemo(() => seed(k + 'axis') * Math.PI, [k])
+  const lobes = useMemo(() => 2 + Math.floor(seed(k + 'lobe') * 5), [k]) // 2..6
+  // Per-territory motion — drift speeds in three octaves, with random
+  // direction, plus a slow radial pulse and gentle whole-body sway.
+  // Each gets its own seed so every territory ends up with a distinct
+  // breathing rhythm instead of every one looking like the same wobble.
+  const f1 = useMemo(() => 0.16 + seed(k + 'f1') * 0.42, [k])  // 0.16..0.58
+  const f2 = useMemo(() => 0.10 + seed(k + 'f2') * 0.32, [k])
+  const f3 = useMemo(() => 0.07 + seed(k + 'f3') * 0.26, [k])
+  const dir1 = useMemo(() => (seed(k + 'd1') > 0.5 ? 1 : -1), [k])
+  const dir2 = useMemo(() => (seed(k + 'd2') > 0.5 ? 1 : -1), [k])
+  const pulseAmp = useMemo(() => 0.04 + seed(k + 'pa') * 0.06, [k])   // ±4..10% radial pulse
+  const pulseSpeed = useMemo(() => 0.22 + seed(k + 'ps') * 0.4, [k])
+  const wobbleScale = useMemo(() => 0.75 + seed(k + 'ws') * 0.7, [k]) // 0.75..1.45
+  const swayAmp = useMemo(() => 1.4 + seed(k + 'sw') * 3.2, [k])    // ±1.4..4.6 vbx
 
   // Pre-build the triangle-fan geometry. Vertex 0 = centre, vertices
   // 1..N = rim. The rim positions get rewritten each frame.
@@ -741,15 +774,27 @@ function CountryTerritory({
     const fanPos = (meshRef.current?.geometry.attributes.position.array as Float32Array | undefined)
     const linePos = (lineRef.current?.geometry.attributes.position.array as Float32Array | undefined)
     if (!fanPos || !linePos) return
+    // Whole-territory sway — moves the centroid in a slow elliptical orbit
+    // so two countries side-by-side don't appear to breathe in sync.
+    const sx = swayAmp * Math.sin(t * pulseSpeed * 0.6 + phase)
+    const sy = swayAmp * Math.cos(t * pulseSpeed * 0.5 + phase * 1.7)
+    // Slow radial pulse — each territory grows/shrinks at its own rate.
+    const pulse = 1 + pulseAmp * Math.sin(t * pulseSpeed + phase * 0.8)
     for (let i = 0; i < N; i++) {
       const ang = (i / N) * Math.PI * 2
-      const w =
-        Math.sin(ang * 3 + t * 0.32 + phase) * 0.11 +
-        Math.sin(ang * 5 - t * 0.21 + phase * 1.3) * 0.055 +
-        Math.sin(ang * 7 + t * 0.16 + phase * 2.1) * 0.035
-      const rad = r * (1 + w)
-      const x = Math.cos(ang) * rad
-      const y = Math.sin(ang) * rad
+      // Static ellipse component — every territory a unique base shape.
+      const ell = 1 + ellipse * Math.cos(2 * (ang - axisAng))
+      // Animated multi-octave wobble with per-country frequencies + dirs,
+      // scaled overall by per-country amplitude. Every empire visibly
+      // breathes to a different rhythm.
+      const w = wobbleScale * (
+        Math.sin(ang * lobes + dir1 * t * f1 + phase) * 0.13 +
+        Math.sin(ang * (lobes + 2) + dir2 * t * f2 + phase * 1.3) * 0.07 +
+        Math.sin(ang * (lobes + 4) - t * f3 + phase * 2.1) * 0.04
+      )
+      const rad = r * pulse * ell * (1 + w)
+      const x = Math.cos(ang) * rad + sx
+      const y = Math.sin(ang) * rad + sy
       const fi = (i + 1) * 3
       fanPos[fi] = x
       fanPos[fi + 1] = y
@@ -782,7 +827,7 @@ function CountryTerritory({
           primitive (vs SVG <line> which TS otherwise infers). */}
       <lineLoop ref={lineRef as unknown as React.RefObject<THREE.LineLoop>}>
         <primitive object={lineGeometry} attach="geometry" />
-        <lineBasicMaterial color={finalColor} transparent opacity={0.7} />
+        <lineBasicMaterial color={finalColor} transparent opacity={0.9} />
       </lineLoop>
       {/* Floating label — kept above the centroid so it's stable. */}
       <group rotation={[Math.PI / 2, 0, 0]}>
@@ -883,7 +928,13 @@ function Bonds({
   dragRef: React.RefObject<DragState | null>
 }) {
   const planetMap = useMemo(() => new Map(planets.map((p) => [p.name, p])), [planets])
-  // Build static bond list: own = moon→planet, feature = moon→featured.
+  const artistByName = useMemo(() => {
+    const m = new Map<string, Artist>()
+    for (const a of artists) m.set(a.name, a)
+    return m
+  }, [])
+  // Build static bond list: own = moon→planet, feat = moon→featured planet,
+  // member = solo planet → group planet (golden, drawn separately).
   const bonds = useMemo(() => {
     const out: Array<{ kind: 'own' | 'feat'; aOwner: string; bOwner: string; aSide: 'planet' | 'moon'; bSide: 'planet'; moonRef?: Moon }> = []
     for (const m of moons) {
@@ -899,8 +950,26 @@ function Bonds({
     return out
   }, [moons, planetMap])
 
+  // Member bonds — drawn as a second LineSegments so we can give them a
+  // gold tint without polluting the per-vertex colour buffer of the main
+  // bond pass. Endpoints are both planet centres.
+  const memberBonds = useMemo(() => {
+    const out: Array<{ from: string; to: string }> = []
+    for (const p of planets) {
+      const a = artistByName.get(p.name)
+      if (!a?.memberOf) continue
+      for (const groupName of a.memberOf) {
+        if (!planetMap.has(groupName)) continue
+        out.push({ from: p.name, to: groupName })
+      }
+    }
+    return out
+  }, [planets, artistByName, planetMap])
+
   const geomRef = useRef<THREE.BufferGeometry>(null)
+  const memberGeomRef = useRef<THREE.BufferGeometry>(null)
   const positions = useMemo(() => new Float32Array(bonds.length * 2 * 3), [bonds.length])
+  const memberPositions = useMemo(() => new Float32Array(memberBonds.length * 2 * 3), [memberBonds.length])
   const colors = useMemo(() => {
     const c = new Float32Array(bonds.length * 2 * 3)
     for (let i = 0; i < bonds.length; i++) {
@@ -934,30 +1003,66 @@ function Bonds({
       positions[o] = ax; positions[o + 1] = 0; positions[o + 2] = az
       positions[o + 3] = bx; positions[o + 4] = 0; positions[o + 5] = bz
     }
+    // Member bonds — planet-to-planet.
+    for (let i = 0; i < memberBonds.length; i++) {
+      const mb = memberBonds[i]
+      const a = planetMap.get(mb.from)!
+      const b = planetMap.get(mb.to)!
+      const aOff = ds?.offsets.get(mb.from) ?? { dx: 0, dz: 0 }
+      const bOff = ds?.offsets.get(mb.to) ?? { dx: 0, dz: 0 }
+      const o = i * 6
+      memberPositions[o] = a.x + aOff.dx
+      memberPositions[o + 1] = 0
+      memberPositions[o + 2] = a.z + aOff.dz
+      memberPositions[o + 3] = b.x + bOff.dx
+      memberPositions[o + 4] = 0
+      memberPositions[o + 5] = b.z + bOff.dz
+    }
     if (geomRef.current) {
       const attr = geomRef.current.attributes.position as THREE.BufferAttribute
+      attr.needsUpdate = true
+    }
+    if (memberGeomRef.current) {
+      const attr = memberGeomRef.current.attributes.position as THREE.BufferAttribute
       attr.needsUpdate = true
     }
   })
 
   return (
-    <lineSegments>
-      <bufferGeometry ref={geomRef}>
-        <bufferAttribute
-          attach="attributes-position"
-          count={bonds.length * 2}
-          array={positions}
-          itemSize={3}
-        />
-        <bufferAttribute
-          attach="attributes-color"
-          count={bonds.length * 2}
-          array={colors}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <lineBasicMaterial vertexColors transparent opacity={0.7} />
-    </lineSegments>
+    <>
+      <lineSegments>
+        <bufferGeometry ref={geomRef}>
+          <bufferAttribute
+            attach="attributes-position"
+            count={bonds.length * 2}
+            array={positions}
+            itemSize={3}
+          />
+          <bufferAttribute
+            attach="attributes-color"
+            count={bonds.length * 2}
+            array={colors}
+            itemSize={3}
+          />
+        </bufferGeometry>
+        <lineBasicMaterial vertexColors transparent opacity={0.7} />
+      </lineSegments>
+      {/* Member bonds — drawn in a warm gold so they're visually distinct
+          from feature lines. */}
+      {memberBonds.length > 0 && (
+        <lineSegments>
+          <bufferGeometry ref={memberGeomRef}>
+            <bufferAttribute
+              attach="attributes-position"
+              count={memberBonds.length * 2}
+              array={memberPositions}
+              itemSize={3}
+            />
+          </bufferGeometry>
+          <lineBasicMaterial color="#f6c66c" transparent opacity={0.85} />
+        </lineSegments>
+      )}
+    </>
   )
 }
 
@@ -1202,7 +1307,7 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
         if (d > r) r = d
       }
       const spec = genreFor(k)
-      out.push({ k, cx, cz, r: r + 16, color: spec.color, label: spec.label })
+      out.push({ k, cx, cz, r: r + 2, color: spec.color, label: spec.label })
     }
     return out
   }, [planets])
@@ -1224,7 +1329,7 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
         const d = Math.hypot(p.x - cx, p.z - cz) + p.orbitR
         if (d > r) r = d
       }
-      out.push({ k, cx, cz, r: r + 16 })
+      out.push({ k, cx, cz, r: r + 2 })
     }
     return out
   }, [planets])
