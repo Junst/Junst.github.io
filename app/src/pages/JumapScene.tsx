@@ -347,24 +347,23 @@ function Sphere({
       {tex ? (
         <meshStandardMaterial
           map={tex}
-          roughness={0.45}
-          metalness={0.05}
-          // Use the genre tint as an emissive tinted map so the planet's
-          // own photo stays the dominant colour but the rim picks up a
-          // genre-coloured halo against the dark backdrop.
-          emissive={new THREE.Color(color)}
+          roughness={0.35}
+          metalness={0.02}
+          // Use the planet's photo as its own emissive map so the surface
+          // glows in its own colours — high-key, almost self-illuminated.
+          emissive={new THREE.Color(0xffffff)}
           emissiveMap={tex}
-          emissiveIntensity={em + (dimmed ? 0 : 0.35)}
+          emissiveIntensity={em + (dimmed ? 0 : 0.7)}
           transparent={transparent}
           opacity={opacity}
         />
       ) : (
         <meshStandardMaterial
           color={color}
-          roughness={0.4}
-          metalness={0.12}
+          roughness={0.35}
+          metalness={0.1}
           emissive={new THREE.Color(color)}
-          emissiveIntensity={em + (dimmed ? 0 : 0.4)}
+          emissiveIntensity={em + (dimmed ? 0 : 0.65)}
           transparent={transparent}
           opacity={opacity}
         />
@@ -382,46 +381,58 @@ function PlanetMesh({
   dimmed?: boolean
 }) {
   const groupRef = useRef<THREE.Group>(null)
+  const rimRef = useRef<THREE.Mesh>(null)
   const [hover, setHover] = useState(false)
   const genre = genreFor(planet.primaryGenre)
-  // Live drag offset, applied imperatively each frame (no React state churn).
-  useFrame(() => {
+  // Unique phase so all planets don't pulse in lockstep — derived from the
+  // artist name seed so it's deterministic per render.
+  const phase = useMemo(() => seed(planet.name) * Math.PI * 2, [planet.name])
+  // Per-frame: apply drag offset AND pulse the rim glow opacity.
+  useFrame(({ clock }) => {
     const ds = dragRef.current
-    if (!ds || !groupRef.current) return
-    const off = ds.offsets.get(planet.name)
-    if (off) groupRef.current.position.set(planet.x + off.dx, 0, planet.z + off.dz)
-    else groupRef.current.position.set(planet.x, 0, planet.z)
+    if (groupRef.current) {
+      const off = ds?.offsets.get(planet.name)
+      if (off) groupRef.current.position.set(planet.x + off.dx, 0, planet.z + off.dz)
+      else groupRef.current.position.set(planet.x, 0, planet.z)
+    }
+    if (rimRef.current) {
+      const mat = rimRef.current.material as THREE.MeshBasicMaterial
+      // Pulse range 0.18 → 0.85. Hover stays at the top; dimmed kills it.
+      const t = clock.elapsedTime * 1.3 + phase
+      const wave = 0.5 + Math.sin(t) * 0.5  // 0..1
+      const base = hover ? 0.75 : 0.18 + wave * 0.55
+      mat.opacity = dimmed ? 0.02 : base
+    }
   })
   const handleDown = useCallback((e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation()
-    // Pass the native pointer coordinates straight through, instead of
-    // relying on window.__lastPointer (which on R3F's pointerdown order
-    // hadn't been updated yet — that's why mobile's first tap was
-    // silently dropped).
     const nev = e.nativeEvent
     onSelect(planet.name, nev.clientX, nev.clientY, nev.pointerId)
   }, [planet.name, onSelect])
   return (
     <group ref={groupRef} position={[planet.x, 0, planet.z]}>
-      {/* Soft glow ring under the planet — sells the "floating" feel. */}
+      {/* Ground glow ring — the "floating" cue. */}
       <mesh position={[0, -planet.r * 0.95, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <ringGeometry args={[planet.r * 1.05, planet.r * 2.4, 64]} />
         <meshBasicMaterial
           color={genre.color}
           transparent
-          opacity={dimmed ? 0.05 : hover ? 0.42 : 0.28}
+          opacity={dimmed ? 0.05 : hover ? 0.5 : 0.36}
           side={THREE.DoubleSide}
         />
       </mesh>
-      {/* Atmospheric halo — a slightly larger transparent sphere behind
-          the planet that gives a billboard-y bright rim so even small
-          T4/T5 planets stay visible against the dark backdrop. */}
-      <mesh>
-        <sphereGeometry args={[planet.r * 1.16, 24, 18]} />
+      {/* Pulsing rim — a slightly larger backside sphere with additive
+          blending. The backside renders as the planet's silhouette from
+          the camera, so the user sees a colored ring of light hugging
+          the planet that breathes in and out. */}
+      <mesh ref={rimRef}>
+        <sphereGeometry args={[planet.r * 1.22, 28, 22]} />
         <meshBasicMaterial
           color={genre.color}
           transparent
-          opacity={dimmed ? 0.02 : hover ? 0.32 : 0.18}
+          opacity={0.4}
+          side={THREE.BackSide}
+          blending={THREE.AdditiveBlending}
           depthWrite={false}
         />
       </mesh>
@@ -430,7 +441,7 @@ function PlanetMesh({
         radius={planet.r}
         color={genre.color}
         faceUrl={planet.faceUrl}
-        emissive={hover ? 0.5 : 0.22}
+        emissive={hover ? 0.7 : 0.4}
         dimmed={dimmed}
         onPointerDown={handleDown}
         onPointerOver={(e) => { e.stopPropagation(); setHover(true) }}
@@ -475,15 +486,28 @@ function MoonMesh({
   })
   const art = albumArtFor(moon.ownerName, moon.song.title)
   const genreColor = genreFor((moon.song.genres[0] || 'other').toLowerCase()).color
+  const rimRef = useRef<THREE.Mesh>(null)
+  const phase = useMemo(() => seed(moon.id) * Math.PI * 2, [moon.id])
+  useFrame(({ clock }) => {
+    if (rimRef.current) {
+      const mat = rimRef.current.material as THREE.MeshBasicMaterial
+      const t = clock.elapsedTime * 1.6 + phase
+      const wave = 0.5 + Math.sin(t) * 0.5
+      const base = hover ? 0.85 : 0.22 + wave * 0.55
+      mat.opacity = dimmed ? 0.02 : base
+    }
+  })
   return (
     <group ref={groupRef} position={[moon.x, 0, moon.z]}>
-      {/* Halo so the moon stays readable when tiny. */}
-      <mesh>
-        <sphereGeometry args={[moon.r * 1.25, 18, 14]} />
+      {/* Pulsing additive rim. */}
+      <mesh ref={rimRef}>
+        <sphereGeometry args={[moon.r * 1.3, 22, 16]} />
         <meshBasicMaterial
           color={genreColor}
           transparent
-          opacity={dimmed ? 0.02 : hover ? 0.35 : 0.22}
+          opacity={0.4}
+          side={THREE.BackSide}
+          blending={THREE.AdditiveBlending}
           depthWrite={false}
         />
       </mesh>
@@ -492,7 +516,7 @@ function MoonMesh({
         radius={moon.r}
         color={genreColor}
         faceUrl={art}
-        emissive={hover ? 0.55 : 0.32}
+        emissive={hover ? 0.75 : 0.5}
         dimmed={dimmed}
         onPointerDown={(e) => { e.stopPropagation(); onOpen(moon) }}
         onPointerOver={(e) => { e.stopPropagation(); setHover(true) }}
@@ -1021,11 +1045,13 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
           was creating visible banding on faraway stars. */}
       <color attach="background" args={['#0a0e1c']} />
 
-      {/* Lighting */}
-      <hemisphereLight args={[0xffffff, 0x40425a, 0.5]} />
-      <directionalLight position={[60, 120, 80]} intensity={0.95} castShadow={false} />
-      <pointLight position={[-120, 60, -80]} intensity={0.4} color="#9fb8ff" />
-      <pointLight position={[120, 40, 120]} intensity={0.3} color="#ffb38a" />
+      {/* Lighting — bumped up so even base-colour planets read brighter
+          against the deep-space backdrop. */}
+      <ambientLight intensity={0.55} />
+      <hemisphereLight args={[0xffffff, 0x4c4f70, 0.85]} />
+      <directionalLight position={[60, 140, 80]} intensity={1.4} castShadow={false} />
+      <pointLight position={[-140, 80, -90]} intensity={0.7} color="#a6c2ff" />
+      <pointLight position={[140, 60, 140]} intensity={0.55} color="#ffc69a" />
 
       <Stars />
       <AtlasGround />
