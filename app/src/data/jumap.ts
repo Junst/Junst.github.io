@@ -388,11 +388,13 @@ export const artists: Artist[] = [
     ],
   },
   {
+    // Korean rapper, AOMG → H1GHR MUSIC. K-hip hop.
     name: 'Sik-K',
-    primaryGenre: 'hiphop',
+    primaryGenre: 'khiphop',
+    origin: 'kr',
     songs: [
-      { title: 'LOV3',        tier: 1, subTier: 2, genres: ['hiphop'] },
-      { title: 'OUTTA SPACE', tier: 3, subTier: 1, genres: ['hiphop'] },
+      { title: 'LOV3',        tier: 1, subTier: 2, genres: ['khiphop'] },
+      { title: 'OUTTA SPACE', tier: 3, subTier: 1, genres: ['khiphop'] },
     ],
   },
   {
@@ -499,10 +501,12 @@ export const artists: Artist[] = [
     ],
   },
   {
+    // Korean rapper, ex-Block B leader. K-hip hop primary.
     name: 'ZICO',
-    primaryGenre: 'kpop',
+    primaryGenre: 'khiphop',
+    origin: 'kr',
     songs: [
-      { title: 'DUET', tier: 2, subTier: 1, genres: ['kpop'], features: ['Lilas'] },
+      { title: 'DUET', tier: 2, subTier: 1, genres: ['khiphop'], features: ['Lilas'] },
     ],
   },
   {
@@ -630,8 +634,10 @@ export const artists: Artist[] = [
     ],
   },
   {
+    // Korean alt-R&B singer-songwriter (Kwon Hyuk), born Seoul.
     name: 'DEAN',
     primaryGenre: 'rnb',
+    origin: 'kr',
     songs: [
       { title: '넘어와', tier: 2, subTier: 0, genres: ['rnb', 'kpop'], features: ['백예린'] },
     ],
@@ -913,8 +919,10 @@ export const artists: Artist[] = [
     songs: [],
   },
   {
+    // Korean R&B singer-songwriter (ex-15&, ex-JYP).
     name: '백예린',
     primaryGenre: 'rnb',
+    origin: 'kr',
     songs: [],
   },
   {
@@ -1320,19 +1328,22 @@ export const artists: Artist[] = [
     ],
   },
   {
+    // 1994–2002 Japanese pop-rock band. Famous DAN DAN Kokoro Hikareteku
+    // (Dragon Ball GT OP).
     name: 'FIELD OF VIEW',
-    primaryGenre: 'jpop',
+    primaryGenre: 'rock',
     origin: 'jp',
     songs: [
-      { title: 'DAN DAN 心魅かれてく', tier: 1, subTier: 0, genres: ['jpop', 'anime'] },
+      { title: 'DAN DAN 心魅かれてく', tier: 1, subTier: 0, genres: ['rock', 'jpop', 'anime'] },
     ],
   },
   {
+    // Korean rock ballad legend (ex-Sinawe / Asiana vocalist).
     name: '임재범',
-    primaryGenre: 'kpop',
+    primaryGenre: 'rock',
     origin: 'kr',
     songs: [
-      { title: '이 밤이 지나면', tier: 4, subTier: 3, genres: ['kpop'] },
+      { title: '이 밤이 지나면', tier: 4, subTier: 3, genres: ['rock'] },
     ],
   },
   {
