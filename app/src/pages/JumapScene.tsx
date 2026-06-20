@@ -1561,8 +1561,40 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
       const baseR = Math.min(ds[pctIdx] + pad, radiusCap)
       out.push({ k, cx, cz, r: baseR, ...extra(k) })
     }
-    // Pairwise clip — guarantees no overlap. Headroom covers the
-    // wobble + ellipse + pulse stack at peak.
+
+    // Pass 0 — push apart territory CENTROIDS that are too close, before
+    // the clip pass touches their radii. The mean position of a small
+    // empire can drift toward a neighbour when a cross-border feat. drags
+    // a member across the line (France's Camille pulled toward USA's
+    // Michael Giacchino is the canonical case). Instead of shrinking
+    // both empires to fit, we shove the smaller one away so France can
+    // sit further from USA without having to give up territory.
+    const PUSH_HEAD = 1.18
+    for (let pass = 0; pass < 5; pass++) {
+      for (let i = 0; i < out.length; i++) {
+        for (let j = i + 1; j < out.length; j++) {
+          const A = out[i], B = out[j]
+          const dx = A.cx - B.cx
+          const dz = A.cz - B.cz
+          const dist = Math.hypot(dx, dz) || 0.01
+          const minSep = (A.r + B.r) * PUSH_HEAD + 6
+          if (dist < minSep) {
+            const push = (minSep - dist) * 0.5
+            // Move smaller empire more; weighted by other's size.
+            const totalR = A.r + B.r
+            const shareA = totalR > 0 ? B.r / totalR : 0.5
+            const shareB = 1 - shareA
+            A.cx += (dx / dist) * push * shareA
+            A.cz += (dz / dist) * push * shareA
+            B.cx -= (dx / dist) * push * shareB
+            B.cz -= (dz / dist) * push * shareB
+          }
+        }
+      }
+    }
+
+    // Pass 1 — pairwise clip as before. Should rarely fire after the
+    // push pass above moved the centroids apart.
     const HEADROOM = 1.30
     for (let pass = 0; pass < 3; pass++) {
       for (let i = 0; i < out.length; i++) {
