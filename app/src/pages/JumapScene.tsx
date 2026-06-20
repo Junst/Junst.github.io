@@ -1529,7 +1529,7 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
         minPolarAngle={0.2}
         maxPolarAngle={Math.PI / 2.2}
         minDistance={18}
-        maxDistance={520}
+        maxDistance={1400}
         screenSpacePanning={false}
       />
     </>
@@ -1542,7 +1542,7 @@ export function JumapScene({ onSongOpen, onArtistOpen, viewMode, searchQuery }: 
       className="jumap3d-canvas"
       // dpr capped on mobile for fps
       dpr={[1, typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches ? 1.4 : 2]}
-      camera={{ position: [0, 180, 200], fov: 35, near: 0.1, far: 2000 }}
+      camera={{ position: [0, 180, 200], fov: 35, near: 0.1, far: 3500 }}
       gl={{ antialias: true, powerPreference: 'high-performance' }}
       style={{ background: 'transparent' }}
     >
