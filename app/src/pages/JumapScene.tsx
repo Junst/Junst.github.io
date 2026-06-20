@@ -91,7 +91,7 @@ function placeByCountry(): Planet[] {
     byCountry.get(c)!.push(a)
   }
   const countryKeys = COUNTRIES.map((c) => c.key).filter((k) => byCountry.has(k))
-  const ringR = 110
+  const ringR = 78
   const cCentres: Record<string, { x: number; z: number }> = {}
   if (countryKeys.length === 1) cCentres[countryKeys[0]] = { x: 0, z: 0 }
   else countryKeys.forEach((k, i) => {
@@ -139,7 +139,7 @@ function placeByGenre(): Planet[] {
     byGenre.get(g)!.push(a)
   }
   const genreKeys = GENRES.map((g) => g.key).filter((k) => byGenre.has(k))
-  const ringR = 130
+  const ringR = 92
   const centres: Record<string, { x: number; z: number }> = {}
   if (genreKeys.length === 1) centres[genreKeys[0]] = { x: 0, z: 0 }
   else genreKeys.forEach((g, i) => {
@@ -217,28 +217,44 @@ function buildLayout(mode: ViewMode = 'country'): { planets: Planet[]; moons: Mo
       }
     }
     const tiers = Array.from(byTier.keys()).sort((a, b) => a - b)
-    const ringStep = 36
+    // Each tier owns a band [Rmin, Rmax]; subTier 3 sits at the inner
+    // edge of the band, subTier 0 at the outer. That keeps T1+3 well
+    // separated from T1+0 instead of stacking on a single ring.
+    const ringStep = 48
     for (const tier of tiers) {
-      const ringR = (tier - 1) * ringStep + 10
-      const list = byTier.get(tier)!.sort(
-        (a, b) =>
-          (b.song.subTier ?? 0) - (a.song.subTier ?? 0) ||
-          a.song.title.localeCompare(b.song.title),
-      )
-      const phase = list.length ? seed(list[0].artistName) * Math.PI * 2 : 0
-      const n = list.length
-      list.forEach((e, i) => {
-        const ang = (i / n) * Math.PI * 2 + phase
-        const sr = songRadius(e.song)
-        moons.push({
-          id: `${e.artistName}|${e.song.title}`,
-          ownerName: e.artistName,
-          song: e.song,
-          x: Math.cos(ang) * ringR,
-          z: Math.sin(ang) * ringR,
-          r: sr,
+      const list = byTier.get(tier)!
+      // Sub-rings per (tier, subTier) so each sub-tier gets its own
+      // angular spread.
+      const bySub = new Map<number, Entry[]>()
+      for (const e of list) {
+        const st = e.song.subTier ?? 0
+        if (!bySub.has(st)) bySub.set(st, [])
+        bySub.get(st)!.push(e)
+      }
+      const subs = Array.from(bySub.keys()).sort((a, b) => b - a) // 3..0
+      const tierR0 = (tier - 1) * ringStep + 14
+      // 4 sub-bands inside a tier band; subTier 3 = innermost.
+      const subStep = (ringStep * 0.78) / 4
+      for (const st of subs) {
+        const ringR = tierR0 + (3 - st) * subStep
+        const sublist = bySub.get(st)!.sort(
+          (a, b) => a.song.title.localeCompare(b.song.title),
+        )
+        const phase = sublist.length ? seed(sublist[0].artistName) * Math.PI * 2 : 0
+        const n = sublist.length
+        sublist.forEach((e, i) => {
+          const ang = (i / n) * Math.PI * 2 + phase
+          const sr = songRadius(e.song)
+          moons.push({
+            id: `${e.artistName}|${e.song.title}`,
+            ownerName: e.artistName,
+            song: e.song,
+            x: Math.cos(ang) * ringR,
+            z: Math.sin(ang) * ringR,
+            r: sr,
+          })
         })
-      })
+      }
     }
   } else {
     for (const p of planets) {
@@ -310,7 +326,10 @@ function forceSettle(planets: Planet[]): void {
         const dz = a.z - b.z
         const d = Math.sqrt(dx * dx + dz * dz) || 0.01
         const sameCountry = a.country === b.country
-        const boost = sameCountry ? 0 : 38
+        // Cross-country buffer trimmed (was 38) so neighbouring territories
+        // breathe close to each other instead of being shoved into wide
+        // dead space between them.
+        const boost = sameCountry ? 0 : 10
         const minD = Math.max(
           2 * Math.max(a.orbitR, b.orbitR) + 12 + boost,
           a.orbitR + b.orbitR + 18 + boost,
@@ -1112,7 +1131,10 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
     cx /= count
     cz /= count
     // Single planet → close orbit. Many planets → pull back to fit them.
-    const dist = count === 1 ? 22 : Math.min(220, 30 + count * 6)
+    // Bumped from 22 / (30 + 6n) to 55 / (70 + 8n) so a single-planet
+    // match lands at a comfortable orbiting distance instead of filling
+    // the entire viewport.
+    const dist = count === 1 ? 55 : Math.min(280, 70 + count * 8)
     camTargetRef.current = { x: cx, z: cz, dist }
   }, [matchedPlanets, planets])
 

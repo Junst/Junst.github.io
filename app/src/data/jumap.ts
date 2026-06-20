@@ -222,6 +222,8 @@ export const artists: Artist[] = [
       { title: '身長差のない恋人',  tier: 1, subTier: 2, genres: ['jpop'] },
       { title: 'Crazy Moon~キミ・ハ・ムテキ~', tier: 2, subTier: 3, genres: ['jpop'] },
       { title: 'BRAVE',            tier: 2, subTier: 2, genres: ['jpop'] },
+      { title: 'FUNKY',                  tier: 2, subTier: 3, genres: ['jpop'] },
+      { title: 'サヨナラのあとで',        tier: 2, subTier: 3, genres: ['jpop'] },
       { title: 'Believe',          tier: 2, subTier: 0, genres: ['jpop'] },
       // year / album: please confirm
       { title: 'WISH',             tier: 3, subTier: 0, genres: ['jpop'] },
