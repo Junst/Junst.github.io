@@ -1456,17 +1456,29 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
       return
     }
     let cx = 0, cz = 0, count = 0
+    let maxOrbit = 0
     for (const p of planets) {
-      if (matchedPlanets.has(p.name)) { cx += p.x; cz += p.z; count++ }
+      if (matchedPlanets.has(p.name)) {
+        cx += p.x; cz += p.z; count++
+        // p.orbitR already covers the artist + furthest moon, so using
+        // the largest orbitR among matches gives us a distance that
+        // safely fits every song in the frame.
+        if (p.orbitR > maxOrbit) maxOrbit = p.orbitR
+      }
     }
     if (count === 0) return
     cx /= count
     cz /= count
-    // Single planet → close orbit. Many planets → pull back to fit them.
-    // Bumped from 22 / (30 + 6n) to 55 / (70 + 8n) so a single-planet
-    // match lands at a comfortable orbiting distance instead of filling
-    // the entire viewport.
-    const dist = count === 1 ? 55 : Math.min(280, 70 + count * 8)
+    // Distance has to fit the artist's full moon orbit in view. The
+    // visible-frustum half-width at distance d (fov 35°) is roughly
+    // d · tan(17.5°) ≈ d · 0.314. So d ≈ orbitR / 0.314 covers it.
+    // Add a comfort multiplier so the planet doesn't sit edge-to-edge.
+    const VIEW_FACTOR = 0.314
+    const COMFORT = 2.4
+    const orbitDist = (maxOrbit / VIEW_FACTOR) * COMFORT
+    const dist = count === 1
+      ? Math.max(110, orbitDist)
+      : Math.min(380, Math.max(140, 90 + count * 12 + orbitDist * 0.6))
     camTargetRef.current = { x: cx, z: cz, dist }
   }, [matchedPlanets, planets])
 

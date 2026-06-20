@@ -974,12 +974,15 @@ html[data-theme="dark"] .jumap-back { background: rgba(20,20,20,0.7); }
   background: transparent;
   font-family: var(--font-sans);
   font-size: 0.82rem;
-  color: var(--text);
+  /* Search pill is always glass-white over the dark-space canvas, so
+     the text needs to be dark regardless of the page theme. Otherwise
+     dark-mode users get white-on-white invisible text. */
+  color: #1a1a1a;
   padding: 8px 14px;
   outline: none;
   width: 220px;
 }
-.jumap3d-search input::placeholder { color: var(--text-muted); }
+.jumap3d-search input::placeholder { color: #6b6b6b; }
 .jumap3d-search-clear {
   appearance: none;
   border: 0;
@@ -1006,7 +1009,9 @@ html[data-theme="dark"] .jumap-back { background: rgba(20,20,20,0.7); }
     background: rgba(28,28,30,0.78);
     border-color: rgba(255,255,255,0.08);
   }
-  .jumap3d-search-clear { background: rgba(255,255,255,0.1); }
+  .jumap3d-search input { color: #f0ede5; }
+  .jumap3d-search input::placeholder { color: #a0a0a0; }
+  .jumap3d-search-clear { background: rgba(255,255,255,0.1); color: #f0ede5; }
 }
 
 /* Pseudo-3D: tilt the SVG content with a stronger CSS perspective so the
