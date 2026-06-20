@@ -1395,7 +1395,11 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
       // 95th percentile reaches almost every member; the clip pass
       // below still keeps the empires from touching their neighbours.
       const pctIdx = Math.max(0, Math.min(ds.length - 1, Math.floor(ds.length * 0.95)))
-      const baseR = ds[pctIdx] + 16
+      // Padding scales with member count — Japan / Korea / USA get a
+      // wider buffer around their crowd than NL / NZ / TW which stay
+      // tight to their handful of artists.
+      const pad = 10 + Math.sqrt(list.length) * 4
+      const baseR = ds[pctIdx] + pad
       out.push({ k, cx, cz, r: baseR, ...extra(k) })
     }
     // Pairwise clip — guarantees no overlap. The wobble + ellipse +
