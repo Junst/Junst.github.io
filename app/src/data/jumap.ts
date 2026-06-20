@@ -83,6 +83,9 @@ export const COUNTRIES: CountrySpec[] = [
   { key: 'nz',    label: 'New Zealand', color: '#5ed896' },  // mint
   { key: 'tw',    label: 'Taiwan',      color: '#5fd9c4' },  // teal
   { key: 'nl',    label: 'Netherlands', color: '#ff7a5a' },  // persimmon
+  { key: 'fr',    label: 'France',      color: '#dbc4ff' },  // lavender
+  { key: 'se',    label: 'Sweden',      color: '#a5d8ff' },  // arctic blue
+  { key: 'no',    label: 'Norway',      color: '#b5e8ff' },  // glacier
   { key: 'other', label: 'Other',       color: '#a4abb6' },
 ]
 const COUNTRY_LOOKUP = Object.fromEntries(COUNTRIES.map((c) => [c.key, c]))
@@ -113,19 +116,59 @@ export function countryOfArtist(a: Artist): string {
   return countryOfGenre(a.primaryGenre ?? artistPrimaryGenre(a))
 }
 
+// Genres are organised into families — siblings share a hue, parent
+// family supplies the base shade. So pop / jpop / kpop all read as
+// "pinks" with slightly different temperatures, hiphop / khiphop /
+// rage all read as "oranges", etc. In Genre view the territory blob
+// is drawn at the family level, with sub-genres clustering inside.
 export const GENRES: GenreSpec[] = [
-  { key: 'pop',     label: 'Pop',      color: '#ffe3ee' },
-  { key: 'jpop',    label: 'J-Pop',    color: '#ffd6e7' },
-  { key: 'kpop',    label: 'K-Pop',    color: '#d6ecff' },
-  { key: 'hiphop',  label: 'Hip-Hop',  color: '#ffe8c4' },
-  { key: 'khiphop', label: 'K-Hip-Hop', color: '#ffd9a8' },
-  { key: 'rage',    label: 'Rage',     color: '#ffc4b8' },
-  { key: 'anime',   label: 'Anime',    color: '#dcf5dc' },
-  { key: 'rock',    label: 'Rock',     color: '#dcdcff' },
-  { key: 'rnb',     label: 'R&B',      color: '#f3dcff' },
-  { key: 'edm',     label: 'EDM',      color: '#fff5c4' },
-  { key: 'other',   label: 'Other',    color: '#ececec' },
+  // Pop family — pinks
+  { key: 'pop',     label: 'Pop',      color: '#ff8eb0' },
+  { key: 'jpop',    label: 'J-Pop',    color: '#ff6d8d' },
+  { key: 'kpop',    label: 'K-Pop',    color: '#f491b6' },
+  // Hip-hop family — oranges
+  { key: 'hiphop',  label: 'Hip-Hop',  color: '#ffb35a' },
+  { key: 'khiphop', label: 'K-Hip-Hop', color: '#ff8a3a' },
+  { key: 'rage',    label: 'Rage',     color: '#ff5e3a' },
+  // Standalone genres
+  { key: 'anime',   label: 'Anime',    color: '#85d97e' },
+  { key: 'rock',    label: 'Rock',     color: '#9b7fff' },
+  { key: 'rnb',     label: 'R&B',      color: '#d784ff' },
+  { key: 'edm',     label: 'EDM',      color: '#f0d83a' },
+  { key: 'other',   label: 'Other',    color: '#a4abb6' },
 ]
+
+// Genre family map — used by the layout to nest sub-genres inside their
+// parent's territory in Genre view, and by callers that want a single
+// "family hue" for related genres.
+const GENRE_FAMILY: Record<string, string> = {
+  pop: 'pop',     jpop: 'pop',     kpop: 'pop',
+  hiphop: 'hiphop', khiphop: 'hiphop', rage: 'hiphop',
+  anime: 'anime',
+  rock: 'rock',
+  rnb: 'rnb',
+  edm: 'edm',
+  other: 'other',
+}
+export function familyOfGenre(genreKey: string): string {
+  return GENRE_FAMILY[genreKey.toLowerCase()] ?? 'other'
+}
+// Family display info — label + base hue. Used when rendering the
+// outer territory blob in Genre mode.
+export interface FamilySpec { key: string; label: string; color: string }
+export const GENRE_FAMILIES: FamilySpec[] = [
+  { key: 'pop',     label: 'Pop',     color: '#ff8eb0' },
+  { key: 'hiphop',  label: 'Hip-Hop', color: '#ffb35a' },
+  { key: 'anime',   label: 'Anime',   color: '#85d97e' },
+  { key: 'rock',    label: 'Rock',    color: '#9b7fff' },
+  { key: 'rnb',     label: 'R&B',     color: '#d784ff' },
+  { key: 'edm',     label: 'EDM',     color: '#f0d83a' },
+  { key: 'other',   label: 'Other',   color: '#a4abb6' },
+]
+const FAMILY_LOOKUP = Object.fromEntries(GENRE_FAMILIES.map((f) => [f.key, f]))
+export function familyFor(key: string): FamilySpec {
+  return FAMILY_LOOKUP[key.toLowerCase()] ?? FAMILY_LOOKUP['other']
+}
 
 const GENRE_LOOKUP = Object.fromEntries(GENRES.map((g) => [g.key, g]))
 export function genreFor(key: string): GenreSpec {
@@ -346,6 +389,7 @@ export const artists: Artist[] = [
     songs: [
       { title: 'Nokia',             tier: 2, genres: ['hiphop'] },
       { title: '2 Hard 4 The Radio', tier: 2, subTier: 2, genres: ['hiphop'] },
+      { title: 'Which One',         tier: 2, subTier: 1, genres: ['hiphop'], features: ['Central Cee'] },
       { title: "God's Plan",        tier: 3, genres: ['hiphop'] },
     ],
   },
@@ -355,6 +399,7 @@ export const artists: Artist[] = [
     origin: 'us',
     songs: [
       { title: 'Not Like Us', tier: 2, subTier: 3, genres: ['hiphop'], year: 2024 },
+      { title: 'Euphoria',    tier: 1, subTier: 2, genres: ['hiphop'], year: 2024 },
       { title: 'HUMBLE.',     tier: 2, subTier: 3, genres: ['hiphop'], year: 2017, album: 'DAMN.' },
       { title: 'Luther',      tier: 2, subTier: 3, genres: ['hiphop', 'rnb'], features: ['SZA'] },
       { title: 'N95',         tier: 3, subTier: 0, genres: ['hiphop'], year: 2022, album: 'Mr. Morale & The Big Steppers' },
@@ -1458,6 +1503,168 @@ export const artists: Artist[] = [
     origin: 'kr',
     songs: [
       { title: '하루하루', tier: 4, subTier: 3, genres: ['kpop'], year: 2008 },
+    ],
+  },
+  {
+    // South Korean singer-songwriter "Nation's Little Sister".
+    name: 'IU',
+    primaryGenre: 'kpop',
+    origin: 'kr',
+    songs: [
+      { title: '아이와 나의 바다', tier: 2, subTier: 0, genres: ['kpop'] },
+    ],
+  },
+  {
+    // South Korean ballad singer.
+    name: '폴킴',
+    primaryGenre: 'kpop',
+    origin: 'kr',
+    songs: [
+      { title: '모든 날, 모든 순간', tier: 5, subTier: 1, genres: ['kpop'] },
+    ],
+  },
+  {
+    // UK drill rapper.
+    name: 'Central Cee',
+    primaryGenre: 'hiphop',
+    origin: 'uk',
+    songs: [],
+  },
+  {
+    // US hip-hop. Marshall Mathers.
+    name: 'Eminem',
+    primaryGenre: 'hiphop',
+    origin: 'us',
+    songs: [
+      { title: 'Without Me', tier: 2, subTier: 1, genres: ['hiphop'], year: 2002, album: 'The Eminem Show' },
+    ],
+  },
+  {
+    // Taiwanese Mandopop king. "Secret" (不能說的秘密) is a Brit-rock
+    // ballad (Mandopop), film soundtrack — not classical, though the
+    // movie's piano-duel scenes feature Chopin arrangements.
+    name: 'Jay Chou',
+    primaryGenre: 'pop',
+    origin: 'tw',
+    songs: [
+      { title: 'Secret', tier: 2, subTier: 1, genres: ['pop', 'rock'], year: 2007, album: 'Secret: Soundtrack' },
+    ],
+  },
+  {
+    // French singer Camille Dalmais — Ratatouille (2007) ending song,
+    // written with composer Michael Giacchino.
+    name: 'Camille',
+    primaryGenre: 'pop',
+    origin: 'fr',
+    songs: [
+      { title: 'Le Festin', tier: 5, subTier: 3, genres: ['pop'], year: 2007, album: 'Ratatouille OST', features: ['Michael Giacchino'] },
+    ],
+  },
+  {
+    name: 'Michael Giacchino',
+    primaryGenre: 'pop',
+    origin: 'us',
+    songs: [],
+  },
+  {
+    // Swedish EDM producer Tim Bergling.
+    name: 'Avicii',
+    primaryGenre: 'edm',
+    origin: 'se',
+    songs: [
+      { title: 'Wake Me Up', tier: 4, subTier: 2, genres: ['edm'], year: 2013, album: 'True' },
+    ],
+  },
+  {
+    // Korean rapper.
+    name: 'ASH ISLAND',
+    primaryGenre: 'khiphop',
+    origin: 'kr',
+    songs: [
+      { title: 'OST', tier: 2, subTier: 3, genres: ['khiphop'], features: ['ちゃんみな'] },
+    ],
+  },
+  {
+    // Japanese-Korean rapper Chanmina (born in Korea, raised in Japan).
+    name: 'ちゃんみな',
+    primaryGenre: 'jpop',
+    origin: 'jp',
+    songs: [],
+  },
+  {
+    // English rock/pop band from Eastbourne. Famous 2000 cover of
+    // "Dancing in the Moonlight" (King Harvest, 1972).
+    name: 'Toploader',
+    primaryGenre: 'rock',
+    origin: 'uk',
+    songs: [
+      { title: 'Dancing in the Moonlight', tier: 2, subTier: 3, genres: ['rock', 'pop'], year: 2000, album: 'Onka’s Big Moka' },
+    ],
+  },
+  {
+    // French chanson singer. "Monaco" (28°C à l'ombre, 1978).
+    name: 'Jean Francois Maurice',
+    primaryGenre: 'pop',
+    origin: 'fr',
+    songs: [
+      { title: 'Monaco', tier: 3, subTier: 3, genres: ['pop'], year: 1978 },
+    ],
+  },
+  {
+    // British-Australian pop / disco trio (Gibb brothers, born Isle of Man).
+    // Famously associated with Saturday Night Fever soundtrack.
+    name: 'Bee Gees',
+    primaryGenre: 'pop',
+    origin: 'uk',
+    songs: [
+      { title: 'How Deep Is Your Love', tier: 1, subTier: 1, genres: ['pop'], year: 1977, album: 'Saturday Night Fever' },
+    ],
+  },
+  {
+    // American rock/pop band from Chicago. Famous for ballads and brass.
+    name: 'Chicago',
+    primaryGenre: 'rock',
+    origin: 'us',
+    songs: [
+      { title: "You're the Inspiration", tier: 1, subTier: 1, genres: ['rock', 'pop'], year: 1984, album: 'Chicago 17' },
+    ],
+  },
+  {
+    // Norwegian singer. Eurovision 1988 — "For vår jord" came 5th.
+    // "You Call It Love" (La Boum 2 OST adaptation, 1988).
+    name: 'Karoline Krüger',
+    primaryGenre: 'pop',
+    origin: 'no',
+    songs: [
+      { title: 'You Call It Love', tier: 2, subTier: 3, genres: ['pop'], year: 1988 },
+    ],
+  },
+  {
+    // English rock band — Jeff Lynne's orchestral-rock outfit.
+    name: 'Electric Light Orchestra',
+    primaryGenre: 'rock',
+    origin: 'uk',
+    songs: [
+      { title: 'Mr. Blue Sky', tier: 2, subTier: 3, genres: ['rock', 'pop'], year: 1977, album: 'Out of the Blue' },
+    ],
+  },
+  {
+    // 1988 Korean rock band, Shin Hae-chul-led. "그대에게" is a
+    // legendary college festival anthem.
+    name: '무한궤도',
+    primaryGenre: 'rock',
+    origin: 'kr',
+    songs: [
+      { title: '그대에게', tier: 4, subTier: 2, genres: ['rock'], year: 1988 },
+    ],
+  },
+  {
+    // Korean rock band, Min Kyung-hoon vocals.
+    name: 'Buzz',
+    primaryGenre: 'rock',
+    origin: 'kr',
+    songs: [
+      { title: '겁쟁이', tier: 4, subTier: 1, genres: ['rock'] },
     ],
   },
 ]

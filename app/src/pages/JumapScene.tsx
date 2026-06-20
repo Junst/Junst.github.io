@@ -4,12 +4,14 @@ import { OrbitControls, Text, Html, useTexture } from '@react-three/drei'
 import * as THREE from 'three'
 import {
   artists,
-  GENRES,
   COUNTRIES,
   genreFor,
   countryFor,
   countryOfGenre,
   countryOfArtist,
+  familyOfGenre,
+  familyFor,
+  GENRE_FAMILIES,
   bubbleRadius,
   bestTier,
   sortArtists,
@@ -194,74 +196,106 @@ function placeByCountry(): Planet[] {
 }
 
 function placeByGenre(): Planet[] {
+  // Family-first: outer ring per genre family (pop / hiphop / anime /
+  // rock / rnb / edm). Inside each family, sub-genres get their own
+  // small sub-centroid (pop / jpop / kpop inside the pop family, etc.)
+  // and artists scatter via Poisson disk inside their sub-centroid.
   const byGenre = new Map<string, Artist[]>()
   for (const a of artists) {
     const g = artistPrimaryGenre(a)
     if (!byGenre.has(g)) byGenre.set(g, [])
     byGenre.get(g)!.push(a)
   }
-  const genreKeys = GENRES.map((g) => g.key).filter((k) => byGenre.has(k))
-  // Per-genre estimated empire radius (planet sprawl only — pad is
-  // added later in territory rendering). The √n curve reflects 2-D
-  // packing; the multiplier had to be ~60% bigger than the previous
-  // 11 because forceSettle's same-group minDist (~38–46 px) makes
-  // planets spread quite a bit wider than the Poisson scatter alone.
-  const empireR = genreKeys.map((g) => {
-    const n = (byGenre.get(g) ?? []).length
-    return 18 + Math.sqrt(n) * 18
+  // Build families from populated genres.
+  const familyToGenres = new Map<string, string[]>()
+  for (const g of byGenre.keys()) {
+    const f = familyOfGenre(g)
+    if (!familyToGenres.has(f)) familyToGenres.set(f, [])
+    familyToGenres.get(f)!.push(g)
+  }
+  const familyKeys = GENRE_FAMILIES.map((f) => f.key).filter((k) => familyToGenres.has(k))
+
+  // Estimate per-family empire radius (sum of its sub-genres' sprawl).
+  const familyR = familyKeys.map((f) => {
+    const genres = familyToGenres.get(f) ?? []
+    const totalN = genres.reduce((s, g) => s + (byGenre.get(g)?.length ?? 0), 0)
+    return 22 + Math.sqrt(totalN) * 18
   })
   const gapFactor = 1.40
-  const totalCircum = empireR.reduce((s, r) => s + 2 * r * gapFactor, 0)
+  const totalCircum = familyR.reduce((s, r) => s + 2 * r * gapFactor, 0)
   const ringR = Math.max(80, totalCircum / (2 * Math.PI))
-  // Centroids are placed with angles weighted by each empire's radius
-  // — big genres get more angular room than small ones. So jpop /
-  // kpop / pop don't sit elbow-to-elbow with anime / edm.
-  const totalWeight = empireR.reduce((s, r) => s + r, 0)
-  const centres: Record<string, { x: number; z: number }> = {}
-  if (genreKeys.length === 1) centres[genreKeys[0]] = { x: 0, z: 0 }
+  const totalWeight = familyR.reduce((s, r) => s + r, 0)
+  const familyCentres: Record<string, { x: number; z: number }> = {}
+  if (familyKeys.length === 1) familyCentres[familyKeys[0]] = { x: 0, z: 0 }
   else {
     let cumulative = 0
-    genreKeys.forEach((g, i) => {
-      cumulative += empireR[i]
-      const ang = (cumulative - empireR[i]) / totalWeight * Math.PI * 2 - Math.PI / 2
-      centres[g] = { x: Math.cos(ang) * ringR, z: Math.sin(ang) * ringR }
+    familyKeys.forEach((f, i) => {
+      cumulative += familyR[i]
+      const ang = (cumulative - familyR[i]) / totalWeight * Math.PI * 2 - Math.PI / 2
+      familyCentres[f] = { x: Math.cos(ang) * ringR, z: Math.sin(ang) * ringR }
     })
   }
+
   const planets: Planet[] = []
-  for (const genre of genreKeys) {
-    const c = centres[genre]
-    const cluster = sortArtists(byGenre.get(genre) ?? [])
-    const targetR = 18 + Math.sqrt(cluster.length) * 18
-    const placedHere: { x: number; z: number; r: number }[] = []
-    for (const a of cluster) {
-      const r = bubbleRadius(a) * 0.10
-      let bestScore = -Infinity
-      let bestX = c.x
-      let bestZ = c.z
-      for (let tries = 0; tries < 80; tries++) {
-        const angHash = seed(a.name + 'gA' + tries)
-        const radHash = seed(a.name + 'gR' + tries)
-        const ang = angHash * Math.PI * 2
-        const rad = targetR * Math.sqrt(radHash)
-        const x = c.x + Math.cos(ang) * rad
-        const z = c.z + Math.sin(ang) * rad
-        let minDistToOther = Infinity
-        for (const p of placedHere) {
-          const d = Math.hypot(x - p.x, z - p.z) - (p.r + r)
-          if (d < minDistToOther) minDistToOther = d
+  for (const family of familyKeys) {
+    const fc = familyCentres[family]
+    const subGenres = familyToGenres.get(family)!
+    // Sub-genre centroids — each gets a small offset inside the family
+    // disk, scaled to its own member count. Single-genre families
+    // (anime / rock / rnb / edm) sit at the family centre.
+    const subCentres: Record<string, { x: number; z: number }> = {}
+    if (subGenres.length === 1) {
+      subCentres[subGenres[0]] = fc
+    } else {
+      const subN = subGenres.map((g) => byGenre.get(g)?.length ?? 0)
+      const subR = subN.map((n) => 14 + Math.sqrt(n) * 12)
+      const subTotal = subR.reduce((s, r) => s + r, 0)
+      const innerR = Math.max(14, subTotal / (2 * Math.PI) * 1.6)
+      let cum = 0
+      subGenres.forEach((g, i) => {
+        cum += subR[i]
+        const ang = (cum - subR[i]) / subTotal * Math.PI * 2 - Math.PI / 2 + seed(family + 'rot') * Math.PI * 2
+        subCentres[g] = {
+          x: fc.x + Math.cos(ang) * innerR,
+          z: fc.z + Math.sin(ang) * innerR,
         }
-        const gap = 5
-        if (minDistToOther < gap) continue
-        const score = Math.min(minDistToOther, 18) * 2
-        if (score > bestScore) { bestScore = score; bestX = x; bestZ = z }
+      })
+    }
+
+    for (const genre of subGenres) {
+      const c = subCentres[genre]
+      const cluster = sortArtists(byGenre.get(genre) ?? [])
+      const targetR = 14 + Math.sqrt(cluster.length) * 14
+      const placedHere: { x: number; z: number; r: number }[] = []
+      for (const a of cluster) {
+        const r = bubbleRadius(a) * 0.10
+        let bestScore = -Infinity
+        let bestX = c.x
+        let bestZ = c.z
+        for (let tries = 0; tries < 80; tries++) {
+          const angHash = seed(a.name + 'gA' + tries)
+          const radHash = seed(a.name + 'gR' + tries)
+          const ang = angHash * Math.PI * 2
+          const rad = targetR * Math.sqrt(radHash)
+          const x = c.x + Math.cos(ang) * rad
+          const z = c.z + Math.sin(ang) * rad
+          let minDistToOther = Infinity
+          for (const p of placedHere) {
+            const d = Math.hypot(x - p.x, z - p.z) - (p.r + r)
+            if (d < minDistToOther) minDistToOther = d
+          }
+          if (minDistToOther < 5) continue
+          const score = Math.min(minDistToOther, 18) * 2
+          if (score > bestScore) { bestScore = score; bestX = x; bestZ = z }
+        }
+        if (bestScore === -Infinity) {
+          const ang = seed(a.name + 'gfb') * Math.PI * 2
+          bestX = c.x + Math.cos(ang) * (targetR * 0.4)
+          bestZ = c.z + Math.sin(ang) * (targetR * 0.4)
+        }
+        placedHere.push({ x: bestX, z: bestZ, r })
+        planets.push(newPlanet(a, bestX, bestZ, countryOfArtist(a), genre))
       }
-      if (bestScore === -Infinity) {
-        const ang = seed(a.name + 'gfb') * Math.PI * 2
-        bestX = c.x + Math.cos(ang) * (targetR * 0.4)
-        bestZ = c.z + Math.sin(ang) * (targetR * 0.4)
-      }
-      placedHere.push({ x: bestX, z: bestZ, r })
-      planets.push(newPlanet(a, bestX, bestZ, countryOfArtist(a), genre))
     }
   }
   return planets
@@ -446,7 +480,7 @@ function forceSettle(planets: Planet[], mode: ViewMode = 'country'): void {
         // boundary; cross-group pairs get pushed apart so the empires
         // visually separate.
         const sameGroup = mode === 'genre'
-          ? a.primaryGenre === b.primaryGenre
+          ? familyOfGenre(a.primaryGenre) === familyOfGenre(b.primaryGenre)
           : a.country === b.country
         const boost = sameGroup ? 0 : 110
         const minD = Math.max(
@@ -1539,19 +1573,55 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
     return out
   }
 
-  // Genre territory groupings — same algorithm as country, just keyed by
-  // each planet's primary genre. Only used when viewMode === 'genre'.
+  // Genre territory: outer blob per genre FAMILY (so pop / jpop / kpop
+  // all share one pink "Pop" empire) and an inner halo per sub-genre
+  // inside its family for visual nesting.
   const genreDisks = useMemo(() => {
+    const groups = new Map<string, Planet[]>()
+    for (const p of planets) {
+      const f = familyOfGenre(p.primaryGenre)
+      if (!groups.has(f)) groups.set(f, [])
+      groups.get(f)!.push(p)
+    }
+    return buildDisks(groups, (k) => {
+      const spec = familyFor(k)
+      return { color: spec.color, label: spec.label }
+    }) as Array<{ k: string; cx: number; cz: number; r: number; color: string; label: string }>
+  }, [planets])
+
+  // Sub-genre halos — drawn inside each family's blob with the sub-
+  // genre's own colour. Lets the user see "this side of the pop empire
+  // is jpop, that side is kpop" without splitting the empire.
+  const subGenreHalos = useMemo(() => {
+    if (viewMode !== 'genre') return []
     const groups = new Map<string, Planet[]>()
     for (const p of planets) {
       if (!groups.has(p.primaryGenre)) groups.set(p.primaryGenre, [])
       groups.get(p.primaryGenre)!.push(p)
     }
-    return buildDisks(groups, (k) => {
-      const spec = genreFor(k)
-      return { color: spec.color, label: spec.label }
-    }) as Array<{ k: string; cx: number; cz: number; r: number; color: string; label: string }>
-  }, [planets])
+    const out: Array<{ k: string; cx: number; cz: number; r: number; color: string }> = []
+    for (const [k, list] of groups) {
+      if (familyOfGenre(k) === k && list.length === groups.get(k)!.length) {
+        // Single-genre family — skip the halo, the outer blob is already
+        // this colour.
+        const fam = familyOfGenre(k)
+        const famMembers = Array.from(groups.entries())
+          .filter(([gk]) => familyOfGenre(gk) === fam)
+          .reduce((s, [, l]) => s + l.length, 0)
+        if (famMembers === list.length) continue
+      }
+      let cx = 0, cz = 0
+      for (const p of list) { cx += p.x; cz += p.z }
+      cx /= list.length; cz /= list.length
+      let r = 0
+      for (const p of list) {
+        const d = Math.hypot(p.x - cx, p.z - cz) + p.r * 1.4
+        if (d > r) r = d
+      }
+      out.push({ k, cx, cz, r: r + 6, color: genreFor(k).color })
+    }
+    return out
+  }, [planets, viewMode])
 
   // Country territory disks.
   const countryDisks = useMemo(() => {
@@ -1595,6 +1665,16 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
           color={g.color}
           label={g.label}
         />
+      ))}
+      {viewMode === 'genre' && subGenreHalos.map((h) => (
+        <mesh
+          key={'sh-' + h.k}
+          position={[h.cx, -1.1, h.cz]}
+          rotation={[-Math.PI / 2, 0, 0]}
+        >
+          <circleGeometry args={[h.r, 64]} />
+          <meshBasicMaterial color={h.color} transparent opacity={0.18} depthWrite={false} />
+        </mesh>
       ))}
 
       {viewMode !== 'tier' && planets.map((p) => (
