@@ -389,7 +389,7 @@ interface DragState {
   tz: number
 }
 
-function DragLoop({ planets, dragRef }: { planets: Planet[]; dragRef: React.RefObject<DragState | null> }) {
+function DragLoop({ dragRef }: { dragRef: React.RefObject<DragState | null> }) {
   useFrame(() => {
     const ds = dragRef.current
     if (!ds) return
@@ -705,7 +705,7 @@ function SceneInner({ onSongOpen }: SceneProps) {
       </Suspense>
 
       <Bonds planets={planets} moons={moons} dragRef={dragRef} />
-      <DragLoop planets={planets} dragRef={dragRef} />
+      <DragLoop dragRef={dragRef} />
       <DragController planets={planets} dragRef={dragRef} setOrbitEnabled={setOrbitEnabled} />
       <OrbitControls
         enabled={orbitEnabled}
