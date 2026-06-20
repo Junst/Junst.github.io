@@ -3127,3 +3127,346 @@ html[data-theme="dark"] .subpage-home-bar { background: rgba(20, 20, 20, 0.78); 
   border: 1px dashed var(--rule);
   border-radius: 999px;
 }
+
+/* === Y2K personal log (LogPage) ============================================
+   All styles scoped under .log-page so they never bleed into the rest of
+   the site. Y2K display fonts loaded only via this page's import. */
+.log-page {
+  --y2k-bg: #0b0418;
+  --y2k-bg-2: #1a0a3a;
+  --y2k-ink: #f6efff;
+  --y2k-hot: #ff3aa5;
+  --y2k-blue: #5cfffe;
+  --y2k-lime: #c8ff3a;
+  --y2k-orange: #ffa14a;
+  --y2k-violet: #b56cff;
+  --y2k-dim: rgba(246,239,255,0.55);
+  position: relative;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 70% 10%, rgba(255,58,165,0.18), transparent 45%),
+    radial-gradient(ellipse at 10% 90%, rgba(92,255,254,0.14), transparent 50%),
+    linear-gradient(180deg, var(--y2k-bg) 0%, var(--y2k-bg-2) 50%, var(--y2k-bg) 100%);
+  color: var(--y2k-ink);
+  overflow-x: hidden;
+  font-family: 'y2k-karma', system-ui, sans-serif;
+  padding: 32px 22px 48px;
+}
+/* Faint cyber grid + scanlines */
+.log-page .log-grid-bg {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,58,165,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(92,255,254,0.06) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+  mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 30%, transparent 100%);
+}
+.log-page .log-scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0,
+    transparent 3px,
+    rgba(255,255,255,0.025) 3px,
+    rgba(255,255,255,0.025) 4px
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+.log-page > header,
+.log-page > main,
+.log-page > footer,
+.log-page > .log-marquee {
+  position: relative;
+  z-index: 1;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+/* Header */
+.log-page .log-header { margin-bottom: 18px; }
+.log-page .log-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'y2k-bytebounce', monospace;
+  font-size: 0.95rem;
+  color: var(--y2k-blue);
+  letter-spacing: 0.08em;
+  padding: 6px 14px;
+  border: 1px solid rgba(92,255,254,0.4);
+  background: rgba(11,4,24,0.55);
+}
+.log-page .log-id { color: var(--y2k-hot); }
+.log-page .log-id-meta { display: flex; gap: 16px; }
+.log-page .log-status { color: var(--y2k-lime); }
+.log-page .log-clock { color: var(--y2k-ink); }
+.log-page .log-title {
+  font-family: 'y2k-overload', sans-serif;
+  font-weight: 700;
+  font-size: clamp(3rem, 11vw, 7rem);
+  line-height: 0.92;
+  margin: 26px 0 12px;
+  letter-spacing: -0.01em;
+  color: var(--y2k-ink);
+  text-shadow:
+    0 0 1px rgba(255,255,255,0.6),
+    3px 3px 0 var(--y2k-hot),
+    6px 6px 0 var(--y2k-violet);
+}
+.log-page .log-title-line { display: block; }
+.log-page .log-title-accent {
+  color: var(--y2k-blue);
+  text-shadow:
+    0 0 1px rgba(255,255,255,0.6),
+    3px 3px 0 var(--y2k-hot),
+    6px 6px 0 var(--y2k-orange);
+}
+.log-page .log-sub {
+  font-family: 'y2k-bytebounce', monospace;
+  font-size: 1rem;
+  color: var(--y2k-dim);
+  letter-spacing: 0.1em;
+}
+
+/* Marquee */
+.log-page .log-marquee {
+  overflow: hidden;
+  border-top: 1px dashed rgba(255,58,165,0.5);
+  border-bottom: 1px dashed rgba(255,58,165,0.5);
+  padding: 6px 0;
+  margin: 18px 0 22px;
+  background: rgba(255,58,165,0.06);
+}
+.log-page .log-marquee-track {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: log-marquee 28s linear infinite;
+  font-family: 'y2k-bytebounce', monospace;
+  font-size: 1.05rem;
+  letter-spacing: 0.06em;
+  color: var(--y2k-blue);
+}
+.log-page .log-marquee-track > span {
+  padding-right: 36px;
+}
+@keyframes log-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-33.333%); }
+}
+
+/* Bento grid */
+.log-page .log-main {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px;
+}
+.log-page .log-card {
+  background: linear-gradient(180deg, rgba(20,8,46,0.85), rgba(11,4,24,0.85));
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
+  padding: 18px 18px 20px;
+  position: relative;
+}
+.log-page .log-card::after {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px dashed rgba(255,255,255,0.08);
+  border-radius: 9px;
+  pointer-events: none;
+}
+.log-page .log-card-now { grid-column: span 7; }
+.log-page .log-card-hobbies { grid-column: span 5; }
+.log-page .log-card-stats { grid-column: span 5; }
+.log-page .log-card-tags { grid-column: span 7; }
+.log-page .log-card-log { grid-column: span 12; }
+@media (max-width: 760px) {
+  .log-page .log-card-now,
+  .log-page .log-card-hobbies,
+  .log-page .log-card-stats,
+  .log-page .log-card-tags,
+  .log-page .log-card-log { grid-column: span 12; }
+}
+.log-page .log-card-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 8px;
+}
+.log-page .log-card-tag {
+  font-family: 'y2k-bytebounce', monospace;
+  font-size: 0.78rem;
+  color: var(--y2k-hot);
+  letter-spacing: 0.08em;
+}
+.log-page .log-card-head h2 {
+  margin: 0;
+  font-family: 'y2k-overload', sans-serif;
+  font-weight: 700;
+  font-size: 1.7rem;
+  letter-spacing: 0.04em;
+  color: var(--y2k-ink);
+}
+
+/* Now playing list */
+.log-page .log-now-list {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.log-page .log-now-list li {
+  display: grid;
+  grid-template-columns: 70px 1fr;
+  gap: 14px;
+  align-items: baseline;
+}
+.log-page .log-now-list span {
+  font-family: 'y2k-bytebounce', monospace;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--y2k-blue);
+}
+.log-page .log-now-list b {
+  font-family: 'y2k-karma', serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--y2k-ink);
+}
+
+/* Hobby list */
+.log-page .log-hobby-list {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.log-page .log-hobby-list li {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 6px 10px;
+  border: 1px dashed rgba(255,255,255,0.15);
+  border-radius: 8px;
+}
+.log-page .log-hobby-tag { font-size: 1.1rem; }
+.log-page .log-hobby-label {
+  font-family: 'y2k-karma', serif;
+  font-size: 0.98rem;
+}
+
+/* Stats */
+.log-page .log-stats-list {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+.log-page .log-stats-list li {
+  border: 1px solid rgba(200,255,58,0.25);
+  background: rgba(200,255,58,0.04);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.log-page .log-stats-val {
+  display: block;
+  font-family: 'y2k-overload', sans-serif;
+  font-weight: 700;
+  font-size: 2.2rem;
+  color: var(--y2k-lime);
+  line-height: 1;
+}
+.log-page .log-stats-key {
+  display: block;
+  margin-top: 4px;
+  font-family: 'y2k-bytebounce', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--y2k-dim);
+  text-transform: uppercase;
+}
+
+/* Vibe tags */
+.log-page .log-vibe-list {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.log-page .log-vibe-list li {
+  font-family: 'y2k-granix', cursive;
+  font-size: 1.4rem;
+  padding: 4px 12px;
+  border: 1px solid rgba(181,108,255,0.45);
+  border-radius: 999px;
+  color: var(--y2k-violet);
+  background: rgba(181,108,255,0.08);
+}
+
+/* Log entries */
+.log-page .log-entries {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: grid;
+  gap: 14px;
+}
+.log-page .log-entries li {
+  padding: 12px 14px;
+  border-left: 3px solid var(--y2k-hot);
+  background: rgba(255,58,165,0.05);
+  border-radius: 0 8px 8px 0;
+}
+.log-page .log-entry-meta {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+.log-page .log-entry-date {
+  font-family: 'y2k-bytebounce', monospace;
+  font-size: 0.88rem;
+  color: var(--y2k-blue);
+  letter-spacing: 0.06em;
+}
+.log-page .log-entry-divider {
+  font-family: 'y2k-bytebounce', monospace;
+  color: var(--y2k-dim);
+}
+.log-page .log-entry-title {
+  font-family: 'y2k-overload', sans-serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--y2k-ink);
+  letter-spacing: 0.02em;
+}
+.log-page .log-entry-body {
+  margin: 8px 0 0;
+  font-family: 'y2k-karma', serif;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--y2k-ink);
+  opacity: 0.92;
+}
+
+/* Footer */
+.log-page .log-footer {
+  margin-top: 38px;
+}
+.log-page .log-footer-meta {
+  margin-top: 16px;
+  font-family: 'y2k-bytebounce', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  color: var(--y2k-dim);
+  text-align: center;
+}

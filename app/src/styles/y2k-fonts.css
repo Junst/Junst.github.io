@@ -1,0 +1,39 @@
+/* Y2K display fonts — loaded only on the personal log page so the
+   main site's typography stays untouched. All four are scoped to
+   their family names (`y2k-*`) and used exclusively inside
+   `.log-page` styles. */
+
+@font-face {
+  font-family: 'y2k-bytebounce';
+  src: url('/fonts/ByteBounce.ttf') format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'y2k-granix';
+  src: url('/fonts/Granix-Demo.otf') format('opentype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'y2k-karma';
+  src: url('/fonts/KarmaFuture.otf') format('opentype');
+  font-display: swap;
+  font-weight: 400;
+}
+@font-face {
+  font-family: 'y2k-karma';
+  src: url('/fonts/KarmaSuture.otf') format('opentype');
+  font-display: swap;
+  font-weight: 700;
+}
+@font-face {
+  font-family: 'y2k-overload';
+  src: url('/fonts/Overload.otf') format('opentype');
+  font-display: swap;
+  font-weight: 400;
+}
+@font-face {
+  font-family: 'y2k-overload';
+  src: url('/fonts/OverloadBurn.otf') format('opentype');
+  font-display: swap;
+  font-weight: 700;
+}
