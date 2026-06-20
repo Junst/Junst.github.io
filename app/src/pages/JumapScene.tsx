@@ -123,7 +123,7 @@ function placeByCountry(): Planet[] {
     // disk for each artist, rejecting candidates that fall too close to
     // already-placed planets. The result is irregular and natural —
     // tighter than phyllotaxis was, and never the same arc pattern.
-    const targetR = 18 + Math.sqrt(cluster.length) * 18
+    const targetR = Math.max(12, Math.sqrt(cluster.length) * 16)
     const placedHere: { x: number; z: number; r: number; genre: string }[] = []
     for (const a of cluster) {
       const r = bubbleRadius(a) * 0.10
@@ -1547,11 +1547,10 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
       //  22 acts → 41
       //  38 acts → 65
       //  50 acts → 83
-      // Padding shrunk so small empires (CA / FR / NL / NZ etc.) hug
-      // their handful of artists tightly. Big empires still grow but
-      // the curve is flatter at low n so 3-act countries don't end up
-      // with half-empty territory blobs.
-      const pad = 2 + list.length * 0.95
+      // Padding hugs the cluster — France (3 acts), Canada (4),
+      // Sweden (1) etc. only get a couple px buffer; USA (~30) is
+      // also brought down a notch.
+      const pad = Math.max(2, list.length * 0.7)
       const baseR = ds[pctIdx] + pad
       out.push({ k, cx, cz, r: baseR, ...extra(k) })
     }
@@ -1625,7 +1624,7 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
       const ds = list.map((p) => Math.hypot(p.x - cx, p.z - cz) + p.r * 1.4)
       ds.sort((a, b) => a - b)
       const pctIdx = Math.max(0, Math.min(ds.length - 1, Math.floor(ds.length * 0.95)))
-      const pad = 2 + list.length * 0.95
+      const pad = Math.max(2, list.length * 0.7)
       famInfo.set(f, { cx, cz, r: ds[pctIdx] + pad })
     }
 
@@ -1642,7 +1641,7 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
       const ds = list.map((p) => Math.hypot(p.x - cx, p.z - cz) + p.r * 1.4)
       ds.sort((a, b) => a - b)
       const pctIdx = Math.max(0, Math.min(ds.length - 1, Math.floor(ds.length * 0.95)))
-      const subPad = 2 + list.length * 0.6
+      const subPad = Math.max(1.5, list.length * 0.45)
       let r = ds[pctIdx] + subPad
       // Clip against family rim — wobble peaks add ~30% so reserve that.
       const fi = famInfo.get(fam)!
