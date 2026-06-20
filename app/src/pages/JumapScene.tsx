@@ -608,33 +608,129 @@ function AtlasGround() {
   )
 }
 
-function CountryDisk({ k, cx, cz, r }: { k: string; cx: number; cz: number; r: number }) {
+// Country territory — instead of a static circular disk, a triangle fan
+// whose rim wobbles like a strategy-game empire boundary that's slowly
+// pushing/pulling against its neighbours. Each country has its own seed
+// phase + frequencies so they look like independent forces, and the
+// whole field reads as "fighting for territory" when zoomed out.
+const TERRITORY_SEGMENTS = 96
+function CountryTerritory({
+  k, cx, cz, r,
+}: {
+  k: string
+  cx: number
+  cz: number
+  r: number
+}) {
   const spec = countryFor(k)
+  const meshRef = useRef<THREE.Mesh>(null)
+  const lineRef = useRef<THREE.LineLoop>(null)
+  // Per-country deterministic phase.
+  const phase = useMemo(() => seed(k) * Math.PI * 2, [k])
+
+  // Pre-build the triangle-fan geometry. Vertex 0 = centre, vertices
+  // 1..N = rim. The rim positions get rewritten each frame.
+  const { fanGeometry, lineGeometry } = useMemo(() => {
+    const N = TERRITORY_SEGMENTS
+    // Fan: 1 centre + N rim verts; indices wrap.
+    const fan = new THREE.BufferGeometry()
+    const fanPos = new Float32Array((N + 1) * 3)
+    fanPos[0] = 0; fanPos[1] = 0; fanPos[2] = 0
+    for (let i = 0; i < N; i++) {
+      const ang = (i / N) * Math.PI * 2
+      fanPos[(i + 1) * 3] = Math.cos(ang) * r
+      fanPos[(i + 1) * 3 + 1] = Math.sin(ang) * r
+      fanPos[(i + 1) * 3 + 2] = 0
+    }
+    const fanIdx = new Uint16Array(N * 3)
+    for (let i = 0; i < N; i++) {
+      fanIdx[i * 3] = 0
+      fanIdx[i * 3 + 1] = i + 1
+      fanIdx[i * 3 + 2] = ((i + 1) % N) + 1
+    }
+    fan.setAttribute('position', new THREE.BufferAttribute(fanPos, 3))
+    fan.setIndex(new THREE.BufferAttribute(fanIdx, 1))
+
+    // Line loop along the rim — same N verts, drawn separately.
+    const line = new THREE.BufferGeometry()
+    const linePos = new Float32Array((N + 1) * 3)
+    for (let i = 0; i <= N; i++) {
+      const ang = ((i % N) / N) * Math.PI * 2
+      linePos[i * 3] = Math.cos(ang) * r
+      linePos[i * 3 + 1] = Math.sin(ang) * r
+      linePos[i * 3 + 2] = 0
+    }
+    line.setAttribute('position', new THREE.BufferAttribute(linePos, 3))
+    return { fanGeometry: fan, lineGeometry: line }
+  }, [r])
+
+  // Per-frame rim wobble — sum of three sin waves of different angular
+  // frequencies + slow phase drift gives the organic "Risk map empires
+  // breathing" look. Cheap: 96 verts × 3 multiplies/frame.
+  useFrame(({ clock }) => {
+    const N = TERRITORY_SEGMENTS
+    const t = clock.elapsedTime
+    const fanPos = (meshRef.current?.geometry.attributes.position.array as Float32Array | undefined)
+    const linePos = (lineRef.current?.geometry.attributes.position.array as Float32Array | undefined)
+    if (!fanPos || !linePos) return
+    for (let i = 0; i < N; i++) {
+      const ang = (i / N) * Math.PI * 2
+      const w =
+        Math.sin(ang * 3 + t * 0.32 + phase) * 0.11 +
+        Math.sin(ang * 5 - t * 0.21 + phase * 1.3) * 0.055 +
+        Math.sin(ang * 7 + t * 0.16 + phase * 2.1) * 0.035
+      const rad = r * (1 + w)
+      const x = Math.cos(ang) * rad
+      const y = Math.sin(ang) * rad
+      const fi = (i + 1) * 3
+      fanPos[fi] = x
+      fanPos[fi + 1] = y
+      const li = i * 3
+      linePos[li] = x
+      linePos[li + 1] = y
+    }
+    // Close the line loop.
+    linePos[N * 3] = linePos[0]
+    linePos[N * 3 + 1] = linePos[1]
+    if (meshRef.current) meshRef.current.geometry.attributes.position.needsUpdate = true
+    if (lineRef.current) lineRef.current.geometry.attributes.position.needsUpdate = true
+  })
+
   return (
-    <group position={[cx, -1.2, cz]}>
-      {/* Solid soft disk */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]}>
-        <circleGeometry args={[r, 96]} />
-        <meshBasicMaterial color={spec.color} transparent opacity={0.32} />
+    <group position={[cx, -1.2, cz]} rotation={[-Math.PI / 2, 0, 0]}>
+      {/* Filled territory body */}
+      <mesh ref={meshRef}>
+        <primitive object={fanGeometry} attach="geometry" />
+        <meshBasicMaterial
+          color={spec.color}
+          transparent
+          opacity={0.38}
+          side={THREE.DoubleSide}
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+        />
       </mesh>
-      {/* Outline ring */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[r * 0.985, r, 96]} />
-        <meshBasicMaterial color={spec.color} transparent opacity={0.55} side={THREE.DoubleSide} />
-      </mesh>
-      {/* Label floating above */}
-      <Text
-        position={[0, 4, -r + 8]}
-        fontSize={6}
-        color={spec.color}
-        anchorX="center"
-        anchorY="middle"
-        outlineWidth={0.3}
-        outlineColor="#0e1322"
-        rotation={[-Math.PI / 6, 0, 0]}
-      >
-        {spec.label}
-      </Text>
+      {/* Wobbling rim outline. lineLoop is unambiguously the three.js
+          primitive (vs SVG <line> which TS otherwise infers). */}
+      <lineLoop ref={lineRef as unknown as React.RefObject<THREE.LineLoop>}>
+        <primitive object={lineGeometry} attach="geometry" />
+        <lineBasicMaterial color={spec.color} transparent opacity={0.7} />
+      </lineLoop>
+      {/* Floating label — kept above the centroid so it's stable. */}
+      <group rotation={[Math.PI / 2, 0, 0]}>
+        <Text
+          position={[0, 4, -r * 0.4]}
+          fontSize={6}
+          color={spec.color}
+          anchorX="center"
+          anchorY="middle"
+          outlineWidth={0.3}
+          outlineColor="#0e1322"
+          rotation={[-Math.PI / 6, 0, 0]}
+        >
+          {spec.label}
+        </Text>
+      </group>
     </group>
   )
 }
@@ -1057,7 +1153,7 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
       <AtlasGround />
 
       {countryDisks.map((c) => (
-        <CountryDisk key={c.k} k={c.k} cx={c.cx} cz={c.cz} r={c.r} />
+        <CountryTerritory key={c.k} k={c.k} cx={c.cx} cz={c.cz} r={c.r} />
       ))}
 
       {planets.map((p) => (
@@ -1095,12 +1191,15 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
         enabled={orbitEnabled}
         enableDamping
         dampingFactor={0.12}
-        // Atlas tilt: look down from above; restrict so we can't flip under.
+        // Idle auto-rotate — very slow drift around the atlas so the whole
+        // map feels alive even when nobody's touching it. autoRotateSpeed
+        // is 2π rad/min at value 2.0; 0.18 ≈ one revolution every ~5 min.
+        autoRotate
+        autoRotateSpeed={0.18}
         minPolarAngle={0.2}
         maxPolarAngle={Math.PI / 2.2}
         minDistance={18}
         maxDistance={520}
-        // Pan in world units instead of screen pixels.
         screenSpacePanning={false}
       />
     </>
