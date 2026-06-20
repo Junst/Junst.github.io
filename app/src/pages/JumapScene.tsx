@@ -91,7 +91,7 @@ function placeByCountry(): Planet[] {
     byCountry.get(c)!.push(a)
   }
   const countryKeys = COUNTRIES.map((c) => c.key).filter((k) => byCountry.has(k))
-  const ringR = 170
+  const ringR = 220
   const cCentres: Record<string, { x: number; z: number }> = {}
   if (countryKeys.length === 1) cCentres[countryKeys[0]] = { x: 0, z: 0 }
   else countryKeys.forEach((k, i) => {
@@ -187,7 +187,7 @@ function placeByGenre(): Planet[] {
     byGenre.get(g)!.push(a)
   }
   const genreKeys = GENRES.map((g) => g.key).filter((k) => byGenre.has(k))
-  const ringR = 90
+  const ringR = 120
   const centres: Record<string, { x: number; z: number }> = {}
   if (genreKeys.length === 1) centres[genreKeys[0]] = { x: 0, z: 0 }
   else genreKeys.forEach((g, i) => {
@@ -363,6 +363,10 @@ function forceSettle(planets: Planet[]): void {
   const indexOf = new Map<string, number>()
   for (let i = 0; i < n; i++) indexOf.set(planets[i].name, i)
   const collabs = new Set<string>()
+  // memberPairs — solo artist ↔ their group (Sho Sakurai ↔ ARASHI,
+  // Lilas ↔ YOASOBI, etc). Stronger spring than collab so members
+  // sit visibly inside their group's gravity well.
+  const memberPairs = new Set<string>()
   for (let i = 0; i < n; i++) {
     for (const s of planets[i].artist.songs) {
       if (!s.features) continue
@@ -373,11 +377,23 @@ function forceSettle(planets: Planet[]): void {
         collabs.add(key)
       }
     }
+    const mo = planets[i].artist.memberOf
+    if (mo) {
+      for (const g of mo) {
+        const j = indexOf.get(g)
+        if (j == null || j === i) continue
+        const key = i < j ? `${i}|${j}` : `${j}|${i}`
+        memberPairs.add(key)
+      }
+    }
   }
   // Spring strength + comfortable distance for a collab pair.
   const COLLAB_PULL = 0.018
   const COLLAB_TARGET_DELTA = 12 // how far inside the min-separation gap
                                  // we'd LIKE the pair to settle.
+  // Members sit much closer than collaborators.
+  const MEMBER_PULL = 0.075
+  const MEMBER_TARGET_DELTA = 4  // basically tangent to each other
 
   for (let k = 0; k < 700; k++) {
     let maxs = 0
@@ -418,6 +434,17 @@ function forceSettle(planets: Planet[]): void {
           if (d > target) {
             const pullStrength = sameCountry ? COLLAB_PULL : COLLAB_PULL * 3
             const pull = (d - target) * pullStrength
+            fx -= (dx / d) * pull
+            fz -= (dz / d) * pull
+          }
+        }
+        // Member pull — much stronger than collab so members visibly sit
+        // right next to their group (Sho Sakurai ↔ ARASHI, Lilas ↔
+        // YOASOBI). Bypasses the cross-country gap entirely.
+        if (memberPairs.has(key)) {
+          const target = minD + MEMBER_TARGET_DELTA
+          if (d > target) {
+            const pull = (d - target) * MEMBER_PULL
             fx -= (dx / d) * pull
             fz -= (dz / d) * pull
           }
@@ -1365,16 +1392,16 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
       cx /= list.length; cz /= list.length
       const ds = list.map((p) => Math.hypot(p.x - cx, p.z - cz) + p.r * 1.4)
       ds.sort((a, b) => a - b)
-      // 85th percentile (or max for very small clusters) — keeps the
-      // boundary tight to the empire's body even when one artist is
-      // pulled out toward a feat. partner.
-      const pctIdx = Math.max(0, Math.min(ds.length - 1, Math.floor(ds.length * 0.85)))
-      const baseR = ds[pctIdx] + 4
+      // 95th percentile reaches almost every member; the clip pass
+      // below still keeps the empires from touching their neighbours.
+      const pctIdx = Math.max(0, Math.min(ds.length - 1, Math.floor(ds.length * 0.95)))
+      const baseR = ds[pctIdx] + 16
       out.push({ k, cx, cz, r: baseR, ...extra(k) })
     }
-    // Pairwise clip — guarantees no overlap. Wobble adds ~22% radius at
-    // peak, so reserve that headroom in the overlap test.
-    const HEADROOM = 1.22
+    // Pairwise clip — guarantees no overlap. The wobble + ellipse +
+    // pulse stack can push the rim up to ~45% past base at peak, so
+    // we keep that headroom reserved here.
+    const HEADROOM = 1.45
     for (let pass = 0; pass < 3; pass++) {
       for (let i = 0; i < out.length; i++) {
         for (let j = i + 1; j < out.length; j++) {

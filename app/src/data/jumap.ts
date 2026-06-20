@@ -1301,6 +1301,48 @@ export const artists: Artist[] = [
     origin: 'nl',
     songs: [],
   },
+
+  // ===== Fifth batch =====
+  {
+    name: 'GENERATIONS from EXILE TRIBE',
+    primaryGenre: 'jpop',
+    origin: 'jp',
+    songs: [
+      { title: 'Hard Knock Days', tier: 4, subTier: 3, genres: ['jpop'] },
+    ],
+  },
+  {
+    name: 'AAA',
+    primaryGenre: 'jpop',
+    origin: 'jp',
+    songs: [
+      { title: 'Wake up!', tier: 4, subTier: 1, genres: ['jpop'] },
+    ],
+  },
+  {
+    name: 'FIELD OF VIEW',
+    primaryGenre: 'jpop',
+    origin: 'jp',
+    songs: [
+      { title: 'DAN DAN 心魅かれてく', tier: 1, subTier: 0, genres: ['jpop', 'anime'] },
+    ],
+  },
+  {
+    name: '임재범',
+    primaryGenre: 'kpop',
+    origin: 'kr',
+    songs: [
+      { title: '이 밤이 지나면', tier: 4, subTier: 3, genres: ['kpop'] },
+    ],
+  },
+  {
+    name: 'BIGBANG',
+    primaryGenre: 'kpop',
+    origin: 'kr',
+    songs: [
+      { title: '하루하루', tier: 4, subTier: 3, genres: ['kpop'], year: 2008 },
+    ],
+  },
 ]
 
 // Pick a face for the bubble. Order of preference:
