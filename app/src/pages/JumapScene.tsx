@@ -96,7 +96,7 @@ function placeByCountry(): Planet[] {
   // (Poisson-disk targetR); the territory pad gets added at draw time.
   const empireR = countryKeys.map((k) => {
     const n = (byCountry.get(k) ?? []).length
-    return 16 + Math.sqrt(n) * 11
+    return 18 + Math.sqrt(n) * 18
   })
   const gapFactor = 1.45
   const totalCircum = empireR.reduce((s, r) => s + 2 * r * gapFactor, 0)
@@ -121,7 +121,7 @@ function placeByCountry(): Planet[] {
     // disk for each artist, rejecting candidates that fall too close to
     // already-placed planets. The result is irregular and natural —
     // tighter than phyllotaxis was, and never the same arc pattern.
-    const targetR = 16 + Math.sqrt(cluster.length) * 11
+    const targetR = 18 + Math.sqrt(cluster.length) * 18
     const placedHere: { x: number; z: number; r: number; genre: string }[] = []
     for (const a of cluster) {
       const r = bubbleRadius(a) * 0.10
@@ -202,18 +202,17 @@ function placeByGenre(): Planet[] {
   }
   const genreKeys = GENRES.map((g) => g.key).filter((k) => byGenre.has(k))
   // Per-genre estimated empire radius (planet sprawl only — pad is
-  // added later in territory rendering). sqrt(n) reflects 2D packing
-  // density; the constant matches the Poisson-disk targetR formula.
+  // added later in territory rendering). The √n curve reflects 2-D
+  // packing; the multiplier had to be ~60% bigger than the previous
+  // 11 because forceSettle's same-group minDist (~38–46 px) makes
+  // planets spread quite a bit wider than the Poisson scatter alone.
   const empireR = genreKeys.map((g) => {
     const n = (byGenre.get(g) ?? []).length
-    return 16 + Math.sqrt(n) * 11
+    return 18 + Math.sqrt(n) * 18
   })
-  // Super-ring radius is whatever is needed to fit every empire on a
-  // circle with a 35% inter-empire gap. Total circumference = Σ
-  // 2·r·gap_factor, so radius = circumference / (2π).
-  const gapFactor = 1.35
+  const gapFactor = 1.40
   const totalCircum = empireR.reduce((s, r) => s + 2 * r * gapFactor, 0)
-  const ringR = Math.max(60, totalCircum / (2 * Math.PI))
+  const ringR = Math.max(80, totalCircum / (2 * Math.PI))
   // Centroids are placed with angles weighted by each empire's radius
   // — big genres get more angular room than small ones. So jpop /
   // kpop / pop don't sit elbow-to-elbow with anime / edm.
@@ -232,7 +231,7 @@ function placeByGenre(): Planet[] {
   for (const genre of genreKeys) {
     const c = centres[genre]
     const cluster = sortArtists(byGenre.get(genre) ?? [])
-    const targetR = 16 + Math.sqrt(cluster.length) * 11
+    const targetR = 18 + Math.sqrt(cluster.length) * 18
     const placedHere: { x: number; z: number; r: number }[] = []
     for (const a of cluster) {
       const r = bubbleRadius(a) * 0.10
