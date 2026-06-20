@@ -805,7 +805,7 @@ function SongRow({ artist, song }: { artist: string; song: Song }) {
 
 // Single-song detail dialog opened by clicking a song moon. Reuses SongRow
 // so the layout matches the existing per-song card.
-function SongModal({
+export function SongModal({
   primaryArtist, song, onClose,
 }: {
   primaryArtist: string

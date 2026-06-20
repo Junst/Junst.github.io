@@ -892,6 +892,49 @@ html[data-theme="dark"] .jumap-back { background: rgba(20,20,20,0.7); }
     border-color: rgba(255,255,255,0.08);
   }
 }
+/* === Jumap 3D (three.js) =================================================== */
+.jumap-page-3d {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% 30%, #fff7ec 0%, #f1ece1 60%, #e5dccf 100%);
+}
+.jumap3d-stage {
+  position: absolute;
+  inset: 0;
+}
+.jumap3d-stage canvas.jumap3d-canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  touch-action: none;
+}
+.jumap3d-help {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: rgba(255,255,255,0.7);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.06);
+  pointer-events: none;
+  z-index: 6;
+}
+@media (max-width: 640px) {
+  .jumap3d-help { font-size: 0.62rem; padding: 4px 10px; }
+}
+
 /* Pseudo-3D: tilt the SVG content with a stronger CSS perspective so the
    canvas actually reads as a raked plane in space. The transform is on
    the SVG itself; the buttons / legend / toggles sit outside so they
