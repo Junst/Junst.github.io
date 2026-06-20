@@ -91,7 +91,7 @@ function placeByCountry(): Planet[] {
     byCountry.get(c)!.push(a)
   }
   const countryKeys = COUNTRIES.map((c) => c.key).filter((k) => byCountry.has(k))
-  const ringR = 220
+  const ringR = 320
   const cCentres: Record<string, { x: number; z: number }> = {}
   if (countryKeys.length === 1) cCentres[countryKeys[0]] = { x: 0, z: 0 }
   else countryKeys.forEach((k, i) => {
@@ -1395,17 +1395,21 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
       // 95th percentile reaches almost every member; the clip pass
       // below still keeps the empires from touching their neighbours.
       const pctIdx = Math.max(0, Math.min(ds.length - 1, Math.floor(ds.length * 0.95)))
-      // Padding scales with member count — Japan / Korea / USA get a
-      // wider buffer around their crowd than NL / NZ / TW which stay
-      // tight to their handful of artists.
-      const pad = 10 + Math.sqrt(list.length) * 4
+      // Padding scales linearly with member count so the divergence
+      // between Japan/Korea/USA and NL/UK/TW is dramatic, not just a
+      // few px difference. √n grew too slowly to matter.
+      //   1 act  → 8
+      //   4 acts → 14
+      //  22 acts → 41
+      //  38 acts → 65
+      //  50 acts → 83
+      const pad = 6 + list.length * 1.55
       const baseR = ds[pctIdx] + pad
       out.push({ k, cx, cz, r: baseR, ...extra(k) })
     }
-    // Pairwise clip — guarantees no overlap. The wobble + ellipse +
-    // pulse stack can push the rim up to ~45% past base at peak, so
-    // we keep that headroom reserved here.
-    const HEADROOM = 1.45
+    // Pairwise clip — guarantees no overlap. Headroom covers the
+    // wobble + ellipse + pulse stack at peak.
+    const HEADROOM = 1.30
     for (let pass = 0; pass < 3; pass++) {
       for (let i = 0; i < out.length; i++) {
         for (let j = i + 1; j < out.length; j++) {
