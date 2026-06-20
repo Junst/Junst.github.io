@@ -347,20 +347,24 @@ function Sphere({
       {tex ? (
         <meshStandardMaterial
           map={tex}
-          roughness={0.55}
+          roughness={0.45}
           metalness={0.05}
+          // Use the genre tint as an emissive tinted map so the planet's
+          // own photo stays the dominant colour but the rim picks up a
+          // genre-coloured halo against the dark backdrop.
           emissive={new THREE.Color(color)}
-          emissiveIntensity={em}
+          emissiveMap={tex}
+          emissiveIntensity={em + (dimmed ? 0 : 0.35)}
           transparent={transparent}
           opacity={opacity}
         />
       ) : (
         <meshStandardMaterial
           color={color}
-          roughness={0.45}
-          metalness={0.1}
+          roughness={0.4}
+          metalness={0.12}
           emissive={new THREE.Color(color)}
-          emissiveIntensity={em + (dimmed ? 0 : 0.12)}
+          emissiveIntensity={em + (dimmed ? 0 : 0.4)}
           transparent={transparent}
           opacity={opacity}
         />
@@ -405,8 +409,20 @@ function PlanetMesh({
         <meshBasicMaterial
           color={genre.color}
           transparent
-          opacity={dimmed ? 0.05 : hover ? 0.32 : 0.18}
+          opacity={dimmed ? 0.05 : hover ? 0.42 : 0.28}
           side={THREE.DoubleSide}
+        />
+      </mesh>
+      {/* Atmospheric halo — a slightly larger transparent sphere behind
+          the planet that gives a billboard-y bright rim so even small
+          T4/T5 planets stay visible against the dark backdrop. */}
+      <mesh>
+        <sphereGeometry args={[planet.r * 1.16, 24, 18]} />
+        <meshBasicMaterial
+          color={genre.color}
+          transparent
+          opacity={dimmed ? 0.02 : hover ? 0.32 : 0.18}
+          depthWrite={false}
         />
       </mesh>
       <Sphere
@@ -414,7 +430,7 @@ function PlanetMesh({
         radius={planet.r}
         color={genre.color}
         faceUrl={planet.faceUrl}
-        emissive={hover ? 0.35 : 0.1}
+        emissive={hover ? 0.5 : 0.22}
         dimmed={dimmed}
         onPointerDown={handleDown}
         onPointerOver={(e) => { e.stopPropagation(); setHover(true) }}
@@ -458,14 +474,25 @@ function MoonMesh({
     }
   })
   const art = albumArtFor(moon.ownerName, moon.song.title)
+  const genreColor = genreFor((moon.song.genres[0] || 'other').toLowerCase()).color
   return (
     <group ref={groupRef} position={[moon.x, 0, moon.z]}>
+      {/* Halo so the moon stays readable when tiny. */}
+      <mesh>
+        <sphereGeometry args={[moon.r * 1.25, 18, 14]} />
+        <meshBasicMaterial
+          color={genreColor}
+          transparent
+          opacity={dimmed ? 0.02 : hover ? 0.35 : 0.22}
+          depthWrite={false}
+        />
+      </mesh>
       <Sphere
         position={[0, 0, 0]}
         radius={moon.r}
-        color={genreFor((moon.song.genres[0] || 'other').toLowerCase()).color}
+        color={genreColor}
         faceUrl={art}
-        emissive={hover ? 0.4 : 0.15}
+        emissive={hover ? 0.55 : 0.32}
         dimmed={dimmed}
         onPointerDown={(e) => { e.stopPropagation(); onOpen(moon) }}
         onPointerOver={(e) => { e.stopPropagation(); setHover(true) }}
@@ -475,29 +502,28 @@ function MoonMesh({
   )
 }
 
-// Far-away starfield — 2500 fixed points on the inside of a large sphere.
-// Render once, no animations. Uses Points + PointsMaterial with vertex
-// colours so we can dust the field with a handful of brighter highlights.
+// Far-away starfield — 2500 fixed points on a large upper-hemisphere shell
+// so they sit above the atlas plane. Bottom half is left to the atlas
+// disk + space background so there's no "stars under the ground" weirdness.
 function Stars() {
   const { positions, colors } = useMemo(() => {
     const N = 2500
     const pos = new Float32Array(N * 3)
     const col = new Float32Array(N * 3)
     for (let i = 0; i < N; i++) {
-      // Random direction (uniform on unit sphere)
-      const u = Math.random() * 2 - 1
+      // Pick a direction uniformly on the upper hemisphere (y >= 0.05).
+      const u = 0.05 + Math.random() * 0.95 // 0.05..1 (always above horizon)
       const t = Math.random() * Math.PI * 2
       const s = Math.sqrt(1 - u * u)
       const r = 700 + Math.random() * 100
       pos[i * 3] = s * Math.cos(t) * r
-      pos[i * 3 + 1] = u * r * 0.6 + 40 // bias upward, atlas plane below
+      pos[i * 3 + 1] = u * r
       pos[i * 3 + 2] = s * Math.sin(t) * r
-      // Mostly faint white, sprinkle a few warm + cool tinted bright ones.
       const bright = Math.random() < 0.05 ? 1 : 0.4 + Math.random() * 0.35
       let cr = bright, cg = bright, cb = bright
       const tint = Math.random()
-      if (tint < 0.08) { cr *= 1; cg *= 0.85; cb *= 0.6 } // warm
-      else if (tint < 0.16) { cr *= 0.7; cg *= 0.85; cb *= 1 } // cool
+      if (tint < 0.08) { cr *= 1; cg *= 0.85; cb *= 0.6 }
+      else if (tint < 0.16) { cr *= 0.7; cg *= 0.85; cb *= 1 }
       col[i * 3] = cr
       col[i * 3 + 1] = cg
       col[i * 3 + 2] = cb
@@ -510,8 +536,51 @@ function Stars() {
         <bufferAttribute attach="attributes-position" count={positions.length / 3} array={positions} itemSize={3} />
         <bufferAttribute attach="attributes-color" count={colors.length / 3} array={colors} itemSize={3} />
       </bufferGeometry>
-      <pointsMaterial size={1.4} vertexColors transparent opacity={0.85} sizeAttenuation={false} />
+      <pointsMaterial size={1.6} vertexColors transparent opacity={0.9} sizeAttenuation={false} />
     </points>
+  )
+}
+
+// A single big disk under the planets, painted with a canvas-rendered
+// radial gradient so the alpha falls off smoothly to 0 at the rim. No
+// hard edge, no z-fighting between layers.
+function AtlasGround() {
+  const texture = useMemo(() => {
+    const size = 1024
+    const canvas = document.createElement('canvas')
+    canvas.width = size
+    canvas.height = size
+    const ctx = canvas.getContext('2d')!
+    const cx = size / 2
+    const cy = size / 2
+    const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, cx)
+    // Warm-cool atlas: bright-ish core fades to deep space at the rim.
+    g.addColorStop(0.00, 'rgba(58, 78, 130, 0.95)')
+    g.addColorStop(0.15, 'rgba(36, 50, 90, 0.85)')
+    g.addColorStop(0.40, 'rgba(22, 30, 60, 0.65)')
+    g.addColorStop(0.70, 'rgba(14, 18, 40, 0.35)')
+    g.addColorStop(1.00, 'rgba(10, 14, 28, 0)')
+    ctx.fillStyle = g
+    ctx.fillRect(0, 0, size, size)
+    // A faint concentric ring scribble so the floor doesn't look uniform.
+    ctx.globalCompositeOperation = 'lighter'
+    for (let r = 80; r < cx; r += 90) {
+      ctx.beginPath()
+      ctx.arc(cx, cy, r, 0, Math.PI * 2)
+      ctx.lineWidth = 1.1
+      ctx.strokeStyle = 'rgba(120, 150, 220, 0.06)'
+      ctx.stroke()
+    }
+    const tex = new THREE.CanvasTexture(canvas)
+    tex.colorSpace = THREE.SRGBColorSpace
+    tex.anisotropy = 4
+    return tex
+  }, [])
+  return (
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2, 0]}>
+      <planeGeometry args={[1400, 1400]} />
+      <meshBasicMaterial map={texture} transparent depthWrite={false} />
+    </mesh>
   )
 }
 
@@ -947,37 +1016,19 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
 
   return (
     <>
-      {/* Atmospheric background — fog so far-away things fade into the
-          ambient colour instead of hitting a hard plane edge. */}
-      <color attach="background" args={['#0e1322']} />
-      <fog attach="fog" args={['#0e1322', 220, 900]} />
+      {/* Deep-space background colour. No fog — the atlas disk uses an
+          alpha-falling texture so it blends without a hard edge, and fog
+          was creating visible banding on faraway stars. */}
+      <color attach="background" args={['#0a0e1c']} />
 
       {/* Lighting */}
-      <hemisphereLight args={[0xffffff, 0x40425a, 0.45]} />
+      <hemisphereLight args={[0xffffff, 0x40425a, 0.5]} />
       <directionalLight position={[60, 120, 80]} intensity={0.95} castShadow={false} />
-      <pointLight position={[-120, 60, -80]} intensity={0.45} color="#9fb8ff" />
-      <pointLight position={[120, 40, 120]} intensity={0.35} color="#ffb38a" />
+      <pointLight position={[-120, 60, -80]} intensity={0.4} color="#9fb8ff" />
+      <pointLight position={[120, 40, 120]} intensity={0.3} color="#ffb38a" />
 
-      {/* Distant star backdrop — random points on a huge sphere. The
-          points are 99% transparent so they read as faint dust except
-          for the brightest few. */}
       <Stars />
-      {/* Soft warm horizon disk just above the atlas plane so the
-          background doesn't read as a black void on bottom. */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -6, 0]}>
-        <ringGeometry args={[160, 700, 96, 1]} />
-        <meshBasicMaterial color="#1c1f30" transparent opacity={0.6} side={THREE.DoubleSide} />
-      </mesh>
-      {/* The atlas surface — a textured-feeling dark plane the planets
-          sit on. We use a radial gradient via a custom canvas texture. */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2, 0]}>
-        <circleGeometry args={[420, 96]} />
-        <meshBasicMaterial color="#161a2a" transparent opacity={0.92} />
-      </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.9, 0]}>
-        <ringGeometry args={[415, 420, 96]} />
-        <meshBasicMaterial color="#3a4670" transparent opacity={0.55} side={THREE.DoubleSide} />
-      </mesh>
+      <AtlasGround />
 
       {countryDisks.map((c) => (
         <CountryDisk key={c.k} k={c.k} cx={c.cx} cz={c.cz} r={c.r} />
