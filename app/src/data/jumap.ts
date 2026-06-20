@@ -763,6 +763,7 @@ export const artists: Artist[] = [
     primaryGenre: 'khiphop',
     origin: 'kr',
     songs: [
+      { title: '아까워',   tier: 2, subTier: 3, genres: ['khiphop'] },
       { title: '하루종일', tier: 3, subTier: 3, genres: ['khiphop'] },
     ],
   },
@@ -1702,6 +1703,25 @@ export const artists: Artist[] = [
     origin: 'kr',
     songs: [
       { title: 'Y', tier: 4, subTier: 2, genres: ['rnb', 'kpop'] },
+    ],
+  },
+  {
+    // Korean hip-hop duo Simon D + E-Sens, debuted 2009 under
+    // Amoeba Culture.
+    name: 'Supreme Team',
+    primaryGenre: 'khiphop',
+    origin: 'kr',
+    songs: [
+      { title: 'Supermagic', tier: 4, subTier: 2, genres: ['khiphop'] },
+    ],
+  },
+  {
+    // Korean rapper Choi Suk-bae. Mass Appeal Records Korea.
+    name: 'Nafla',
+    primaryGenre: 'khiphop',
+    origin: 'kr',
+    songs: [
+      { title: 'Wu', tier: 2, subTier: 2, genres: ['khiphop'] },
     ],
   },
 ]
