@@ -2105,6 +2105,16 @@ export const artists: Artist[] = [
       { title: 'Where Is The Love?', tier: 4, subTier: 3, genres: ['pop', 'hiphop'], year: 2003, album: 'Elephunk' },
     ],
   },
+  {
+    // American pop singer Kesha Rose Sebert; styled "Ke$ha" early
+    // career.
+    name: 'Ke$ha',
+    primaryGenre: 'pop',
+    origin: 'us',
+    songs: [
+      { title: 'Tik Tok', tier: 3, subTier: 1, genres: ['pop'], year: 2009, album: 'Animal' },
+    ],
+  },
 ]
 
 // Pick a face for the bubble. Order of preference:
