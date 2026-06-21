@@ -1609,8 +1609,9 @@ export const artists: Artist[] = [
     primaryGenre: 'hiphop',
     origin: 'us',
     songs: [
-      { title: 'Without Me', tier: 2, subTier: 1, genres: ['hiphop'], year: 2002, album: 'The Eminem Show' },
-      { title: 'Houdini',    tier: 3, subTier: 1, genres: ['hiphop'], year: 2024, album: 'The Death of Slim Shady (Coup de Grâce)' },
+      { title: 'Without Me',          tier: 2, subTier: 1, genres: ['hiphop'], year: 2002, album: 'The Eminem Show' },
+      { title: 'The Real Slim Shady', tier: 3, subTier: 2, genres: ['hiphop'], year: 2000, album: 'The Marshall Mathers LP' },
+      { title: 'Houdini',             tier: 3, subTier: 1, genres: ['hiphop'], year: 2024, album: 'The Death of Slim Shady (Coup de Grâce)' },
     ],
   },
   {
@@ -2049,6 +2050,60 @@ export const artists: Artist[] = [
     primaryGenre: 'hiphop',
     origin: 'us',
     songs: [],
+  },
+  {
+    // New Jersey emo / alt-rock band.
+    name: 'My Chemical Romance',
+    primaryGenre: 'rock',
+    origin: 'us',
+    songs: [
+      { title: 'Welcome to the Black Parade', tier: 3, subTier: 3, genres: ['rock'], year: 2006, album: 'The Black Parade' },
+    ],
+  },
+  {
+    // American singer-songwriter from Virginia.
+    name: 'Jason Mraz',
+    primaryGenre: 'pop',
+    origin: 'us',
+    songs: [
+      { title: "I'm Yours", tier: 4, subTier: 1, genres: ['pop'], year: 2008, album: 'We Sing. We Dance. We Steal Things.' },
+    ],
+  },
+  {
+    // American pop/rock singer-songwriter, Pennsylvania.
+    name: 'Vanessa Carlton',
+    primaryGenre: 'pop',
+    origin: 'us',
+    songs: [
+      { title: 'A Thousand Miles', tier: 4, subTier: 2, genres: ['pop'], year: 2002, album: 'Be Not Nobody' },
+    ],
+  },
+  {
+    // St. Louis rapper.
+    name: 'Nelly',
+    primaryGenre: 'hiphop',
+    origin: 'us',
+    songs: [
+      { title: 'Hot in Herre', tier: 4, subTier: 0, genres: ['hiphop'], year: 2002, album: 'Nellyville' },
+    ],
+  },
+  {
+    // American pop/country superstar.
+    name: 'Taylor Swift',
+    primaryGenre: 'pop',
+    origin: 'us',
+    songs: [
+      { title: 'You Belong With Me', tier: 4, subTier: 3, genres: ['pop'], year: 2008, album: 'Fearless' },
+    ],
+  },
+  {
+    // LA hip-hop / pop group; will.i.am, apl.de.ap, Taboo, Fergie.
+    name: 'Black Eyed Peas',
+    primaryGenre: 'pop',
+    origin: 'us',
+    songs: [
+      { title: 'Where Is The Love?', tier: 4, subTier: 3, genres: ['pop', 'hiphop'], year: 2003, album: 'Elephunk' },
+    ],
   },
 ]
 
