@@ -1,0 +1,142 @@
+{
+  "fetchedAt": "2026-06-20T17:47:20.332Z",
+  "ddragonVersion": "16.12.1",
+  "account": {
+    "gameName": "솔 봉",
+    "tagLine": "KR1"
+  },
+  "summoner": {
+    "profileIconId": 6498,
+    "summonerLevel": 84
+  },
+  "rank": [],
+  "topChampions": [
+    {
+      "championId": 31,
+      "championName": "Cho'Gath",
+      "championIdName": "Chogath",
+      "championLevel": 15,
+      "championPoints": 155266
+    },
+    {
+      "championId": 266,
+      "championName": "Aatrox",
+      "championIdName": "Aatrox",
+      "championLevel": 9,
+      "championPoints": 69235
+    },
+    {
+      "championId": 86,
+      "championName": "Garen",
+      "championIdName": "Garen",
+      "championLevel": 5,
+      "championPoints": 23344
+    },
+    {
+      "championId": 127,
+      "championName": "Lissandra",
+      "championIdName": "Lissandra",
+      "championLevel": 4,
+      "championPoints": 20042
+    },
+    {
+      "championId": 84,
+      "championName": "Akali",
+      "championIdName": "Akali",
+      "championLevel": 4,
+      "championPoints": 18991
+    }
+  ],
+  "recentMatches": [
+    {
+      "matchId": "KR_7308083156",
+      "gameMode": "CLASSIC",
+      "queueId": 420,
+      "gameStartTimestamp": 1727789945614,
+      "gameDuration": 1587,
+      "championName": "Chogath",
+      "championId": 31,
+      "championIdName": "Chogath",
+      "kills": 1,
+      "deaths": 9,
+      "assists": 0,
+      "kda": 0.11,
+      "win": false,
+      "position": "TOP",
+      "cs": 165,
+      "gold": 8622
+    },
+    {
+      "matchId": "KR_7308025351",
+      "gameMode": "CLASSIC",
+      "queueId": 420,
+      "gameStartTimestamp": 1727788309750,
+      "gameDuration": 1266,
+      "championName": "Chogath",
+      "championId": 31,
+      "championIdName": "Chogath",
+      "kills": 3,
+      "deaths": 2,
+      "assists": 3,
+      "kda": 3,
+      "win": true,
+      "position": "TOP",
+      "cs": 154,
+      "gold": 7906
+    },
+    {
+      "matchId": "KR_7307968643",
+      "gameMode": "CLASSIC",
+      "queueId": 420,
+      "gameStartTimestamp": 1727786747664,
+      "gameDuration": 1154,
+      "championName": "Amumu",
+      "championId": 32,
+      "championIdName": "Amumu",
+      "kills": 4,
+      "deaths": 3,
+      "assists": 5,
+      "kda": 3,
+      "win": true,
+      "position": "JUNGLE",
+      "cs": 114,
+      "gold": 7025
+    },
+    {
+      "matchId": "KR_7306672398",
+      "gameMode": "CLASSIC",
+      "queueId": 420,
+      "gameStartTimestamp": 1727711813700,
+      "gameDuration": 2028,
+      "championName": "Chogath",
+      "championId": 31,
+      "championIdName": "Chogath",
+      "kills": 0,
+      "deaths": 2,
+      "assists": 0,
+      "kda": 0,
+      "win": true,
+      "position": "TOP",
+      "cs": 89,
+      "gold": 6957
+    },
+    {
+      "matchId": "KR_7306577161",
+      "gameMode": "CLASSIC",
+      "queueId": 420,
+      "gameStartTimestamp": 1727708584913,
+      "gameDuration": 1748,
+      "championName": "Chogath",
+      "championId": 31,
+      "championIdName": "Chogath",
+      "kills": 7,
+      "deaths": 6,
+      "assists": 3,
+      "kda": 1.67,
+      "win": false,
+      "position": "TOP",
+      "cs": 221,
+      "gold": 12398
+    }
+  ]
+}

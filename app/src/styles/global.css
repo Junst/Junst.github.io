@@ -3280,17 +3280,17 @@ html[data-theme="dark"] .subpage-home-bar { background: rgba(20, 20, 20, 0.78); 
   border-radius: 9px;
   pointer-events: none;
 }
-.log-page .log-card-now { grid-column: span 7; }
-.log-page .log-card-hobbies { grid-column: span 5; }
-.log-page .log-card-stats { grid-column: span 5; }
-.log-page .log-card-tags { grid-column: span 7; }
-.log-page .log-card-log { grid-column: span 12; }
+.log-page .log-card-now      { grid-column: span 7; }
+.log-page .log-card-youtube  { grid-column: span 5; }
+.log-page .log-card-profile  { grid-column: span 7; }
+.log-page .log-card-champs   { grid-column: span 5; }
+.log-page .log-card-matches  { grid-column: span 12; }
 @media (max-width: 760px) {
   .log-page .log-card-now,
-  .log-page .log-card-hobbies,
-  .log-page .log-card-stats,
-  .log-page .log-card-tags,
-  .log-page .log-card-log { grid-column: span 12; }
+  .log-page .log-card-youtube,
+  .log-page .log-card-profile,
+  .log-page .log-card-champs,
+  .log-page .log-card-matches { grid-column: span 12; }
 }
 .log-page .log-card-head {
   display: flex;
@@ -3342,120 +3342,274 @@ html[data-theme="dark"] .subpage-home-bar { background: rgba(20, 20, 20, 0.78); 
   color: var(--y2k-ink);
 }
 
-/* Hobby list */
-.log-page .log-hobby-list {
+/* YouTube CTA */
+.log-page .log-yt-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255,58,165,0.4);
+  background: linear-gradient(135deg, rgba(255,58,165,0.08), rgba(181,108,255,0.06));
+  border-radius: 10px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+.log-page .log-yt-link:hover {
+  transform: translateY(-1px);
+  border-color: var(--y2k-hot);
+  background: linear-gradient(135deg, rgba(255,58,165,0.16), rgba(181,108,255,0.12));
+}
+.log-page .log-yt-logo {
+  width: 42px; height: 42px;
+  display: grid; place-items: center;
+  background: var(--y2k-hot);
+  color: #0a0a0a;
+  font-size: 1.4rem;
+  border-radius: 9px;
+  flex-shrink: 0;
+}
+.log-page .log-yt-text { flex: 1; min-width: 0; }
+.log-page .log-yt-handle {
+  font-family: 'y2k-overload', sans-serif;
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--y2k-ink);
+  letter-spacing: 0.02em;
+}
+.log-page .log-yt-sub {
+  font-family: 'y2k-bytebounce', monospace;
+  font-size: 0.8rem;
+  color: var(--y2k-blue);
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+}
+.log-page .log-yt-arrow {
+  font-family: 'y2k-overload', sans-serif;
+  font-size: 1.4rem;
+  color: var(--y2k-hot);
+}
+.log-page .log-yt-fallback {
+  display: block;
+  margin-top: 10px;
+  font-family: 'y2k-bytebounce', monospace;
+  font-size: 0.78rem;
+  color: var(--y2k-dim);
+  text-decoration: none;
+  letter-spacing: 0.05em;
+}
+.log-page .log-yt-fallback:hover { color: var(--y2k-ink); }
+
+/* Summoner card */
+.log-page .log-summoner {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+.log-page .log-summoner-icon {
+  width: 92px; height: 92px;
+  border-radius: 14px;
+  border: 2px solid rgba(200,255,58,0.4);
+  background: rgba(0,0,0,0.3);
+  flex-shrink: 0;
+  image-rendering: -webkit-optimize-contrast;
+}
+.log-page .log-summoner-body { flex: 1; min-width: 0; }
+.log-page .log-summoner-name {
+  font-family: 'y2k-overload', sans-serif;
+  font-weight: 700;
+  font-size: 1.55rem;
+  color: var(--y2k-ink);
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+}
+.log-page .log-summoner-tag {
+  font-family: 'y2k-bytebounce', monospace;
+  font-size: 0.9rem;
+  color: var(--y2k-blue);
+  margin-left: 6px;
+  letter-spacing: 0.04em;
+}
+.log-page .log-summoner-level {
+  margin-top: 4px;
+  font-family: 'y2k-granix', cursive;
+  font-size: 1.4rem;
+  color: var(--y2k-lime);
+}
+.log-page .log-rank-rows {
+  margin-top: 12px;
+  display: grid;
+  gap: 6px;
+}
+.log-page .log-rank-row {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 12px;
+  align-items: baseline;
+  padding: 6px 10px;
+  border: 1px dashed rgba(255,255,255,0.12);
+  border-radius: 8px;
+}
+.log-page .log-rank-q {
+  font-family: 'y2k-bytebounce', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  color: var(--y2k-blue);
+}
+.log-page .log-rank-v {
+  font-family: 'y2k-karma', serif;
+  font-size: 1rem;
+  color: var(--y2k-ink);
+}
+.log-page .log-rank-v em {
+  font-style: normal;
+  color: var(--y2k-dim);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+}
+.log-page .log-rank-unranked {
+  color: var(--y2k-dim);
+  font-family: 'y2k-bytebounce', monospace;
+  letter-spacing: 0.08em;
+}
+
+/* Top champions */
+.log-page .log-champ-list {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.log-page .log-champ-list li {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 10px;
+  border: 1px solid rgba(200,255,58,0.18);
+  background: rgba(200,255,58,0.04);
+  border-radius: 8px;
+}
+.log-page .log-champ-icon {
+  width: 38px; height: 38px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+  flex-shrink: 0;
+}
+.log-page .log-champ-meta { flex: 1; min-width: 0; }
+.log-page .log-champ-name {
+  font-family: 'y2k-overload', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--y2k-ink);
+  letter-spacing: 0.02em;
+}
+.log-page .log-champ-mastery {
+  font-family: 'y2k-bytebounce', monospace;
+  font-size: 0.82rem;
+  color: var(--y2k-lime);
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+}
+
+/* Recent matches */
+.log-page .log-fetched-at {
+  margin-left: auto;
+  font-family: 'y2k-bytebounce', monospace;
+  font-size: 0.78rem;
+  color: var(--y2k-dim);
+  letter-spacing: 0.06em;
+}
+.log-page .log-match-list {
   list-style: none;
   margin: 0; padding: 0;
   display: grid;
   gap: 10px;
 }
-.log-page .log-hobby-list li {
+.log-page .log-match-list li {
   display: flex;
-  gap: 12px;
-  align-items: center;
-  padding: 6px 10px;
-  border: 1px dashed rgba(255,255,255,0.15);
-  border-radius: 8px;
-}
-.log-page .log-hobby-tag { font-size: 1.1rem; }
-.log-page .log-hobby-label {
-  font-family: 'y2k-karma', serif;
-  font-size: 0.98rem;
-}
-
-/* Stats */
-.log-page .log-stats-list {
-  list-style: none;
-  margin: 0; padding: 0;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-.log-page .log-stats-list li {
-  border: 1px solid rgba(200,255,58,0.25);
-  background: rgba(200,255,58,0.04);
-  border-radius: 10px;
-  padding: 10px 12px;
-}
-.log-page .log-stats-val {
-  display: block;
-  font-family: 'y2k-overload', sans-serif;
-  font-weight: 700;
-  font-size: 2.2rem;
-  color: var(--y2k-lime);
-  line-height: 1;
-}
-.log-page .log-stats-key {
-  display: block;
-  margin-top: 4px;
-  font-family: 'y2k-bytebounce', monospace;
-  font-size: 0.78rem;
-  letter-spacing: 0.06em;
-  color: var(--y2k-dim);
-  text-transform: uppercase;
-}
-
-/* Vibe tags */
-.log-page .log-vibe-list {
-  list-style: none;
-  margin: 0; padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.log-page .log-vibe-list li {
-  font-family: 'y2k-granix', cursive;
-  font-size: 1.4rem;
-  padding: 4px 12px;
-  border: 1px solid rgba(181,108,255,0.45);
-  border-radius: 999px;
-  color: var(--y2k-violet);
-  background: rgba(181,108,255,0.08);
-}
-
-/* Log entries */
-.log-page .log-entries {
-  list-style: none;
-  margin: 0; padding: 0;
-  display: grid;
   gap: 14px;
-}
-.log-page .log-entries li {
-  padding: 12px 14px;
-  border-left: 3px solid var(--y2k-hot);
-  background: rgba(255,58,165,0.05);
+  align-items: center;
+  padding: 10px 12px;
+  border-left: 3px solid var(--y2k-dim);
+  background: rgba(255,255,255,0.02);
   border-radius: 0 8px 8px 0;
 }
-.log-page .log-entry-meta {
+.log-page .log-match-list li.win  { border-left-color: var(--y2k-lime); background: rgba(200,255,58,0.05); }
+.log-page .log-match-list li.loss { border-left-color: var(--y2k-hot);  background: rgba(255,58,165,0.05); }
+.log-page .log-match-champ {
+  width: 46px; height: 46px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+  flex-shrink: 0;
+}
+.log-page .log-match-meta { flex: 1; min-width: 0; }
+.log-page .log-match-head {
   display: flex;
   gap: 10px;
   align-items: baseline;
   flex-wrap: wrap;
 }
-.log-page .log-entry-date {
-  font-family: 'y2k-bytebounce', monospace;
-  font-size: 0.88rem;
-  color: var(--y2k-blue);
-  letter-spacing: 0.06em;
-}
-.log-page .log-entry-divider {
-  font-family: 'y2k-bytebounce', monospace;
-  color: var(--y2k-dim);
-}
-.log-page .log-entry-title {
+.log-page .log-match-result {
   font-family: 'y2k-overload', sans-serif;
   font-weight: 700;
-  font-size: 1.05rem;
-  color: var(--y2k-ink);
-  letter-spacing: 0.02em;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  padding: 2px 8px;
+  border-radius: 4px;
 }
-.log-page .log-entry-body {
-  margin: 8px 0 0;
+.log-page .log-match-result.win  { background: rgba(200,255,58,0.18); color: var(--y2k-lime); }
+.log-page .log-match-result.loss { background: rgba(255,58,165,0.18); color: var(--y2k-hot); }
+.log-page .log-match-queue {
+  font-family: 'y2k-bytebounce', monospace;
+  font-size: 0.78rem;
+  color: var(--y2k-blue);
+  letter-spacing: 0.08em;
+}
+.log-page .log-match-when {
+  font-family: 'y2k-bytebounce', monospace;
+  font-size: 0.78rem;
+  color: var(--y2k-dim);
+  margin-left: auto;
+}
+.log-page .log-match-body {
+  margin-top: 4px;
+  display: flex;
+  gap: 14px;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+.log-page .log-match-champ-name {
   font-family: 'y2k-karma', serif;
+  font-weight: 700;
   font-size: 1rem;
-  line-height: 1.55;
   color: var(--y2k-ink);
-  opacity: 0.92;
+}
+.log-page .log-match-kda {
+  font-family: 'y2k-overload', sans-serif;
+  font-size: 0.95rem;
+  color: var(--y2k-ink);
+  letter-spacing: 0.04em;
+}
+.log-page .log-match-kda-num {
+  font-family: 'y2k-bytebounce', monospace;
+  font-size: 0.82rem;
+  color: var(--y2k-violet);
+  letter-spacing: 0.06em;
+}
+.log-page .log-match-cs {
+  font-family: 'y2k-bytebounce', monospace;
+  font-size: 0.78rem;
+  color: var(--y2k-dim);
+  letter-spacing: 0.06em;
+}
+
+.log-page .log-loading {
+  font-family: 'y2k-bytebounce', monospace;
+  font-size: 0.88rem;
+  color: var(--y2k-dim);
+  letter-spacing: 0.06em;
+  padding: 12px 6px;
+  text-align: center;
 }
 
 /* Footer */
