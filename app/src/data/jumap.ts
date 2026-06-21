@@ -1971,6 +1971,25 @@ export const artists: Artist[] = [
       { title: "Don't Stop Me Now", tier: 2, subTier: 2, genres: ['rock', 'pop'], year: 1978, album: 'Jazz' },
     ],
   },
+  {
+    // British rock — Chris Martin, Jonny Buckland, Guy Berryman, Will
+    // Champion.
+    name: 'Coldplay',
+    primaryGenre: 'rock',
+    origin: 'uk',
+    songs: [
+      { title: 'Viva La Vida', tier: 5, subTier: 2, genres: ['rock', 'pop'], year: 2008, album: 'Viva la Vida or Death and All His Friends' },
+    ],
+  },
+  {
+    // American pop/rock band fronted by Adam Levine.
+    name: 'Maroon 5',
+    primaryGenre: 'pop',
+    origin: 'us',
+    songs: [
+      { title: 'Sugar', tier: 5, subTier: 2, genres: ['pop', 'rock'], year: 2014, album: 'V' },
+    ],
+  },
 ]
 
 // Pick a face for the bubble. Order of preference:
