@@ -415,7 +415,7 @@ export const artists: Artist[] = [
     primaryGenre: 'hiphop',
     origin: 'us',
     songs: [
-      { title: 'Not Like Us', tier: 2, subTier: 3, genres: ['hiphop'], year: 2024 },
+      { title: 'Not Like Us', tier: 1, subTier: 0, genres: ['hiphop'], year: 2024 },
       { title: 'Euphoria',    tier: 1, subTier: 2, genres: ['hiphop'], year: 2024 },
       { title: 'HUMBLE.',     tier: 2, subTier: 3, genres: ['hiphop'], year: 2017, album: 'DAMN.' },
       { title: 'Luther',      tier: 2, subTier: 3, genres: ['hiphop', 'rnb'], features: ['SZA'] },
@@ -1610,6 +1610,7 @@ export const artists: Artist[] = [
     origin: 'us',
     songs: [
       { title: 'Without Me', tier: 2, subTier: 1, genres: ['hiphop'], year: 2002, album: 'The Eminem Show' },
+      { title: 'Houdini',    tier: 3, subTier: 1, genres: ['hiphop'], year: 2024, album: 'The Death of Slim Shady (Coup de Grâce)' },
     ],
   },
   {
@@ -1989,6 +1990,65 @@ export const artists: Artist[] = [
     songs: [
       { title: 'Sugar', tier: 5, subTier: 2, genres: ['pop', 'rock'], year: 2014, album: 'V' },
     ],
+  },
+  {
+    // LA-based indie pop / soul band fronted by Michael Fitzpatrick.
+    name: 'Fitz and the Tantrums',
+    primaryGenre: 'pop',
+    origin: 'us',
+    songs: [
+      { title: 'HandClap', tier: 4, subTier: 1, genres: ['pop', 'rock'], year: 2016, album: 'Fitz and the Tantrums' },
+    ],
+  },
+  {
+    // British (Zimbabwean-born) pop/dance singer.
+    name: 'Taio Cruz',
+    primaryGenre: 'pop',
+    origin: 'uk',
+    songs: [
+      { title: 'Hangover', tier: 3, subTier: 3, genres: ['pop'], year: 2011, album: 'TY.O', features: ['Flo Rida'] },
+    ],
+  },
+  {
+    // American rapper from Florida.
+    name: 'Flo Rida',
+    primaryGenre: 'hiphop',
+    origin: 'us',
+    songs: [],
+  },
+  {
+    // Canadian pop singer-songwriter.
+    name: 'Shawn Mendes',
+    primaryGenre: 'pop',
+    origin: 'ca',
+    songs: [
+      { title: "If I Can't Have You", tier: 3, subTier: 3, genres: ['pop'], year: 2019 },
+    ],
+  },
+  {
+    // American hip-hop. Ye.
+    name: 'Kanye West',
+    primaryGenre: 'hiphop',
+    origin: 'us',
+    songs: [
+      { title: 'On Sight', tier: 3, subTier: 3, genres: ['hiphop'], year: 2013, album: 'Yeezus' },
+    ],
+  },
+  {
+    // Cuban-American pop singer; ex-Fifth Harmony.
+    name: 'Camila Cabello',
+    primaryGenre: 'pop',
+    origin: 'us',
+    songs: [
+      { title: 'Havana', tier: 2, subTier: 2, genres: ['pop'], year: 2017, album: 'Camila', features: ['Young Thug'] },
+    ],
+  },
+  {
+    // Atlanta rapper.
+    name: 'Young Thug',
+    primaryGenre: 'hiphop',
+    origin: 'us',
+    songs: [],
   },
 ]
 
