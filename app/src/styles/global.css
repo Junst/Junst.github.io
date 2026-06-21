@@ -3284,12 +3284,14 @@ html[data-theme="dark"] .subpage-home-bar { background: rgba(20, 20, 20, 0.78); 
 .log-page .log-card-profile  { grid-column: span 7; }
 .log-page .log-card-champs   { grid-column: span 5; }
 .log-page .log-card-matches  { grid-column: span 12; }
+.log-page .log-card-tft      { grid-column: span 12; }
 @media (max-width: 760px) {
   .log-page .log-card-now,
   .log-page .log-card-youtube,
   .log-page .log-card-profile,
   .log-page .log-card-champs,
-  .log-page .log-card-matches { grid-column: span 12; }
+  .log-page .log-card-matches,
+  .log-page .log-card-tft { grid-column: span 12; }
 }
 .log-page .log-card-head {
   display: flex;
@@ -3623,6 +3625,161 @@ html[data-theme="dark"] .subpage-home-bar { background: rgba(20, 20, 20, 0.78); 
   font-size: 0.78rem;
   color: var(--y2k-dim);
   letter-spacing: 0.06em;
+}
+
+/* TFT ladder */
+.log-page .log-tft-rank-chip {
+  margin-left: auto;
+  font-family: 'y2k-overload', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--y2k-violet), var(--y2k-hot));
+  padding: 4px 12px;
+  border-radius: 999px;
+  box-shadow: 0 2px 0 rgba(155,91,255,0.25);
+}
+.log-page .log-tft-rank-chip em {
+  font-style: normal;
+  color: rgba(255,255,255,0.82);
+  font-size: 0.82rem;
+}
+.log-page .log-tft-rank-unranked {
+  background: var(--y2k-silver);
+  color: var(--y2k-ink);
+  box-shadow: none;
+}
+.log-page .log-tft-list {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.log-page .log-tft-list li {
+  display: flex;
+  gap: 14px;
+  align-items: stretch;
+  padding: 10px 12px;
+  border-left: 4px solid var(--y2k-silver);
+  background: linear-gradient(180deg, #ffffff, #f5f8ff);
+  border-radius: 0 12px 12px 0;
+  box-shadow: 0 1px 0 rgba(155,91,255,0.08);
+}
+.log-page .log-tft-list li.tft-first {
+  border-left-color: #e8b800;
+  background: linear-gradient(180deg, #fffceb, #fff4c5);
+}
+.log-page .log-tft-list li.tft-top {
+  border-left-color: var(--y2k-lime);
+  background: linear-gradient(180deg, #fcffea, #f0ffd0);
+}
+.log-page .log-tft-list li.tft-bot {
+  border-left-color: var(--y2k-hot);
+  background: linear-gradient(180deg, #fff5fa, #ffe5f0);
+}
+.log-page .log-tft-placement {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-width: 64px;
+  padding: 4px 10px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1.5px solid var(--y2k-silver);
+  box-shadow: 0 2px 0 rgba(155,91,255,0.12);
+}
+.log-page .log-tft-placement.tft-first {
+  background: linear-gradient(135deg, #ffe770, #ffc100);
+  border-color: #e8b800;
+  color: #5a3d00;
+}
+.log-page .log-tft-placement.tft-top  {
+  background: linear-gradient(135deg, #d8ff9c, var(--y2k-lime));
+  border-color: var(--y2k-lime);
+  color: #1f4a00;
+}
+.log-page .log-tft-placement.tft-bot  {
+  background: linear-gradient(135deg, #ffd1e5, var(--y2k-hot));
+  border-color: var(--y2k-hot);
+  color: #ffffff;
+}
+.log-page .log-tft-placement-num {
+  font-family: 'y2k-overload', sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+.log-page .log-tft-placement-set {
+  font-family: 'y2k-bytebounce', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+  opacity: 0.85;
+}
+.log-page .log-tft-meta { flex: 1; min-width: 0; }
+.log-page .log-tft-head {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+.log-page .log-tft-queue {
+  font-family: 'y2k-bytebounce', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  color: var(--y2k-violet);
+}
+.log-page .log-tft-level {
+  font-family: 'y2k-karma', serif;
+  font-weight: 700;
+  color: var(--y2k-ink);
+}
+.log-page .log-tft-units {
+  font-family: 'y2k-bytebounce', monospace;
+  font-size: 0.78rem;
+  color: var(--y2k-dim);
+}
+.log-page .log-tft-when {
+  margin-left: auto;
+  font-family: 'y2k-bytebounce', monospace;
+  font-size: 0.78rem;
+  color: var(--y2k-dim);
+}
+.log-page .log-tft-traits {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.log-page .log-tft-traits li {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-family: 'y2k-karma', serif;
+  font-size: 0.85rem;
+  border: 1px solid;
+  background: #ffffff;
+}
+.log-page .log-tft-traits li b {
+  font-family: 'y2k-overload', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.log-page .log-tft-traits li.trait-bronze    { border-color: #b46e3b; color: #6b3f1c; background: #f6e1cb; }
+.log-page .log-tft-traits li.trait-silver    { border-color: #8a9bbc; color: #2e3f5a; background: #e3ebf7; }
+.log-page .log-tft-traits li.trait-gold      { border-color: #e0a900; color: #6b4d00; background: #fff3b0; }
+.log-page .log-tft-traits li.trait-chromatic { border-color: var(--y2k-violet); color: var(--y2k-violet); background: #f1e6ff; }
+.log-page .log-tft-traits li.trait-unique    {
+  border-color: var(--y2k-hot);
+  color: var(--y2k-hot);
+  background: linear-gradient(135deg, #fff0f8, #fde1ef);
 }
 
 .log-page .log-loading {

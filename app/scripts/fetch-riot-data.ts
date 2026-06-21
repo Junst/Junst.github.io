@@ -74,6 +74,37 @@ interface MatchDto {
   }
 }
 
+interface TftMatchDto {
+  metadata: { match_id: string; participants: string[] }
+  info: {
+    game_datetime: number
+    game_length: number
+    queue_id: number
+    tft_set_number: number
+    participants: Array<{
+      puuid: string
+      placement: number
+      level: number
+      last_round: number
+      players_eliminated: number
+      time_eliminated: number
+      gold_left: number
+      total_damage_to_players: number
+      traits: Array<{
+        name: string
+        num_units: number
+        style: number
+        tier_current: number
+      }>
+      units: Array<{
+        character_id: string
+        tier: number
+        rarity: number
+      }>
+    }>
+  }
+}
+
 async function main() {
   console.log(`[riot] Looking up ${GAME_NAME}#${TAG_LINE} on ${ROUTE}/${PLATFORM}`)
 
@@ -178,6 +209,75 @@ async function main() {
     }
   })
 
+  // 7. TFT — ranked entries + recent matches. Same puuid, different
+  //    endpoints. Wrapped so a TFT-side outage / missing data doesn't
+  //    break the LoL fetch.
+  let tftRank: LeagueEntry[] = []
+  try {
+    tftRank = await fetchJson<LeagueEntry[]>(
+      `https://${PLATFORM}.api.riotgames.com/tft/league/v1/by-puuid/${account.puuid}`,
+      'TftLeague',
+    )
+  } catch (e) {
+    console.warn(`[riot] TFT rank skipped: ${(e as Error).message}`)
+  }
+
+  let tftMatchIds: string[] = []
+  try {
+    tftMatchIds = await fetchJson<string[]>(
+      `https://${ROUTE}.api.riotgames.com/tft/match/v1/matches/by-puuid/${account.puuid}/ids?start=0&count=5`,
+      'TftMatchIds',
+    )
+  } catch (e) {
+    console.warn(`[riot] TFT match ids skipped: ${(e as Error).message}`)
+  }
+
+  const tftMatches: TftMatchDto[] = []
+  for (const id of tftMatchIds) {
+    try {
+      tftMatches.push(await fetchJson<TftMatchDto>(
+        `https://${ROUTE}.api.riotgames.com/tft/match/v1/matches/${id}`,
+        `TftMatch ${id}`,
+      ))
+    } catch (e) {
+      console.warn(`[riot] skipping ${id}: ${(e as Error).message}`)
+    }
+  }
+
+  // Build a focused per-match view: placement, level, top traits + units.
+  // TFT trait names are like "TFT15_Edgelord" — strip the set prefix for
+  // display; tier 0 traits are inactive so they're filtered out.
+  const myTftMatches = tftMatches
+    .map((m) => {
+      const me = m.info.participants.find((p) => p.puuid === account.puuid)
+      if (!me) return null
+      const activeTraits = me.traits
+        .filter((t) => t.tier_current > 0)
+        .sort((a, b) => b.style - a.style || b.tier_current - a.tier_current || b.num_units - a.num_units)
+        .slice(0, 4)
+        .map((t) => ({
+          name: t.name.replace(/^TFT\d+_/, ''),
+          numUnits: t.num_units,
+          tier: t.tier_current,
+          style: t.style,
+        }))
+      return {
+        matchId: m.metadata.match_id,
+        gameDatetime: m.info.game_datetime,
+        gameLength: Math.round(m.info.game_length),
+        queueId: m.info.queue_id,
+        tftSet: m.info.tft_set_number,
+        placement: me.placement,
+        level: me.level,
+        lastRound: me.last_round,
+        playersEliminated: me.players_eliminated,
+        goldLeft: me.gold_left,
+        traits: activeTraits,
+        unitCount: me.units.length,
+      }
+    })
+    .filter(Boolean)
+
   const out = {
     fetchedAt: new Date().toISOString(),
     ddragonVersion: ddVersion,
@@ -189,10 +289,14 @@ async function main() {
     rank: leagues,
     topChampions,
     recentMatches: myMatches,
+    tft: {
+      rank: tftRank,
+      recentMatches: myTftMatches,
+    },
   }
 
   writeFileSync('public/data/riot.json', JSON.stringify(out, null, 2))
-  console.log(`[riot] wrote public/data/riot.json — level ${summoner.summonerLevel}, ${leagues.length} queues, ${myMatches.length} matches`)
+  console.log(`[riot] wrote public/data/riot.json — level ${summoner.summonerLevel}, ${leagues.length} LoL queues, ${myMatches.length} LoL matches, ${tftRank.length} TFT queues, ${myTftMatches.length} TFT matches`)
 }
 
 main().catch((err) => {

@@ -53,6 +53,30 @@ interface RiotData {
     cs: number
     gold: number
   }>
+  tft?: {
+    rank: Array<{
+      queueType: string
+      tier: string
+      rank: string
+      leaguePoints: number
+      wins: number
+      losses: number
+    }>
+    recentMatches: Array<{
+      matchId: string
+      gameDatetime: number
+      gameLength: number
+      queueId: number
+      tftSet: number
+      placement: number
+      level: number
+      lastRound: number
+      playersEliminated: number
+      goldLeft: number
+      traits: Array<{ name: string; numUnits: number; tier: number; style: number }>
+      unitCount: number
+    }>
+  }
   placeholder?: boolean
 }
 
@@ -89,6 +113,39 @@ function queueLabel(id: number): string {
   if (id === 900) return 'URF'
   return `Q ${id}`
 }
+function tftQueueLabel(id: number): string {
+  if (id === 1100) return 'RANKED'
+  if (id === 1090) return 'NORMAL'
+  if (id === 1130) return 'HYPER ROLL'
+  if (id === 1160) return 'DOUBLE UP'
+  if (id === 1170) return 'CHONCC'
+  return `Q ${id}`
+}
+function placementOrdinal(n: number): string {
+  if (n === 1) return '1st'
+  if (n === 2) return '2nd'
+  if (n === 3) return '3rd'
+  return `${n}th`
+}
+function placementClass(n: number): string {
+  if (n === 1) return 'first'
+  if (n <= 4) return 'top'
+  return 'bot'
+}
+function traitStyleClass(style: number): string {
+  if (style >= 5) return 'unique'
+  if (style >= 4) return 'chromatic'
+  if (style >= 3) return 'gold'
+  if (style >= 2) return 'silver'
+  return 'bronze'
+}
+function cleanTraitName(raw: string): string {
+  // Strip Riot's internal "UniqueTrait" / "Trait" suffix and split CamelCase.
+  return raw
+    .replace(/UniqueTrait$/, '')
+    .replace(/Trait$/, '')
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+}
 
 function Marquee({ children }: { children: string }) {
   return (
@@ -122,6 +179,8 @@ export function LogPage() {
 
   const soloRank = data?.rank.find((r) => r.queueType === 'RANKED_SOLO_5x5')
   const flexRank = data?.rank.find((r) => r.queueType === 'RANKED_FLEX_SR')
+  const tftRank = data?.tft?.rank.find((r) => r.queueType === 'RANKED_TFT')
+  const tftMatches = data?.tft?.recentMatches ?? []
   const hasRiot = data && !data.placeholder
 
   return (
@@ -309,6 +368,55 @@ export function LogPage() {
                 ? '[no data yet — run `npm run riot` with a fresh RIOT_API_KEY]'
                 : '[loading…]'}
             </div>
+          )}
+        </section>
+
+        {/* TFT ladder + recent placements */}
+        <section className="log-card log-card-tft">
+          <header className="log-card-head">
+            <span className="log-card-tag">[granix]</span>
+            <h2>TFT.LADDER</h2>
+            {tftRank && (
+              <span className="log-tft-rank-chip">
+                {tftRank.tier} {tftRank.rank} · {tftRank.leaguePoints} LP
+                <em> · {tftRank.wins}W / {tftRank.losses}L</em>
+              </span>
+            )}
+            {!tftRank && data && (
+              <span className="log-tft-rank-chip log-tft-rank-unranked">UNRANKED</span>
+            )}
+          </header>
+          {hasRiot && tftMatches.length > 0 ? (
+            <ol className="log-tft-list">
+              {tftMatches.map((m) => (
+                <li key={m.matchId} className={`tft-${placementClass(m.placement)}`}>
+                  <div className={`log-tft-placement tft-${placementClass(m.placement)}`}>
+                    <span className="log-tft-placement-num">{placementOrdinal(m.placement)}</span>
+                    <span className="log-tft-placement-set">set {m.tftSet}</span>
+                  </div>
+                  <div className="log-tft-meta">
+                    <div className="log-tft-head">
+                      <span className="log-tft-queue">{tftQueueLabel(m.queueId)}</span>
+                      <span className="log-tft-level">lvl {m.level}</span>
+                      <span className="log-tft-units">{m.unitCount} units</span>
+                      <span className="log-tft-when">{fmtTimeAgo(m.gameDatetime)}</span>
+                    </div>
+                    {m.traits.length > 0 && (
+                      <ul className="log-tft-traits">
+                        {m.traits.map((t, i) => (
+                          <li key={`${m.matchId}-${i}`} className={`trait-${traitStyleClass(t.style)}`}>
+                            <b>{t.numUnits}</b>
+                            <span>{cleanTraitName(t.name)}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <div className="log-loading">[no tft data]</div>
           )}
         </section>
       </main>
