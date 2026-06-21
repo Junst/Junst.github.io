@@ -1540,49 +1540,67 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
     groups: Map<T, Planet[]>,
     extra: (k: T) => { color?: string; label?: string } = () => ({}),
   ) {
-    const out: Array<{ k: T; cx: number; cz: number; r: number; color?: string; label?: string }> = []
+    // Containment-first sizing: every member must sit inside its own
+    // empire's disk. We track a `required` radius (the minimum that
+    // encloses every member from the current centroid) and a `desired`
+    // radius (required + breathing pad). The clip pass below is allowed
+    // to shrink toward `required` but never below it — if neighbours
+    // really cannot fit, we push centroids further apart instead.
+    type Disk = {
+      k: T
+      cx: number; cz: number
+      r: number
+      required: number
+      members: Planet[]
+      color?: string
+      label?: string
+    }
+    const out: Disk[] = []
     for (const [k, list] of groups) {
       if (list.length === 0) continue
       let cx = 0, cz = 0
       for (const p of list) { cx += p.x; cz += p.z }
       cx /= list.length; cz /= list.length
-      const ds = list.map((p) => Math.hypot(p.x - cx, p.z - cz) + p.r * 1.4)
-      ds.sort((a, b) => a - b)
-      // 95th percentile reaches almost every member; the clip pass
-      // below still keeps the empires from touching their neighbours.
-      const pctIdx = Math.max(0, Math.min(ds.length - 1, Math.floor(ds.length * 0.95)))
-      // Padding scales linearly with member count so the divergence
-      // between Japan/Korea/USA and NL/UK/TW is dramatic, not just a
-      // few px difference. √n grew too slowly to matter.
-      //   1 act  → 8
-      //   4 acts → 14
-      //  22 acts → 41
-      //  38 acts → 65
-      //  50 acts → 83
-      // Padding hugs the cluster — France (2 acts), Canada (4),
-      // Sweden (1) etc. only get a couple px buffer; USA (~30) is
-      // also brought down a notch.
-      const pad = Math.max(2, list.length * 0.7)
-      // Hard cap on territory radius based on member count. Without
-      // this, a 2-act empire whose member gets dragged 30 px across
-      // the border by a feat. pull blows the 95th-percentile up to
-      // ~30 and the territory looks oversized compared to its 2 actual
-      // residents (France with Camille pulled toward Michael Giacchino
-      // is the canonical case).
-      const radiusCap = Math.max(14, 8 + Math.sqrt(list.length) * 13)
-      const baseR = Math.min(ds[pctIdx] + pad, radiusCap)
-      out.push({ k, cx, cz, r: baseR, ...extra(k) })
+      const maxDist = list.reduce(
+        (acc, p) => Math.max(acc, Math.hypot(p.x - cx, p.z - cz) + p.r * 1.4),
+        0,
+      )
+      // Breathing pad scales linearly with member count so big empires
+      // (Korea ~30, USA ~30, Japan ~22) get more visual padding than
+      // single-act territories (Sweden, NL). France/Canada with 2-4
+      // members get only a couple px of buffer.
+      const pad = Math.max(3, list.length * 0.6)
+      out.push({
+        k,
+        cx, cz,
+        r: maxDist + pad,
+        required: maxDist + 2,
+        members: list,
+        ...extra(k),
+      })
     }
 
-    // Pass 0 — push apart territory CENTROIDS that are too close, before
-    // the clip pass touches their radii. The mean position of a small
-    // empire can drift toward a neighbour when a cross-border feat. drags
-    // a member across the line (France's Camille pulled toward USA's
-    // Michael Giacchino is the canonical case). Instead of shrinking
-    // both empires to fit, we shove the smaller one away so France can
-    // sit further from USA without having to give up territory.
+    // Re-derive containment radius from the current centroid + members.
+    // Called whenever a centroid moves so the disk follows.
+    function refit(d: Disk) {
+      let m = 0
+      for (const p of d.members) {
+        const dist = Math.hypot(p.x - d.cx, p.z - d.cz) + p.r * 1.4
+        if (dist > m) m = dist
+      }
+      const pad = Math.max(3, d.members.length * 0.6)
+      d.required = m + 2
+      d.r = Math.max(d.r, m + pad)
+    }
+
+    // Pass 0 — push apart any centroids that overlap given current
+    // radii. Containment radii are recomputed after each move so the
+    // disk always encloses every artist (was a bug: pushing the
+    // centroid without recomputing left France's disk floating away
+    // from its actual members).
     const PUSH_HEAD = 1.18
-    for (let pass = 0; pass < 5; pass++) {
+    for (let pass = 0; pass < 8; pass++) {
+      let moved = false
       for (let i = 0; i < out.length; i++) {
         for (let j = i + 1; j < out.length; j++) {
           const A = out[i], B = out[j]
@@ -1591,8 +1609,8 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
           const dist = Math.hypot(dx, dz) || 0.01
           const minSep = (A.r + B.r) * PUSH_HEAD + 6
           if (dist < minSep) {
+            moved = true
             const push = (minSep - dist) * 0.5
-            // Move smaller empire more; weighted by other's size.
             const totalR = A.r + B.r
             const shareA = totalR > 0 ? B.r / totalR : 0.5
             const shareB = 1 - shareA
@@ -1600,31 +1618,59 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
             A.cz += (dz / dist) * push * shareA
             B.cx -= (dx / dist) * push * shareB
             B.cz -= (dz / dist) * push * shareB
+            refit(A); refit(B)
           }
         }
       }
+      if (!moved) break
     }
 
-    // Pass 1 — pairwise clip as before. Should rarely fire after the
-    // push pass above moved the centroids apart.
-    const HEADROOM = 1.30
-    for (let pass = 0; pass < 3; pass++) {
+    // Pass 1 — pairwise clip if any overlap remains, but never shrink
+    // below the containment-required radius. If we'd need to, push the
+    // centroids further apart instead so containment + separation both
+    // hold.
+    const HEADROOM = 1.18
+    for (let pass = 0; pass < 4; pass++) {
+      let changed = false
       for (let i = 0; i < out.length; i++) {
         for (let j = i + 1; j < out.length; j++) {
           const A = out[i], B = out[j]
-          const dist = Math.hypot(A.cx - B.cx, A.cz - B.cz)
-          const overlap = (A.r + B.r) * HEADROOM - dist + 2 /* small gap */
-          if (overlap > 0) {
-            const total = A.r + B.r
-            const shareA = total > 0 ? A.r / total : 0.5
-            A.r -= overlap * shareA / HEADROOM
-            B.r -= overlap * (1 - shareA) / HEADROOM
+          const dx = A.cx - B.cx
+          const dz = A.cz - B.cz
+          const dist = Math.hypot(dx, dz) || 0.01
+          const overlap = (A.r + B.r) * HEADROOM - dist + 2
+          if (overlap <= 0) continue
+          changed = true
+          // First try shrinking — but only the slack above each disk's
+          // required radius can be given back.
+          const slackA = Math.max(0, A.r - A.required)
+          const slackB = Math.max(0, B.r - B.required)
+          const slackTotal = slackA + slackB
+          const shrink = Math.min(overlap, slackTotal)
+          if (shrink > 0 && slackTotal > 0) {
+            A.r -= shrink * (slackA / slackTotal)
+            B.r -= shrink * (slackB / slackTotal)
+          }
+          // Whatever overlap remains after eating slack — push the
+          // centroids apart, then refit so containment stays intact.
+          const remaining = overlap - shrink
+          if (remaining > 0) {
+            const totalR = A.r + B.r
+            const shareA = totalR > 0 ? B.r / totalR : 0.5
+            const shareB = 1 - shareA
+            const push = remaining * 0.55
+            A.cx += (dx / dist) * push * shareA
+            A.cz += (dz / dist) * push * shareA
+            B.cx -= (dx / dist) * push * shareB
+            B.cz -= (dz / dist) * push * shareB
+            refit(A); refit(B)
           }
         }
       }
+      if (!changed) break
     }
     for (const t of out) if (t.r < 4) t.r = 4
-    return out
+    return out.map(({ k, cx, cz, r, color, label }) => ({ k, cx, cz, r, color, label }))
   }
 
   // Genre territory: outer blob per genre FAMILY (so pop / jpop / kpop
