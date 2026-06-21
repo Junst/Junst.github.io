@@ -916,6 +916,8 @@ export const artists: Artist[] = [
     origin: 'jp',
     songs: [
       { title: '犬かキャットかで死ぬまで喧嘩しよう!', tier: 1, subTier: 2, genres: ['jpop'] },
+      { title: 'ノーダウト',                          tier: 4, subTier: 2, genres: ['jpop'] },
+      { title: '宿命',                                tier: 4, subTier: 3, genres: ['jpop'] },
     ],
   },
 
@@ -1012,6 +1014,7 @@ export const artists: Artist[] = [
     origin: 'uk',
     songs: [
       { title: 'Let It Be', tier: 4, subTier: 2, genres: ['rock'], year: 1970, album: 'Let It Be' },
+      { title: 'Hey Jude',  tier: 3, subTier: 1, genres: ['rock'], year: 1968, album: 'Hey Jude' },
     ],
   },
   {
@@ -1229,6 +1232,7 @@ export const artists: Artist[] = [
     origin: 'kr',
     songs: [
       { title: 'Antifreeze', tier: 2, subTier: 3, genres: ['rock', 'kpop'] },
+      { title: 'Ling Ling',  tier: 3, subTier: 2, genres: ['rock'] },
     ],
   },
 
@@ -1752,6 +1756,7 @@ export const artists: Artist[] = [
     origin: 'kr',
     songs: [
       { title: '주저하는 연인들을 위해', tier: 3, subTier: 0, genres: ['rock'], year: 2019, album: '전설' },
+      { title: '사랑의이름으로!',        tier: 2, subTier: 2, genres: ['rock', 'kpop'], features: ['KARINA'] },
     ],
   },
   {
@@ -1896,6 +1901,74 @@ export const artists: Artist[] = [
     origin: 'uk',
     songs: [
       { title: 'Shape of You', tier: 4, subTier: 1, genres: ['pop'], year: 2017, album: '÷ (Divide)' },
+    ],
+  },
+  {
+    // British soul / pop band (1967–1970), best known for "Build Me Up
+    // Buttercup".
+    name: 'The Foundations',
+    primaryGenre: 'pop',
+    origin: 'uk',
+    songs: [
+      { title: 'Build Me Up Buttercup', tier: 4, subTier: 2, genres: ['pop', 'rnb'], year: 1968, album: 'Digging the Foundations' },
+    ],
+  },
+  {
+    // American R&B / funk / soul band founded by Maurice White.
+    name: 'Earth, Wind & Fire',
+    primaryGenre: 'rnb',
+    origin: 'us',
+    songs: [
+      { title: 'September', tier: 2, subTier: 3, genres: ['rnb', 'pop'], year: 1978, album: 'The Best of Earth, Wind & Fire, Vol. 1' },
+    ],
+  },
+  {
+    // American singer/rapper from Dallas, viral with "Lil Boo Thang"
+    // (2023).
+    name: 'Paul Russell',
+    primaryGenre: 'pop',
+    origin: 'us',
+    songs: [
+      { title: 'Lil Boo Thang', tier: 4, subTier: 2, genres: ['pop', 'hiphop'], year: 2023, album: 'Lil Boo Thang' },
+    ],
+  },
+  {
+    // King of Pop.
+    name: 'Michael Jackson',
+    primaryGenre: 'pop',
+    origin: 'us',
+    songs: [
+      { title: 'Beat It', tier: 2, subTier: 3, genres: ['pop', 'rock'], year: 1982, album: 'Thriller' },
+    ],
+  },
+  {
+    // aespa member; appears here as the featured artist on 잔나비's
+    // "사랑의이름으로!" — the strong member-pull will keep her sitting
+    // tangent to the aespa planet inside Korea.
+    name: 'KARINA',
+    primaryGenre: 'kpop',
+    origin: 'kr',
+    memberOf: ['aespa'],
+    songs: [],
+  },
+  {
+    // American sibling duo (Karen + Richard Carpenter), early 70s soft
+    // pop.
+    name: 'Carpenters',
+    primaryGenre: 'pop',
+    origin: 'us',
+    songs: [
+      { title: 'Top Of The World', tier: 5, subTier: 2, genres: ['pop'], year: 1972, album: 'A Song for You' },
+    ],
+  },
+  {
+    // British rock band; Freddie Mercury, Brian May, Roger Taylor,
+    // John Deacon.
+    name: 'Queen',
+    primaryGenre: 'rock',
+    origin: 'uk',
+    songs: [
+      { title: "Don't Stop Me Now", tier: 2, subTier: 2, genres: ['rock', 'pop'], year: 1978, album: 'Jazz' },
     ],
   },
 ]

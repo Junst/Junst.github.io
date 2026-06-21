@@ -334,6 +334,7 @@ function buildLayout(mode: ViewMode = 'country'): { planets: Planet[]; moons: Mo
   const planets =
     mode === 'genre' ? placeByGenre() : mode === 'tier' ? placeByTier() : placeByCountry()
   forceSettle(planets, mode)
+  if (mode !== 'tier') clampOutliers(planets, mode)
 
   const moons: Moon[] = []
   if (mode === 'tier') {
@@ -411,6 +412,92 @@ function buildLayout(mode: ViewMode = 'country'): { planets: Planet[]; moons: Mo
     }
   }
   return { planets, moons }
+}
+
+// After forceSettle, cross-border feat. pulls can drag a planet far past
+// its own empire's bulk (e.g. France's Camille pulled toward USA's
+// Michael Giacchino). If the disk expands to enclose them, small empires
+// balloon and overlap their neighbours; if it doesn't, the artist
+// renders outside their territory. We solve it before the disk pass by
+// snapping outliers back toward their cluster's TRIMMED centroid (a
+// centroid computed after dropping the top 25% furthest members, so the
+// outlier doesn't drag the center toward itself). The clamp is iterated
+// because pulling an outlier back shifts the centroid for everyone else.
+function clampOutliers(planets: Planet[], mode: ViewMode): void {
+  type K = string
+  const keyOf = (p: Planet): K =>
+    mode === 'genre' ? familyOfGenre(p.primaryGenre) : p.country
+
+  const groups = new Map<K, Planet[]>()
+  for (const p of planets) {
+    const k = keyOf(p)
+    if (!groups.has(k)) groups.set(k, [])
+    groups.get(k)!.push(p)
+  }
+
+  for (let pass = 0; pass < 4; pass++) {
+    let moved = false
+    for (const [, list] of groups) {
+      const n = list.length
+      if (n < 2) continue
+
+      // Trimmed centroid — drop the 25% members furthest from the raw
+      // mean so a single outlier can't drag the reference point.
+      let cx0 = 0, cz0 = 0
+      for (const p of list) { cx0 += p.x; cz0 += p.z }
+      cx0 /= n; cz0 /= n
+      const idxByDist = list
+        .map((p, i) => ({ i, d: Math.hypot(p.x - cx0, p.z - cz0) }))
+        .sort((a, b) => a.d - b.d)
+      const keep = Math.max(1, Math.ceil(n * 0.75))
+      let cx = 0, cz = 0
+      for (let k = 0; k < keep; k++) {
+        cx += list[idxByDist[k].i].x
+        cz += list[idxByDist[k].i].z
+      }
+      cx /= keep; cz /= keep
+
+      // Allowed distance from trimmed centroid. Scales with member
+      // count so big empires (Korea/Japan/USA) get room while tiny
+      // ones (France/Canada/Sweden) stay compact.
+      //   1 act  → 12 (won't trigger)
+      //   2 acts → 17
+      //   4 acts → 24
+      //  10 acts → 38
+      //  22 acts → 56
+      //  30 acts → 66
+      const cap = 8 + Math.sqrt(n) * 10
+
+      // Distances inside the kept cluster (used to detect "is this
+      // really an outlier" — only clamp if the over-cap member is also
+      // far above the cluster's normal spread).
+      const inside = idxByDist
+        .slice(0, keep)
+        .map(({ i }) => Math.hypot(list[i].x - cx, list[i].z - cz))
+      inside.sort((a, b) => a - b)
+      const insideMax = inside[inside.length - 1] || 0
+
+      for (const p of list) {
+        const dx = p.x - cx
+        const dz = p.z - cz
+        const d = Math.hypot(dx, dz) || 0.01
+        // Outlier rule: outside cap AND visibly further than the
+        // cluster's normal spread (so we don't yank an entire
+        // close-knit empire if the cap is undersized).
+        if (d > cap && d > insideMax * 1.3) {
+          // Snap to the cap on the same bearing. Soft pull (90%) so a
+          // second pass can keep nudging if the centroid shifts after
+          // the move.
+          const target = cap
+          const k = 1 - (target / d)
+          p.x -= dx * k * 0.9
+          p.z -= dz * k * 0.9
+          moved = true
+        }
+      }
+    }
+    if (!moved) break
+  }
 }
 
 function forceSettle(planets: Planet[], mode: ViewMode = 'country'): void {
@@ -1565,23 +1652,27 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
         (acc, p) => Math.max(acc, Math.hypot(p.x - cx, p.z - cz) + p.r * 1.4),
         0,
       )
-      // Breathing pad scales linearly with member count so big empires
-      // (Korea ~30, USA ~30, Japan ~22) get more visual padding than
-      // single-act territories (Sweden, NL). France/Canada with 2-4
-      // members get only a couple px of buffer.
+      // Padding scales with member count: France/Canada (2-4) only get
+      // a few px, Korea/Japan/USA (22-30+) get visible breathing room.
       const pad = Math.max(3, list.length * 0.6)
+      // Safety cap so a stray planet that survived clampOutliers (e.g.
+      // a 1-member territory has no "cluster" to clamp toward) doesn't
+      // blow up the whole map. Generous: sqrt scales it 21→34→51→73
+      // at n = 1/4/16/36.
+      const safetyCap = 18 + Math.sqrt(list.length) * 9
       out.push({
         k,
         cx, cz,
-        r: maxDist + pad,
-        required: maxDist + 2,
+        r: Math.min(maxDist + pad, safetyCap),
+        required: Math.min(maxDist + 2, safetyCap),
         members: list,
         ...extra(k),
       })
     }
 
     // Re-derive containment radius from the current centroid + members.
-    // Called whenever a centroid moves so the disk follows.
+    // Called whenever a centroid moves so the disk follows. Caps at
+    // safetyCap so a single survived outlier can't blow it up.
     function refit(d: Disk) {
       let m = 0
       for (const p of d.members) {
@@ -1589,8 +1680,9 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
         if (dist > m) m = dist
       }
       const pad = Math.max(3, d.members.length * 0.6)
-      d.required = m + 2
-      d.r = Math.max(d.r, m + pad)
+      const safetyCap = 18 + Math.sqrt(d.members.length) * 9
+      d.required = Math.min(m + 2, safetyCap)
+      d.r = Math.max(d.r, Math.min(m + pad, safetyCap))
     }
 
     // Pass 0 — push apart any centroids that overlap given current
