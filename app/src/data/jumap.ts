@@ -87,6 +87,8 @@ export const COUNTRIES: CountrySpec[] = [
   { key: 'se',    label: 'Sweden',      color: '#a5d8ff' },  // arctic blue
   { key: 'no',    label: 'Norway',      color: '#b5e8ff' },  // glacier
   { key: 'es',    label: 'Spain',       color: '#ff9d6a' },  // terracotta
+  { key: 'in',    label: 'India',       color: '#ffa356' },  // saffron
+  { key: 'dk',    label: 'Denmark',     color: '#f06880' },  // dannebrog red
   { key: 'other', label: 'Other',       color: '#a4abb6' },
 ]
 const COUNTRY_LOOKUP = Object.fromEntries(COUNTRIES.map((c) => [c.key, c]))
@@ -1013,8 +1015,9 @@ export const artists: Artist[] = [
     primaryGenre: 'rock',
     origin: 'uk',
     songs: [
-      { title: 'Let It Be', tier: 4, subTier: 2, genres: ['rock'], year: 1970, album: 'Let It Be' },
-      { title: 'Hey Jude',  tier: 3, subTier: 1, genres: ['rock'], year: 1968, album: 'Hey Jude' },
+      { title: 'Let It Be',              tier: 4, subTier: 2, genres: ['rock'], year: 1970, album: 'Let It Be' },
+      { title: 'Hey Jude',               tier: 3, subTier: 1, genres: ['rock'], year: 1968, album: 'Hey Jude' },
+      { title: 'I Want To Hold Your Hand', tier: 2, subTier: 0, genres: ['rock', 'pop'], year: 1963, album: 'Meet the Beatles!' },
     ],
   },
   {
@@ -2113,6 +2116,54 @@ export const artists: Artist[] = [
     origin: 'us',
     songs: [
       { title: 'Tik Tok', tier: 3, subTier: 1, genres: ['pop'], year: 2009, album: 'Animal' },
+    ],
+  },
+  {
+    // Japanese composer (菅野祐悟). Wrote the JoJo's Bizarre Adventure
+    // Part 5 main theme "il vento d'oro" (Golden Wind).
+    name: 'Yugo Kanno',
+    primaryGenre: 'anime',
+    origin: 'jp',
+    songs: [
+      { title: "il vento d'oro", tier: 3, subTier: 1, genres: ['anime'], year: 2018, album: 'Le Bizzarre Avventure di GioGio' },
+    ],
+  },
+  {
+    // Indian bhangra / Punjabi pop singer; "King of Bhangra Pop".
+    name: 'Daler Mehndi',
+    primaryGenre: 'other',
+    origin: 'in',
+    songs: [
+      { title: 'Tunak Tunak Tun', tier: 4, subTier: 1, genres: ['other', 'pop'], year: 1998, album: 'Tunak Tunak Tun' },
+    ],
+  },
+  {
+    // Norwegian comedy duo Vegard + Bård Ylvisåker. "What Does the Fox
+    // Say?" 2013 viral hit.
+    name: 'YLVIS',
+    primaryGenre: 'pop',
+    origin: 'no',
+    songs: [
+      { title: 'The Fox', tier: 5, subTier: 1, genres: ['pop'], year: 2013, album: 'I kveld med YLVIS' },
+    ],
+  },
+  {
+    // Atlanta rapper DeAndre Cortez Way. "Crank That (Soulja Boy)" was
+    // a 2007 ringtone-era smash.
+    name: 'Soulja Boy',
+    primaryGenre: 'hiphop',
+    origin: 'us',
+    songs: [
+      { title: 'Crank That', tier: 3, subTier: 3, genres: ['hiphop'], year: 2007, album: 'souljaboytellem.com' },
+    ],
+  },
+  {
+    // Danish-Norwegian eurodance group; "Barbie Girl" 1997.
+    name: 'AQUA',
+    primaryGenre: 'pop',
+    origin: 'dk',
+    songs: [
+      { title: 'Barbie Girl', tier: 4, subTier: 2, genres: ['pop', 'edm'], year: 1997, album: 'Aquarium' },
     ],
   },
 ]
