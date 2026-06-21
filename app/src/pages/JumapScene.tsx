@@ -45,6 +45,11 @@ interface Planet {
   artist: Artist
   x: number
   z: number
+  // Anchor = original placement before forceSettle pushed/pulled the
+  // planet. clampOutliers uses these to snap cross-border feat. outliers
+  // back toward where they're "supposed to" sit (per their country).
+  ax: number
+  az: number
   r: number
   country: string
   primaryGenre: string
@@ -76,6 +81,8 @@ function newPlanet(a: Artist, x: number, z: number, country: string, genre: stri
     artist: a,
     x,
     z,
+    ax: x,
+    az: z,
     r: bubbleRadius(a) * 0.10,
     country,
     primaryGenre: genre,
@@ -416,13 +423,12 @@ function buildLayout(mode: ViewMode = 'country'): { planets: Planet[]; moons: Mo
 
 // After forceSettle, cross-border feat. pulls can drag a planet far past
 // its own empire's bulk (e.g. France's Camille pulled toward USA's
-// Michael Giacchino). If the disk expands to enclose them, small empires
-// balloon and overlap their neighbours; if it doesn't, the artist
-// renders outside their territory. We solve it before the disk pass by
-// snapping outliers back toward their cluster's TRIMMED centroid (a
-// centroid computed after dropping the top 25% furthest members, so the
-// outlier doesn't drag the center toward itself). The clamp is iterated
-// because pulling an outlier back shifts the centroid for everyone else.
+// Michael Giacchino). Using the post-settle centroid as the reference
+// breaks for 2-member clusters: if one of two artists is dragged across
+// the border, the centroid floats midway and "outlier detection" never
+// triggers. So we use the ANCHOR centroid — the mean of every member's
+// pre-settle anchor position, which is fixed and doesn't move when
+// feat. pulls do — as ground truth for "where this empire belongs".
 function clampOutliers(planets: Planet[], mode: ViewMode): void {
   type K = string
   const keyOf = (p: Planet): K =>
@@ -439,59 +445,36 @@ function clampOutliers(planets: Planet[], mode: ViewMode): void {
     let moved = false
     for (const [, list] of groups) {
       const n = list.length
-      if (n < 2) continue
+      if (n < 1) continue
 
-      // Trimmed centroid — drop the 25% members furthest from the raw
-      // mean so a single outlier can't drag the reference point.
-      let cx0 = 0, cz0 = 0
-      for (const p of list) { cx0 += p.x; cz0 += p.z }
-      cx0 /= n; cz0 /= n
-      const idxByDist = list
-        .map((p, i) => ({ i, d: Math.hypot(p.x - cx0, p.z - cz0) }))
-        .sort((a, b) => a.d - b.d)
-      const keep = Math.max(1, Math.ceil(n * 0.75))
-      let cx = 0, cz = 0
-      for (let k = 0; k < keep; k++) {
-        cx += list[idxByDist[k].i].x
-        cz += list[idxByDist[k].i].z
-      }
-      cx /= keep; cz /= keep
+      // Anchor centroid — the empire's "home". Fixed across iterations
+      // (anchors don't move) so this remains stable.
+      let ax = 0, az = 0
+      for (const p of list) { ax += p.ax; az += p.az }
+      ax /= n; az /= n
 
-      // Allowed distance from trimmed centroid. Scales with member
-      // count so big empires (Korea/Japan/USA) get room while tiny
-      // ones (France/Canada/Sweden) stay compact.
-      //   1 act  → 12 (won't trigger)
-      //   2 acts → 17
-      //   4 acts → 24
-      //  10 acts → 38
-      //  22 acts → 56
-      //  30 acts → 66
-      const cap = 8 + Math.sqrt(n) * 10
-
-      // Distances inside the kept cluster (used to detect "is this
-      // really an outlier" — only clamp if the over-cap member is also
-      // far above the cluster's normal spread).
-      const inside = idxByDist
-        .slice(0, keep)
-        .map(({ i }) => Math.hypot(list[i].x - cx, list[i].z - cz))
-      inside.sort((a, b) => a - b)
-      const insideMax = inside[inside.length - 1] || 0
+      // Allowed distance from home. Bumped from prior values so the
+      // big empires (Korea/Japan/USA, n~22–30) get more breathing room
+      // before clamping kicks in.
+      //   1 act  → 18
+      //   2 acts → 24
+      //   4 acts → 32
+      //  10 acts → 51
+      //  22 acts → 75
+      //  30 acts → 87
+      const cap = 12 + Math.sqrt(n) * 13.5
 
       for (const p of list) {
-        const dx = p.x - cx
-        const dz = p.z - cz
+        const dx = p.x - ax
+        const dz = p.z - az
         const d = Math.hypot(dx, dz) || 0.01
-        // Outlier rule: outside cap AND visibly further than the
-        // cluster's normal spread (so we don't yank an entire
-        // close-knit empire if the cap is undersized).
-        if (d > cap && d > insideMax * 1.3) {
-          // Snap to the cap on the same bearing. Soft pull (90%) so a
-          // second pass can keep nudging if the centroid shifts after
-          // the move.
+        if (d > cap) {
           const target = cap
           const k = 1 - (target / d)
-          p.x -= dx * k * 0.9
-          p.z -= dz * k * 0.9
+          // Soft pull (85%) so multiple passes can chase the centroid
+          // if it shifts after clamping a neighbour empire.
+          p.x -= dx * k * 0.85
+          p.z -= dz * k * 0.85
           moved = true
         }
       }
@@ -1655,11 +1638,10 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
       // Padding scales with member count: France/Canada (2-4) only get
       // a few px, Korea/Japan/USA (22-30+) get visible breathing room.
       const pad = Math.max(3, list.length * 0.6)
-      // Safety cap so a stray planet that survived clampOutliers (e.g.
-      // a 1-member territory has no "cluster" to clamp toward) doesn't
-      // blow up the whole map. Generous: sqrt scales it 21→34→51→73
-      // at n = 1/4/16/36.
-      const safetyCap = 18 + Math.sqrt(list.length) * 9
+      // Safety cap a bit above the clampOutliers cap so the disk
+      // always encloses its (already-clamped) members. Scales to
+      //   1 → 30 / 4 → 47 / 16 → 73 / 36 → 105
+      const safetyCap = 22 + Math.sqrt(list.length) * 14
       out.push({
         k,
         cx, cz,
@@ -1680,7 +1662,7 @@ function SceneInner({ onSongOpen, onArtistOpen, viewMode = 'country', searchQuer
         if (dist > m) m = dist
       }
       const pad = Math.max(3, d.members.length * 0.6)
-      const safetyCap = 18 + Math.sqrt(d.members.length) * 9
+      const safetyCap = 22 + Math.sqrt(d.members.length) * 14
       d.required = Math.min(m + 2, safetyCap)
       d.r = Math.max(d.r, Math.min(m + pad, safetyCap))
     }
