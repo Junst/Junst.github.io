@@ -17,8 +17,8 @@ if (!API_KEY) {
   process.exit(1)
 }
 
-const GAME_NAME = process.env.RIOT_GAME_NAME ?? '솔봉'
-const TAG_LINE = process.env.RIOT_TAG_LINE ?? 'KR1'
+const GAME_NAME = process.env.RIOT_GAME_NAME ?? '高俊永'
+const TAG_LINE = process.env.RIOT_TAG_LINE ?? 'bong'
 const ROUTE = process.env.RIOT_ROUTE ?? 'asia' // account/match v5 routing
 const PLATFORM = process.env.RIOT_PLATFORM ?? 'kr' // summoner/league/mastery
 

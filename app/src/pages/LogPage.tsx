@@ -137,11 +137,7 @@ export function LogPage() {
             <span className="log-clock">{date} · {clock}</span>
           </div>
         </div>
-        <h1 className="log-title">
-          <span className="log-title-line">PERSONAL</span>
-          <span className="log-title-line log-title-accent">_TRANSMISSIONS</span>
-        </h1>
-        <p className="log-sub">a y2k console · now playing · league log · video signal</p>
+        <p className="log-sub">now playing · league log · video signal</p>
       </header>
 
       <Marquee>
