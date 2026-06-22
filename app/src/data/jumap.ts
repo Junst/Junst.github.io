@@ -2245,6 +2245,15 @@ export const artists: Artist[] = [
       { title: 'As It Was', tier: 4, subTier: 2, genres: ['pop'], year: 2022, album: "Harry's House" },
     ],
   },
+  {
+    // American pop/R&B icon; "Queen of Christmas".
+    name: 'Mariah Carey',
+    primaryGenre: 'pop',
+    origin: 'us',
+    songs: [
+      { title: 'All I Want for Christmas Is You', tier: 3, subTier: 0, genres: ['pop', 'rnb'], year: 1994, album: 'Merry Christmas' },
+    ],
+  },
 ]
 
 // Pick a face for the bubble. Order of preference:
