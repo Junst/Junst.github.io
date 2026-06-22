@@ -406,10 +406,13 @@ export const artists: Artist[] = [
     primaryGenre: 'hiphop',
     origin: 'ca',
     songs: [
-      { title: 'Nokia',             tier: 2, genres: ['hiphop'] },
+      { title: 'Nokia',              tier: 2, genres: ['hiphop'] },
       { title: '2 Hard 4 The Radio', tier: 2, subTier: 2, genres: ['hiphop'] },
-      { title: 'Which One',         tier: 2, subTier: 1, genres: ['hiphop'], features: ['Central Cee'] },
-      { title: "God's Plan",        tier: 3, genres: ['hiphop'] },
+      { title: 'Which One',          tier: 2, subTier: 1, genres: ['hiphop'], features: ['Central Cee'] },
+      { title: "God's Plan",         tier: 3, genres: ['hiphop'] },
+      { title: 'Janice STFU',        tier: 2, subTier: 0, genres: ['hiphop'], year: 2025, album: 'ICEMAN' },
+      { title: 'Shabang',            tier: 2, subTier: 1, genres: ['hiphop'], year: 2025, album: 'ICEMAN' },
+      { title: 'National Treasures', tier: 2, subTier: 2, genres: ['hiphop'], year: 2025, album: 'ICEMAN' },
     ],
   },
   {
