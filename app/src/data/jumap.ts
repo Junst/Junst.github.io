@@ -2200,6 +2200,15 @@ export const artists: Artist[] = [
       { title: "A Step You Can't Take Back", tier: 5, subTier: 0, genres: ['pop'], year: 2014, album: 'Begin Again (Original Motion Picture Soundtrack)' },
     ],
   },
+  {
+    // Canadian jazz / pop crooner from Burnaby, BC.
+    name: 'Michael Bublé',
+    primaryGenre: 'pop',
+    origin: 'ca',
+    songs: [
+      { title: "It's a Beautiful Day", tier: 5, subTier: 2, genres: ['pop'], year: 2013, album: 'To Be Loved' },
+    ],
+  },
 ]
 
 // Pick a face for the bubble. Order of preference:
