@@ -2190,6 +2190,16 @@ export const artists: Artist[] = [
       { title: "Can't Take My Eyes off You", tier: 4, subTier: 3, genres: ['pop'], year: 2014, album: 'Brother' },
     ],
   },
+  {
+    // British actress; sang "A Step You Can't Take Back" in the 2013
+    // film "Begin Again" (dir. John Carney).
+    name: 'Keira Knightley',
+    primaryGenre: 'pop',
+    origin: 'uk',
+    songs: [
+      { title: "A Step You Can't Take Back", tier: 5, subTier: 0, genres: ['pop'], year: 2014, album: 'Begin Again (Original Motion Picture Soundtrack)' },
+    ],
+  },
 ]
 
 // Pick a face for the bubble. Order of preference:
