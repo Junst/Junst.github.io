@@ -2179,6 +2179,17 @@ export const artists: Artist[] = [
       { title: "Don't Know Why", tier: 4, subTier: 0, genres: ['pop', 'rnb'], year: 2002, album: 'Come Away with Me' },
     ],
   },
+  {
+    // Norwegian singer; lead vocalist of a-ha ("Take On Me"). "Can't
+    // Take My Eyes off You" is his Frankie Valli cover from his 2014
+    // album "Brother".
+    name: 'Morten Harket',
+    primaryGenre: 'pop',
+    origin: 'no',
+    songs: [
+      { title: "Can't Take My Eyes off You", tier: 4, subTier: 3, genres: ['pop'], year: 2014, album: 'Brother' },
+    ],
+  },
 ]
 
 // Pick a face for the bubble. Order of preference:
