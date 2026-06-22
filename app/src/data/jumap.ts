@@ -2209,6 +2209,24 @@ export const artists: Artist[] = [
       { title: "It's a Beautiful Day", tier: 5, subTier: 2, genres: ['pop'], year: 2013, album: 'To Be Loved' },
     ],
   },
+  {
+    // British (Kosovar-Albanian) pop singer; "Levitating" 2020.
+    name: 'Dua Lipa',
+    primaryGenre: 'pop',
+    origin: 'uk',
+    songs: [
+      { title: 'Levitating', tier: 4, subTier: 2, genres: ['pop'], year: 2020, album: 'Future Nostalgia' },
+    ],
+  },
+  {
+    // Australian singer-songwriter Sia Furler. "Chandelier" 2014.
+    name: 'Sia',
+    primaryGenre: 'pop',
+    origin: 'au',
+    songs: [
+      { title: 'Chandelier', tier: 5, subTier: 1, genres: ['pop'], year: 2014, album: '1000 Forms of Fear' },
+    ],
+  },
 ]
 
 // Pick a face for the bubble. Order of preference:
