@@ -2169,6 +2169,16 @@ export const artists: Artist[] = [
       { title: 'Barbie Girl', tier: 4, subTier: 2, genres: ['pop', 'edm'], year: 1997, album: 'Aquarium' },
     ],
   },
+  {
+    // American jazz / pop singer-pianist. "Don't Know Why" was her
+    // 2002 breakout, Album of the Year at the 2003 Grammys.
+    name: 'Norah Jones',
+    primaryGenre: 'pop',
+    origin: 'us',
+    songs: [
+      { title: "Don't Know Why", tier: 4, subTier: 0, genres: ['pop', 'rnb'], year: 2002, album: 'Come Away with Me' },
+    ],
+  },
 ]
 
 // Pick a face for the bubble. Order of preference:
