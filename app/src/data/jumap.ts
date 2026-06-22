@@ -2227,6 +2227,15 @@ export const artists: Artist[] = [
       { title: 'Chandelier', tier: 5, subTier: 1, genres: ['pop'], year: 2014, album: '1000 Forms of Fear' },
     ],
   },
+  {
+    // British hyperpop singer (Charlotte Aitchison). BRAT, 2024.
+    name: 'Charli xcx',
+    primaryGenre: 'pop',
+    origin: 'uk',
+    songs: [
+      { title: '360', tier: 4, subTier: 1, genres: ['pop', 'edm'], year: 2024, album: 'BRAT' },
+    ],
+  },
 ]
 
 // Pick a face for the bubble. Order of preference:
