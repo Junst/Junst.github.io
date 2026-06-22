@@ -2236,6 +2236,15 @@ export const artists: Artist[] = [
       { title: '360', tier: 4, subTier: 1, genres: ['pop', 'edm'], year: 2024, album: 'BRAT' },
     ],
   },
+  {
+    // British pop singer; ex-One Direction. Harry's House, 2022.
+    name: 'Harry Styles',
+    primaryGenre: 'pop',
+    origin: 'uk',
+    songs: [
+      { title: 'As It Was', tier: 4, subTier: 2, genres: ['pop'], year: 2022, album: "Harry's House" },
+    ],
+  },
 ]
 
 // Pick a face for the bubble. Order of preference:
