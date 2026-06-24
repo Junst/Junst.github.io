@@ -2254,6 +2254,17 @@ export const artists: Artist[] = [
       { title: 'All I Want for Christmas Is You', tier: 3, subTier: 0, genres: ['pop', 'rnb'], year: 1994, album: 'Merry Christmas' },
     ],
   },
+  {
+    // Japanese piano-pop band from Shimane / Tokyo. "幾億光年"
+    // ("Hundred Million Light Years") is the opening for the 2024
+    // anime "Oblivion Battery" (忘却バッテリー).
+    name: 'Omoinotake',
+    primaryGenre: 'jpop',
+    origin: 'jp',
+    songs: [
+      { title: '幾億光年', tier: 2, subTier: 2, genres: ['jpop'], year: 2024 },
+    ],
+  },
 ]
 
 // Pick a face for the bubble. Order of preference:
