@@ -89,6 +89,7 @@ export const COUNTRIES: CountrySpec[] = [
   { key: 'es',    label: 'Spain',       color: '#ff9d6a' },  // terracotta
   { key: 'in',    label: 'India',       color: '#ffa356' },  // saffron
   { key: 'dk',    label: 'Denmark',     color: '#f06880' },  // dannebrog red
+  { key: 'ie',    label: 'Ireland',     color: '#5edd96' },  // shamrock
   { key: 'other', label: 'Other',       color: '#a4abb6' },
 ]
 const COUNTRY_LOOKUP = Object.fromEntries(COUNTRIES.map((c) => [c.key, c]))
@@ -2262,7 +2263,16 @@ export const artists: Artist[] = [
     primaryGenre: 'jpop',
     origin: 'jp',
     songs: [
-      { title: '幾億光年', tier: 2, subTier: 2, genres: ['jpop'], year: 2024 },
+      { title: '幾億光年', tier: 2, subTier: 0, genres: ['jpop'], year: 2024 },
+    ],
+  },
+  {
+    // Irish pop boy band from Sligo / Dublin. "My Love" 2000.
+    name: 'Westlife',
+    primaryGenre: 'pop',
+    origin: 'ie',
+    songs: [
+      { title: 'My Love', tier: 2, subTier: 0, genres: ['pop'], year: 2000, album: 'Coast to Coast' },
     ],
   },
 ]
