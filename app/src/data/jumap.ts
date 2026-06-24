@@ -2022,7 +2022,10 @@ export const artists: Artist[] = [
     name: 'Flo Rida',
     primaryGenre: 'hiphop',
     origin: 'us',
-    songs: [],
+    songs: [
+      { title: 'Whistle',      tier: 4, subTier: 0, genres: ['hiphop', 'pop'], year: 2012, album: 'Wild Ones' },
+      { title: 'Good Feeling', tier: 3, subTier: 0, genres: ['hiphop', 'pop'], year: 2011, album: 'Wild Ones' },
+    ],
   },
   {
     // Canadian pop singer-songwriter.
