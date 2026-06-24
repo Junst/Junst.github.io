@@ -1203,7 +1203,7 @@ export const artists: Artist[] = [
     primaryGenre: 'kpop',
     origin: 'kr',
     songs: [
-      { title: '애인만들기', tier: 1, subTier: 0, genres: ['kpop'] },
+      { title: '애인만들기', tier: 1, subTier: 1, genres: ['kpop'] },
     ],
   },
   {
