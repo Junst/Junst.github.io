@@ -2275,6 +2275,24 @@ export const artists: Artist[] = [
       { title: 'My Love', tier: 2, subTier: 0, genres: ['pop'], year: 2000, album: 'Coast to Coast' },
     ],
   },
+  {
+    // American pop-punk band from Baltimore, MD.
+    name: 'All Time Low',
+    primaryGenre: 'rock',
+    origin: 'us',
+    songs: [
+      { title: 'Time-Bomb', tier: 4, subTier: 0, genres: ['rock', 'pop'], year: 2011, album: 'Dirty Work' },
+    ],
+  },
+  {
+    // American pop / R&B singer-rapper Melissa Viviane Jefferson.
+    name: 'Lizzo',
+    primaryGenre: 'pop',
+    origin: 'us',
+    songs: [
+      { title: 'Juice', tier: 3, subTier: 0, genres: ['pop', 'rnb'], year: 2019, album: 'Cuz I Love You' },
+    ],
+  },
 ]
 
 // Pick a face for the bubble. Order of preference:
