@@ -2293,6 +2293,33 @@ export const artists: Artist[] = [
       { title: 'Juice', tier: 3, subTier: 0, genres: ['pop', 'rnb'], year: 2019, album: 'Cuz I Love You' },
     ],
   },
+  {
+    // American pop singer / producer, Rumson NJ.
+    name: 'Charlie Puth',
+    primaryGenre: 'pop',
+    origin: 'us',
+    songs: [
+      { title: "I Don't Think That I Like Her", tier: 3, subTier: 1, genres: ['pop'], year: 2022, album: 'Charlie' },
+    ],
+  },
+  {
+    // American actress / singer; voice of Anna in Disney's Frozen.
+    // "Love Is an Open Door" is the Anna ↔ Hans duet — Santino Fontana
+    // sings as Hans.
+    name: 'Kristen Bell',
+    primaryGenre: 'pop',
+    origin: 'us',
+    songs: [
+      { title: 'Love Is an Open Door', tier: 3, subTier: 1, genres: ['pop'], year: 2013, album: 'Frozen (Original Motion Picture Soundtrack)', features: ['Santino Fontana'] },
+    ],
+  },
+  {
+    // American actor / singer; voiced Hans in Disney's Frozen.
+    name: 'Santino Fontana',
+    primaryGenre: 'pop',
+    origin: 'us',
+    songs: [],
+  },
 ]
 
 // Pick a face for the bubble. Order of preference:
