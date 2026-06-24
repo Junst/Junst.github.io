@@ -2323,6 +2323,15 @@ export const artists: Artist[] = [
     origin: 'us',
     songs: [],
   },
+  {
+    // American rapper / singer from Houston, TX. Cactus Jack signee.
+    name: 'Don Toliver',
+    primaryGenre: 'hiphop',
+    origin: 'us',
+    songs: [
+      { title: 'Lose My Mind', tier: 3, subTier: 1, genres: ['hiphop', 'rnb'], year: 2025, features: ['Doja Cat'] },
+    ],
+  },
 ]
 
 // Pick a face for the bubble. Order of preference:
