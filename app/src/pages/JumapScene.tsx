@@ -607,14 +607,10 @@ function forceSettle(planets: Planet[], mode: ViewMode = 'country'): void {
 
 // --- Three components --------------------------------------------------------
 
-function Sphere({
-  position, radius, color, faceUrl, onPointerDown, onPointerOver, onPointerOut,
-  emissive = 0, dimmed = false,
-}: {
+type SphereBaseProps = {
   position: [number, number, number]
   radius: number
   color: string
-  faceUrl?: string
   onPointerDown?: (e: ThreeEvent<PointerEvent>) => void
   onPointerOver?: (e: ThreeEvent<PointerEvent>) => void
   onPointerOut?: (e: ThreeEvent<PointerEvent>) => void
@@ -622,13 +618,31 @@ function Sphere({
   /** Search-dim flag: lower the material's opacity + kill emissive so
    *  non-matches read as background while matches stay bright. */
   dimmed?: boolean
-}) {
-  // Lazy texture — when faceUrl resolves, swap onto the sphere.
-  const tex = faceUrl ? useTexture(faceUrl) : null
-  if (tex) {
-    tex.colorSpace = THREE.SRGBColorSpace
-    tex.anisotropy = 4
-  }
+}
+
+// Top-level Sphere: picks textured or plain variant. Each planet gets its
+// own <Suspense> boundary so a single missing/broken asset URL can no
+// longer stall the whole scene — the planet just stays in its plain
+// coloured form until (or in place of) the texture resolves.
+function Sphere({ faceUrl, ...base }: SphereBaseProps & { faceUrl?: string }) {
+  return (
+    <Suspense fallback={<PlainSphere {...base} />}>
+      {faceUrl ? <TexturedSphere {...base} faceUrl={faceUrl} /> : <PlainSphere {...base} />}
+    </Suspense>
+  )
+}
+
+// Textured variant — useTexture is called UNCONDITIONALLY here so hook
+// order stays stable across renders. If the URL 404s / CORS-fails,
+// useTexture throws a suspender that the parent <Suspense> catches and
+// renders <PlainSphere/> instead of stalling forever.
+function TexturedSphere({
+  position, radius, faceUrl, onPointerDown, onPointerOver, onPointerOut,
+  emissive = 0, dimmed = false,
+}: SphereBaseProps & { faceUrl: string }) {
+  const tex = useTexture(faceUrl)
+  tex.colorSpace = THREE.SRGBColorSpace
+  tex.anisotropy = 4
   const opacity = dimmed ? 0.18 : 1
   const transparent = dimmed
   const em = dimmed ? 0 : emissive
@@ -640,30 +654,46 @@ function Sphere({
       onPointerOut={onPointerOut}
     >
       <sphereGeometry args={[radius, 28, 22]} />
-      {tex ? (
-        <meshStandardMaterial
-          map={tex}
-          roughness={0.35}
-          metalness={0.02}
-          // Use the planet's photo as its own emissive map so the surface
-          // glows in its own colours — high-key, almost self-illuminated.
-          emissive={new THREE.Color(0xffffff)}
-          emissiveMap={tex}
-          emissiveIntensity={em + (dimmed ? 0 : 0.7)}
-          transparent={transparent}
-          opacity={opacity}
-        />
-      ) : (
-        <meshStandardMaterial
-          color={color}
-          roughness={0.35}
-          metalness={0.1}
-          emissive={new THREE.Color(color)}
-          emissiveIntensity={em + (dimmed ? 0 : 0.65)}
-          transparent={transparent}
-          opacity={opacity}
-        />
-      )}
+      <meshStandardMaterial
+        map={tex}
+        roughness={0.35}
+        metalness={0.02}
+        // Use the planet's photo as its own emissive map so the surface
+        // glows in its own colours — high-key, almost self-illuminated.
+        emissive={new THREE.Color(0xffffff)}
+        emissiveMap={tex}
+        emissiveIntensity={em + (dimmed ? 0 : 0.7)}
+        transparent={transparent}
+        opacity={opacity}
+      />
+    </mesh>
+  )
+}
+
+function PlainSphere({
+  position, radius, color, onPointerDown, onPointerOver, onPointerOut,
+  emissive = 0, dimmed = false,
+}: SphereBaseProps) {
+  const opacity = dimmed ? 0.18 : 1
+  const transparent = dimmed
+  const em = dimmed ? 0 : emissive
+  return (
+    <mesh
+      position={position}
+      onPointerDown={onPointerDown}
+      onPointerOver={onPointerOver}
+      onPointerOut={onPointerOut}
+    >
+      <sphereGeometry args={[radius, 28, 22]} />
+      <meshStandardMaterial
+        color={color}
+        roughness={0.35}
+        metalness={0.1}
+        emissive={new THREE.Color(color)}
+        emissiveIntensity={em + (dimmed ? 0 : 0.65)}
+        transparent={transparent}
+        opacity={opacity}
+      />
     </mesh>
   )
 }
