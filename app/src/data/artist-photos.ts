@@ -84,7 +84,6 @@ export const ARTIST_PHOTOS: Record<string, string> = {
   "Justin Bieber": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Justin_Bieber_in_2015.jpg/330px-Justin_Bieber_in_2015.jpg",
   "Hikaru Utada": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Hikaru_Utada_at_Spotify_Tokyo.png/330px-Hikaru_Utada_at_Spotify_Tokyo.png",
   "Kalen Anzai": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Kalen_Anzai_-_publicity_event_-_2023_Dec_14_various_15_17_21_985000.jpeg/330px-Kalen_Anzai_-_publicity_event_-_2023_Dec_14_various_15_17_21_985000.jpeg",
-  "Epik High": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Epik_High_2026_Tour_Promo.png/330px-Epik_High_2026_Tour_Promo.png",
   "Heize": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Heize_2019.jpg/330px-Heize_2019.jpg",
   "CORTIS": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Cortis_at_TikTok_Awards_Korea.jpg/330px-Cortis_at_TikTok_Awards_Korea.jpg",
   "R3HAB": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/R3HAB_BTS.jpg/330px-R3HAB_BTS.jpg",

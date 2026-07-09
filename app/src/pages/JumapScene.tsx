@@ -1,4 +1,4 @@
-import { Suspense, useMemo, useRef, useState, useEffect, useCallback } from 'react'
+import { Component, Suspense, useMemo, useRef, useState, useEffect, useCallback, type ReactNode } from 'react'
 import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber'
 import { OrbitControls, Text, Html, useTexture } from '@react-three/drei'
 import * as THREE from 'three'
@@ -620,15 +620,32 @@ type SphereBaseProps = {
   dimmed?: boolean
 }
 
+// Catches asset-loader rejections (e.g. 404 from Wikipedia photo URLs)
+// and swaps in a fallback so a single dead URL cannot crash the whole
+// scene at the React root. <Suspense> only handles the *pending* case;
+// this handles the *rejected* case.
+class TextureErrorBoundary extends Component<
+  { fallback: ReactNode; children: ReactNode },
+  { failed: boolean }
+> {
+  state = { failed: false }
+  static getDerivedStateFromError() { return { failed: true } }
+  componentDidCatch() { /* silent — a missing photo is not fatal */ }
+  render() { return this.state.failed ? this.props.fallback : this.props.children }
+}
+
 // Top-level Sphere: picks textured or plain variant. Each planet gets its
-// own <Suspense> boundary so a single missing/broken asset URL can no
-// longer stall the whole scene — the planet just stays in its plain
-// coloured form until (or in place of) the texture resolves.
+// own error+suspense boundary so a single missing / broken asset URL can
+// no longer stall or crash the whole scene — the planet just stays in
+// its plain coloured form until (or in place of) the texture resolves.
 function Sphere({ faceUrl, ...base }: SphereBaseProps & { faceUrl?: string }) {
+  const plainFallback = <PlainSphere {...base} />
   return (
-    <Suspense fallback={<PlainSphere {...base} />}>
-      {faceUrl ? <TexturedSphere {...base} faceUrl={faceUrl} /> : <PlainSphere {...base} />}
-    </Suspense>
+    <TextureErrorBoundary fallback={plainFallback}>
+      <Suspense fallback={plainFallback}>
+        {faceUrl ? <TexturedSphere {...base} faceUrl={faceUrl} /> : <PlainSphere {...base} />}
+      </Suspense>
+    </TextureErrorBoundary>
   )
 }
 
