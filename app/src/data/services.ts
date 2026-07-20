@@ -35,7 +35,7 @@ export const serviceGroups: ServiceGroup[] = [
   {
     category: 'Volunteer',
     items: [
-      { name: 'WFK Paraguay', years: "'18", role: 'IT Volunteer · World Friends Korea' },
+      { name: 'World Friends Korea', years: "'18", role: 'IT Volunteer · Paraguay dispatch' },
     ],
   },
 ]
