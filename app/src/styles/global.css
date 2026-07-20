@@ -315,16 +315,16 @@ html { scroll-behavior: smooth; }
   font-size: 0.95rem;
 }
 
-/* Academic Services — circular badges */
+/* Academic Services — capsule (pill) badges */
 .service-groups {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 14px;
 }
 .service-group {
   display: grid;
   grid-template-columns: 160px 1fr;
-  gap: 8px 20px;
+  gap: 6px 20px;
   align-items: center;
 }
 .service-group-label {
@@ -336,48 +336,46 @@ html { scroll-behavior: smooth; }
 .service-badge-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 14px;
+  gap: 6px 8px;
 }
 .service-badge {
-  width: 92px;
-  height: 92px;
-  border-radius: 50%;
-  border: 1.5px solid var(--text-muted);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 4px;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 3px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--text-muted);
   background: transparent;
-  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  transition: border-color 0.15s ease, background 0.15s ease;
   cursor: default;
-  text-align: center;
+  white-space: nowrap;
+  line-height: 1.35;
 }
 .service-badge:hover {
-  transform: translateY(-2px);
   border-color: var(--text-soft);
   background: color-mix(in srgb, var(--text-muted) 8%, transparent);
 }
 .service-badge-name {
-  font-weight: 700;
-  font-size: 0.98rem;
-  line-height: 1.1;
+  font-weight: 600;
+  font-size: 0.85rem;
   letter-spacing: 0.01em;
   color: var(--text-strong, inherit);
 }
 .service-badge-years {
-  margin-top: 4px;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   color: var(--text-muted);
   letter-spacing: 0.03em;
 }
 @media (max-width: 640px) {
   .service-group {
     grid-template-columns: 1fr;
-    gap: 6px;
+    gap: 4px;
   }
-  .service-badge { width: 80px; height: 80px; }
-  .service-badge-name { font-size: 0.88rem; }
+  .service-badge {
+    padding: 3px 10px;
+  }
+  .service-badge-name { font-size: 0.8rem; }
+  .service-badge-years { font-size: 0.66rem; }
 }
 
 /* Publications */
