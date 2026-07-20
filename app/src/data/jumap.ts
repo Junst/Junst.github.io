@@ -1639,7 +1639,7 @@ export const artists: Artist[] = [
     primaryGenre: 'pop',
     origin: 'fr',
     songs: [
-      { title: 'Le Festin', tier: 5, subTier: 3, genres: ['pop'], year: 2007, album: 'Ratatouille OST', features: ['Michael Giacchino'] },
+      { title: 'Le Festin', tier: 1, subTier: 3, genres: ['pop'], year: 2007, album: 'Ratatouille OST', features: ['Michael Giacchino'] },
     ],
   },
   {

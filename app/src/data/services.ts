@@ -1,12 +1,41 @@
-export interface ServiceItem {
-  role: string
-  detail: string  // HTML allowed
-  period: string  // year only
+export interface ServiceBadge {
+  name: string       // conference / venue short name (big text inside circle)
+  years: string      // year(s) (small text under name)
+  role?: string      // optional role hint, shown as tooltip
 }
 
-export const services: ServiceItem[] = [
-  { role: 'Conference Reviewer', detail: 'ISMIR 2025, 2026 · AAAI 2025 · NeurIPS 2025, 2026 · ICASSP 2025, 2026', period: '2025 –' },
-  { role: 'Leader',              detail: 'Modulabs MAAP (Music AI Assemble People)', period: '2025 –' },
-  { role: 'Journal Reviewer',    detail: 'IEEE Access (SCI)',                       period: '2023 –' },
-  { role: 'IT Volunteer Service',detail: 'World Friends Korea Paraguay',            period: '2018' },
+// Grouped so we can render each row as its own circular-badge grid.
+export interface ServiceGroup {
+  category: string
+  items: ServiceBadge[]
+}
+
+export const serviceGroups: ServiceGroup[] = [
+  {
+    category: 'Conference Reviewer',
+    items: [
+      { name: 'ISMIR',   years: "'25–'26" },
+      { name: 'AAAI',    years: "'25" },
+      { name: 'NeurIPS', years: "'25–'26" },
+      { name: 'ICASSP',  years: "'25–'26" },
+    ],
+  },
+  {
+    category: 'Journal Reviewer',
+    items: [
+      { name: 'IEEE Access', years: "'23–" },
+    ],
+  },
+  {
+    category: 'Leadership',
+    items: [
+      { name: 'MAAP', years: "'25–", role: 'Leader · Modulabs Music AI Assemble People' },
+    ],
+  },
+  {
+    category: 'Volunteer',
+    items: [
+      { name: 'WFK Paraguay', years: "'18", role: 'IT Volunteer · World Friends Korea' },
+    ],
+  },
 ]
