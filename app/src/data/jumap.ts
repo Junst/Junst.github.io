@@ -486,6 +486,7 @@ export const artists: Artist[] = [
     origin: 'us',
     songs: [
       { title: 'thank u, next', tier: 4, subTier: 2, genres: ['pop'], year: 2018, album: 'thank u, next' },
+      { title: 'Popular', tier: 2, subTier: 3, genres: ['pop'], year: 2024, album: 'Wicked (Original Motion Picture Soundtrack)', note: 'Duet with Cynthia Erivo' },
     ],
   },
   {
@@ -1643,6 +1644,16 @@ export const artists: Artist[] = [
     ],
   },
   {
+    // Bulgarian-born French chanteuse, "La Maritza" (1968) is a nostalgia
+    // classic named after the Bulgarian river of her childhood.
+    name: 'Sylvie Vartan',
+    primaryGenre: 'pop',
+    origin: 'fr',
+    songs: [
+      { title: 'La Maritza', tier: 2, subTier: 3, genres: ['pop'], year: 1968, album: 'La Maritza' },
+    ],
+  },
+  {
     name: 'Michael Giacchino',
     primaryGenre: 'pop',
     origin: 'us',
@@ -1699,7 +1710,7 @@ export const artists: Artist[] = [
     primaryGenre: 'pop',
     origin: 'uk',
     songs: [
-      { title: 'How Deep Is Your Love', tier: 1, subTier: 1, genres: ['pop'], year: 1977, album: 'Saturday Night Fever' },
+      { title: 'How Deep Is Your Love', tier: 1, subTier: 3, genres: ['pop'], year: 1977, album: 'Saturday Night Fever' },
     ],
   },
   {
