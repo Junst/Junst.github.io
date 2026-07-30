@@ -357,6 +357,7 @@ export const artists: Artist[] = [
       { title: 'WDA',   tier: 3, genres: ['kpop'], features: ['G-DRAGON'] },
       { title: 'Spicy', tier: 2, subTier: 3, genres: ['kpop'], year: 2023, album: 'MY WORLD' },
       { title: 'Girls', tier: 3, subTier: 1, genres: ['kpop'], year: 2022, album: 'Girls' },
+      { title: 'LEMONADE', tier: 2, subTier: 3, genres: ['kpop'], year: 2022, album: 'Girls' },
     ],
   },
   {
@@ -1651,6 +1652,16 @@ export const artists: Artist[] = [
     origin: 'fr',
     songs: [
       { title: 'La Maritza', tier: 2, subTier: 3, genres: ['pop'], year: 1968, album: 'La Maritza' },
+    ],
+  },
+  {
+    // Jamaican-American singer, "King of Calypso". "Day-O (The Banana
+    // Boat Song)" (1956, Calypso album) is his signature folk hit.
+    name: 'Harry Belafonte',
+    primaryGenre: 'pop',
+    origin: 'us',
+    songs: [
+      { title: 'Day-O (The Banana Boat Song)', tier: 3, subTier: 2, genres: ['pop'], year: 1956, album: 'Calypso' },
     ],
   },
   {
