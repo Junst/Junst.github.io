@@ -109,8 +109,16 @@ export const allPapers: Publication[] = [
     selected: true,
   },
   {
-    title: 'Closing the STFT-CQT Gap: Simple Multi-Scale Features for Vocal Multi-Pitch Estimation',
+    title: 'M0TET: Role-agnostic Multi-pitch Estimation for Vocal Ensembles',
     authors: '<strong>Junyoung Koh</strong> and Hao-Wen Dong',
+    venue: 'Under Review',
+    status: 'under-review',
+    tags: ['music'],
+    selected: true,
+  },
+  {
+    title: 'VESPA: Voice-flexible Ensemble Separation via Pitch-informed Analysis',
+    authors: '<strong>Junyoung Koh</strong>, Jungwoo Kim, Thomas Sesmat, Zeynel Tok, and Soo Yong Kim',
     venue: 'Under Review',
     status: 'under-review',
     tags: ['music'],
