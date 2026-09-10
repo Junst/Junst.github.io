@@ -33,6 +33,12 @@ export const allPapers: Publication[] = [
     tags: ['music'],
   },
   {
+    title: 'Hierarchy Aware Preference Optimization for the Safety of Korean Small Language Models',
+    authors: 'Soo Yong Kim, <strong>Junyoung Koh</strong>, Kyeonghun Kim, and Seunghyeok Hong',
+    venue: 'AACL-IJCNLP 2026 Main',
+    tags: ['nlp'],
+  },
+  {
     title: 'Jamendo-MT-QA: A Benchmark for Multi-Track Comparative Music Question Answering',
     authors: '<strong>Junyoung Koh</strong>, Jaeyun Lee, Soo Yong Kim, GYU HYEONG CHOI, Jung In Koh, Jordan Phillips, Yeonjin Lee, and Min Song',
     venue: 'ACL 2026 Findings',
@@ -130,13 +136,6 @@ export const allPapers: Publication[] = [
     venue: 'Under Review',
     status: 'under-review',
     tags: ['music'],
-  },
-  {
-    title: 'Hierarchy Aware Preference Optimization for the Safety of Korean Small Language Models',
-    authors: 'Soo Yong Kim, <strong>Junyoung Koh</strong>, Kyeonghun Kim, and Seunghyeok Hong',
-    venue: 'Under Review',
-    status: 'under-review',
-    tags: ['nlp'],
   },
   {
     title: 'Jamendo-QA: A Large-Scale Music Question Answering Dataset',

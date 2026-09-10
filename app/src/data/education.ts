@@ -10,7 +10,7 @@ export const education: EducationItem[] = [
     institution: 'University of Michigan',
     location: 'Ann Arbor, Michigan, USA',
     period: 'Aug 2026 – Dec 2026',
-    detail: 'Visiting Student, School of Music, Theatre & Dance (SMTD)',
+    detail: 'Visiting Scholar, School of Music, Theatre & Dance (SMTD)',
   },
   {
     institution: 'University of Southern California',

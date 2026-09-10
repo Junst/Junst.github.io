@@ -5,7 +5,7 @@ export function Hero() {
     <header className="hero">
       <div className="hero-name">
         <h1>{profile.name}</h1>
-        <div className="subtitle">Ph.D. Student · Yonsei University · KRAFTON</div>
+        <div className="subtitle">Ph.D. Student · Yonsei University · Visiting Scholar, University of Michigan</div>
       </div>
       <div className="hero-photo">
         <img src={profile.photo} alt={profile.name} />

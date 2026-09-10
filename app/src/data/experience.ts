@@ -10,7 +10,7 @@ export const experience: ExperienceItem[] = [
   {
     company: 'Krafton',
     role: 'AI Researcher Internship',
-    period: 'Aug 2025 – Current',
+    period: 'Aug 2025 – Aug 2026',
     logo:     '/assets/company/krafton-black.png',
     logoDark: '/assets/company/krafton-red.png',
   },
