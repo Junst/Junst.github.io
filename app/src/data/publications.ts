@@ -131,10 +131,14 @@ export const allPapers: Publication[] = [
     selected: true,
   },
   {
-    title: 'Revisiting Input Time-Frequency Representations in Multi-Pitch Estimation for Vocal Ensembles',
+    title: 'Revisiting Input Time-frequency Representations in Multi-pitch Estimation for Vocal Ensembles',
     authors: '<strong>Junyoung Koh</strong> and Hao-Wen Dong',
     venue: 'Under Review',
     status: 'under-review',
+    links: [
+      { label: 'arXiv', href: 'https://arxiv.org/abs/2610.03656' },
+      { label: 'PDF',   href: 'https://arxiv.org/pdf/2610.03656' },
+    ],
     tags: ['music'],
     selected: true,
   },
