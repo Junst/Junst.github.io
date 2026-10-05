@@ -13,7 +13,7 @@ export const newsGroups: NewsGroup[] = [
   {
     year: 'current',
     items: [
-      { date: 'Oct 2026', text: 'New preprint on arXiv: <a href="https://arxiv.org/abs/2610.03656">Revisiting Input Time-frequency Representations in Multi-pitch Estimation for Vocal Ensembles</a>, with Hao-Wen Dong 🎼' },
+      { date: 'Oct 2026', text: 'New preprint on arXiv: <a href="https://arxiv.org/abs/2610.03656">Revisiting Input Time-frequency Representations in Multi-pitch Estimation for Vocal Ensembles</a> 🎼' },
       { date: 'May 2026', text: 'Got my US student visa for the upcoming visit to the University of Michigan! ✈️' },
       { date: 'May 2026', text: '🏆 1 paper accepted to the ICME 2026 ATTM Grand Challenge — won <strong>1st place in the Performance Track</strong> AND <strong>#1 overall in MOS evaluation</strong>! 🎵' },
       { date: 'Apr 2026', text: 'MCJudgeBench is accepted to ACL 2026 Workshop (GEM)!' },
