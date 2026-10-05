@@ -154,6 +154,10 @@ export const allPapers: Publication[] = [
     authors: 'Jungwoo Kim, Joonyong Park, <strong>Junyoung Koh</strong>, and Jong-Seok Lee',
     venue: 'Under Review',
     status: 'under-review',
+    links: [
+      { label: 'arXiv', href: 'https://arxiv.org/abs/2609.39651' },
+      { label: 'PDF',   href: 'https://arxiv.org/pdf/2609.39651' },
+    ],
     tags: ['music'],
   },
   {
