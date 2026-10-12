@@ -10,8 +10,8 @@
   --link-hover: #b03434;
   --selection-bg: #1a1a1a;
   --selection-fg: #fdfdfb;
-  --callout-bg: #fbeaea;
-  --callout-border: #b03434;
+  --callout-bg: #eaf1f9;
+  --callout-border: #205493;
 
   --font-serif: 'Crimson Pro', 'PT Serif', Georgia, serif;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -32,8 +32,8 @@ html[data-theme="dark"] {
   --link-hover: #ff8a8a;
   --selection-bg: #e8e6e1;
   --selection-fg: #0e0e0e;
-  --callout-bg: #2a1616;
-  --callout-border: #ff8a8a;
+  --callout-bg: #142030;
+  --callout-border: #9ec1ff;
 }
 
 * { box-sizing: border-box; }
@@ -166,7 +166,7 @@ html { scroll-behavior: smooth; }
   border-radius: 6px;
   padding: 0.75rem 1rem;
 }
-.hero-hiring strong { color: var(--accent); }
+.hero-hiring strong { color: var(--callout-border); }
 .hero-photo img {
   display: block;
   width: 100%;
