@@ -1,0 +1,156 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #111;
+  color: #eee;
+  font-family: 'Segoe UI', sans-serif;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+}
+
+#container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+/* ── Upload UI ── */
+#upload-ui {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.85);
+  padding: 48px 64px;
+  border-radius: 16px;
+  border: 1px solid #333;
+  backdrop-filter: blur(12px);
+}
+
+#upload-ui.hidden {
+  display: none;
+}
+
+#upload-ui h1 {
+  font-size: 2.4rem;
+  margin-bottom: 12px;
+  letter-spacing: 4px;
+  font-weight: 300;
+}
+
+#upload-ui p {
+  font-size: 0.95rem;
+  color: #999;
+  margin-bottom: 32px;
+}
+
+#video-input {
+  display: none;
+}
+
+#upload-label {
+  display: inline-block;
+  padding: 14px 40px;
+  background: #fff;
+  color: #111;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background 0.2s, transform 0.15s;
+}
+
+#upload-label:hover {
+  background: #ddd;
+  transform: scale(1.03);
+}
+
+/* ── Status bar ── */
+#status-bar {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  font-size: 0.85rem;
+  color: #ccc;
+  backdrop-filter: blur(8px);
+  white-space: nowrap;
+}
+
+#status-bar.hidden {
+  display: none;
+}
+
+/* ── Controls ── */
+#controls {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.75);
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: 1px solid #333;
+  backdrop-filter: blur(8px);
+}
+
+#controls.hidden {
+  display: none;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.control-group label {
+  font-size: 0.78rem;
+  color: #aaa;
+  white-space: nowrap;
+}
+
+.control-group input[type="range"] {
+  width: 100px;
+  accent-color: #fff;
+}
+
+.control-group button {
+  padding: 5px 14px;
+  background: #333;
+  color: #eee;
+  border: 1px solid #555;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.78rem;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.control-group button:hover {
+  background: #555;
+}
+
+.control-group button.active {
+  background: #0066FF;
+  border-color: #0088FF;
+}

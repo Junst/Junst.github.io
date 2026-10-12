@@ -1,0 +1,383 @@
+{
+  "fetchedAt": "2026-06-21T07:42:46.265Z",
+  "ddragonVersion": "16.12.1",
+  "account": {
+    "gameName": "高俊永",
+    "tagLine": "bong"
+  },
+  "summoner": {
+    "profileIconId": 5181,
+    "summonerLevel": 363
+  },
+  "rank": [
+    {
+      "queueType": "RANKED_FLEX_SR",
+      "tier": "SILVER",
+      "rank": "III",
+      "puuid": "DJ8lKB7RgbDTw3RlRG5SCKxrEEUogx8qkSYOhGvedGBDQwpZlurCFoVm228IzEM-JpcQD5SPfH5VPw",
+      "leaguePoints": 21,
+      "wins": 3,
+      "losses": 3,
+      "veteran": false,
+      "inactive": false,
+      "freshBlood": false,
+      "hotStreak": false
+    },
+    {
+      "queueType": "RANKED_SOLO_5x5",
+      "tier": "SILVER",
+      "rank": "II",
+      "puuid": "DJ8lKB7RgbDTw3RlRG5SCKxrEEUogx8qkSYOhGvedGBDQwpZlurCFoVm228IzEM-JpcQD5SPfH5VPw",
+      "leaguePoints": 1,
+      "wins": 11,
+      "losses": 11,
+      "veteran": false,
+      "inactive": false,
+      "freshBlood": false,
+      "hotStreak": false
+    }
+  ],
+  "topChampions": [
+    {
+      "championId": 103,
+      "championName": "Ahri",
+      "championIdName": "Ahri",
+      "championLevel": 65,
+      "championPoints": 688113
+    },
+    {
+      "championId": 8,
+      "championName": "Vladimir",
+      "championIdName": "Vladimir",
+      "championLevel": 16,
+      "championPoints": 191521
+    },
+    {
+      "championId": 63,
+      "championName": "Brand",
+      "championIdName": "Brand",
+      "championLevel": 14,
+      "championPoints": 157537
+    },
+    {
+      "championId": 105,
+      "championName": "Fizz",
+      "championIdName": "Fizz",
+      "championLevel": 13,
+      "championPoints": 155490
+    },
+    {
+      "championId": 23,
+      "championName": "Tryndamere",
+      "championIdName": "Tryndamere",
+      "championLevel": 17,
+      "championPoints": 153885
+    }
+  ],
+  "recentMatches": [
+    {
+      "matchId": "KR_8266965176",
+      "gameMode": "CLASSIC",
+      "queueId": 420,
+      "gameStartTimestamp": 1781966730319,
+      "gameDuration": 1112,
+      "championName": "Tryndamere",
+      "championId": 23,
+      "championIdName": "Tryndamere",
+      "kills": 6,
+      "deaths": 1,
+      "assists": 1,
+      "kda": 7,
+      "win": true,
+      "position": "MIDDLE",
+      "cs": 173,
+      "gold": 9569
+    },
+    {
+      "matchId": "KR_8265846626",
+      "gameMode": "CLASSIC",
+      "queueId": 420,
+      "gameStartTimestamp": 1781923107314,
+      "gameDuration": 2071,
+      "championName": "Graves",
+      "championId": 104,
+      "championIdName": "Graves",
+      "kills": 5,
+      "deaths": 18,
+      "assists": 9,
+      "kda": 0.78,
+      "win": false,
+      "position": "JUNGLE",
+      "cs": 136,
+      "gold": 11206
+    },
+    {
+      "matchId": "KR_8260669395",
+      "gameMode": "CLASSIC",
+      "queueId": 420,
+      "gameStartTimestamp": 1781536410316,
+      "gameDuration": 1903,
+      "championName": "Malzahar",
+      "championId": 90,
+      "championIdName": "Malzahar",
+      "kills": 4,
+      "deaths": 6,
+      "assists": 14,
+      "kda": 3,
+      "win": true,
+      "position": "MIDDLE",
+      "cs": 287,
+      "gold": 14065
+    },
+    {
+      "matchId": "KR_8260602202",
+      "gameMode": "CLASSIC",
+      "queueId": 420,
+      "gameStartTimestamp": 1781533658484,
+      "gameDuration": 1686,
+      "championName": "Ahri",
+      "championId": 103,
+      "championIdName": "Ahri",
+      "kills": 4,
+      "deaths": 10,
+      "assists": 0,
+      "kda": 0.4,
+      "win": false,
+      "position": "MIDDLE",
+      "cs": 183,
+      "gold": 10821
+    },
+    {
+      "matchId": "KR_8145137824",
+      "gameMode": "CLASSIC",
+      "queueId": 420,
+      "gameStartTimestamp": 1774191380035,
+      "gameDuration": 1900,
+      "championName": "Fizz",
+      "championId": 105,
+      "championIdName": "Fizz",
+      "kills": 6,
+      "deaths": 6,
+      "assists": 7,
+      "kda": 2.17,
+      "win": false,
+      "position": "MIDDLE",
+      "cs": 248,
+      "gold": 14471
+    }
+  ],
+  "tft": {
+    "rank": [
+      {
+        "puuid": "DJ8lKB7RgbDTw3RlRG5SCKxrEEUogx8qkSYOhGvedGBDQwpZlurCFoVm228IzEM-JpcQD5SPfH5VPw",
+        "queueType": "RANKED_TFT",
+        "tier": "PLATINUM",
+        "rank": "IV",
+        "leaguePoints": 26,
+        "wins": 37,
+        "losses": 38,
+        "veteran": false,
+        "inactive": false,
+        "freshBlood": true,
+        "hotStreak": false
+      }
+    ],
+    "recentMatches": [
+      {
+        "matchId": "KR_8267146167",
+        "gameDatetime": 1781974547087,
+        "gameLength": 2408,
+        "queueId": 1100,
+        "tftSet": 17,
+        "placement": 1,
+        "level": 10,
+        "lastRound": 40,
+        "playersEliminated": 5,
+        "goldLeft": 2,
+        "traits": [
+          {
+            "name": "RhaastUniqueTrait",
+            "numUnits": 1,
+            "tier": 1,
+            "style": 3
+          },
+          {
+            "name": "ShenUniqueTrait",
+            "numUnits": 1,
+            "tier": 1,
+            "style": 3
+          },
+          {
+            "name": "Astronaut",
+            "numUnits": 5,
+            "tier": 2,
+            "style": 2
+          },
+          {
+            "name": "AssassinTrait",
+            "numUnits": 3,
+            "tier": 2,
+            "style": 2
+          }
+        ],
+        "unitCount": 10
+      },
+      {
+        "matchId": "KR_8266823080",
+        "gameDatetime": 1781964711268,
+        "gameLength": 2010,
+        "queueId": 1100,
+        "tftSet": 17,
+        "placement": 5,
+        "level": 9,
+        "lastRound": 30,
+        "playersEliminated": 0,
+        "goldLeft": 0,
+        "traits": [
+          {
+            "name": "BlitzcrankUniqueTrait",
+            "numUnits": 1,
+            "tier": 1,
+            "style": 3
+          },
+          {
+            "name": "JhinUniqueTrait",
+            "numUnits": 1,
+            "tier": 1,
+            "style": 3
+          },
+          {
+            "name": "RhaastUniqueTrait",
+            "numUnits": 1,
+            "tier": 1,
+            "style": 3
+          },
+          {
+            "name": "TahmKenchUniqueTrait",
+            "numUnits": 1,
+            "tier": 1,
+            "style": 3
+          }
+        ],
+        "unitCount": 9
+      },
+      {
+        "matchId": "KR_8266721589",
+        "gameDatetime": 1781962344375,
+        "gameLength": 2216,
+        "queueId": 1100,
+        "tftSet": 17,
+        "placement": 4,
+        "level": 8,
+        "lastRound": 33,
+        "playersEliminated": 1,
+        "goldLeft": 41,
+        "traits": [
+          {
+            "name": "ADMIN",
+            "numUnits": 3,
+            "tier": 2,
+            "style": 4
+          },
+          {
+            "name": "RhaastUniqueTrait",
+            "numUnits": 1,
+            "tier": 1,
+            "style": 3
+          },
+          {
+            "name": "AnimaSquad",
+            "numUnits": 3,
+            "tier": 1,
+            "style": 1
+          },
+          {
+            "name": "SummonTrait",
+            "numUnits": 3,
+            "tier": 1,
+            "style": 1
+          }
+        ],
+        "unitCount": 9
+      },
+      {
+        "matchId": "KR_8266643638",
+        "gameDatetime": 1781959910066,
+        "gameLength": 2043,
+        "queueId": 1100,
+        "tftSet": 17,
+        "placement": 5,
+        "level": 8,
+        "lastRound": 31,
+        "playersEliminated": 1,
+        "goldLeft": 13,
+        "traits": [
+          {
+            "name": "FlexTrait",
+            "numUnits": 5,
+            "tier": 4,
+            "style": 2
+          },
+          {
+            "name": "Astronaut",
+            "numUnits": 3,
+            "tier": 1,
+            "style": 1
+          },
+          {
+            "name": "DarkStar",
+            "numUnits": 2,
+            "tier": 1,
+            "style": 1
+          },
+          {
+            "name": "ResistTank",
+            "numUnits": 2,
+            "tier": 1,
+            "style": 1
+          }
+        ],
+        "unitCount": 8
+      },
+      {
+        "matchId": "KR_8266582077",
+        "gameDatetime": 1781957790099,
+        "gameLength": 2172,
+        "queueId": 1100,
+        "tftSet": 17,
+        "placement": 1,
+        "level": 10,
+        "lastRound": 37,
+        "playersEliminated": 3,
+        "goldLeft": 8,
+        "traits": [
+          {
+            "name": "BlitzcrankUniqueTrait",
+            "numUnits": 1,
+            "tier": 1,
+            "style": 3
+          },
+          {
+            "name": "MorganaUniqueTrait",
+            "numUnits": 1,
+            "tier": 1,
+            "style": 3
+          },
+          {
+            "name": "RhaastUniqueTrait",
+            "numUnits": 1,
+            "tier": 1,
+            "style": 3
+          },
+          {
+            "name": "SonaUniqueTrait",
+            "numUnits": 1,
+            "tier": 1,
+            "style": 3
+          }
+        ],
+        "unitCount": 11
+      }
+    ]
+  }
+}
