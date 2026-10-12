@@ -5,7 +5,8 @@ export function Hero() {
     <header className="hero">
       <div className="hero-name">
         <h1>{profile.name}</h1>
-        <div className="subtitle">Ph.D. Student · Yonsei University · Visiting Scholar, University of Michigan</div>
+        <div className="subtitle">Ph.D. Student · Yonsei University</div>
+        <div className="subtitle">Visiting Scholar · University of Michigan</div>
       </div>
       <div className="hero-photo">
         <img src={profile.photo} alt={profile.name} />
@@ -22,6 +23,7 @@ export function Hero() {
         {profile.intro.map((para, i) => (
           <p key={i} dangerouslySetInnerHTML={{ __html: para }} />
         ))}
+        <p className="hero-hiring" dangerouslySetInnerHTML={{ __html: profile.hiring }} />
       </div>
     </header>
   )
