@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://solbon1212-tab-orchestra-demucs.hf.space https://*.hf.space; script-src 'self'; style-src 'self' 'unsafe-inline';">
+  <title>Tab Orchestra</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Upload / Demo UI overlay -->
+  <div id="upload-screen">
+    <div class="upload-container">
+      <h1>Tab Orchestra</h1>
+      <p class="subtitle">Open multiple tabs to hear each instrument</p>
+
+      <div class="upload-box" id="drop-zone">
+        <input type="file" id="file-input" accept="audio/*" hidden>
+        <div class="upload-icon">&#9835;</div>
+        <p>Drop audio file here or <span class="browse-link">browse</span></p>
+        <p class="hint">MP3, WAV, M4A, FLAC, OGG — up to 20 MB</p>
+      </div>
+
+      <div class="divider"><span>or</span></div>
+
+      <button id="demo-btn" class="btn-primary">Use Demo Song</button>
+    </div>
+  </div>
+
+  <!-- Processing overlay -->
+  <div id="processing-screen" class="hidden">
+    <div class="processing-container">
+      <div class="spinner"></div>
+      <p id="status-text">Separating stems...</p>
+      <div class="progress-bar">
+        <div id="progress-fill" class="progress-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Waiting for stems (non-coordinator tabs) -->
+  <div id="waiting-screen" class="hidden">
+    <div class="processing-container">
+      <div class="spinner"></div>
+      <p>Waiting for stems from coordinator tab...</p>
+    </div>
+  </div>
+
+  <!-- Full assignment message -->
+  <div id="full-screen" class="hidden">
+    <div class="processing-container">
+      <h2>All Instruments Assigned</h2>
+      <p>4 tabs are already open — close one to free a slot.</p>
+    </div>
+  </div>
+
+  <!-- Main visualizer -->
+  <div id="visualizer" class="hidden">
+    <canvas id="canvas"></canvas>
+    <div id="instrument-label"></div>
+    <div id="tab-count"></div>
+    <div id="missing-stems"></div>
+    <button id="add-tab-btn" class="add-tab-btn">+ Add Instrument</button>
+    <button id="open-all-btn" class="add-tab-btn" style="top: 112px; right: 24px;">Open All (4-split)</button>
+    <button id="new-song-btn" class="new-song-btn">New Song</button>
+    <div id="controls">
+      <button id="mute-btn" class="ctrl-btn" title="Mute this stem">&#x1F50A;</button>
+      <button id="play-pause-btn" class="ctrl-btn">&#9654;</button>
+      <span id="time-display">0:00 / 0:00</span>
+      <button id="loop-btn" class="ctrl-btn" title="Loop">&#x1F501;</button>
+      <span class="ctrl-divider">|</span>
+      <button id="ab-a-btn" class="ctrl-btn ab-btn" title="Set loop start">A</button>
+      <button id="ab-b-btn" class="ctrl-btn ab-btn" title="Set loop end">B</button>
+      <button id="ab-clear-btn" class="ctrl-btn ab-btn" title="Clear A-B loop">&#x2715;</button>
+    </div>
+
+    <!-- EQ Panel -->
+    <div id="eq-panel">
+      <div class="eq-slider">
+        <label>Low</label>
+        <input type="range" id="eq-low" min="-12" max="12" value="0" step="1">
+        <span id="eq-low-val">0</span>
+      </div>
+      <div class="eq-slider">
+        <label>Mid</label>
+        <input type="range" id="eq-mid" min="-12" max="12" value="0" step="1">
+        <span id="eq-mid-val">0</span>
+      </div>
+      <div class="eq-slider">
+        <label>High</label>
+        <input type="range" id="eq-high" min="-12" max="12" value="0" step="1">
+        <span id="eq-high-val">0</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
