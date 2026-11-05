@@ -13,6 +13,7 @@ export const newsGroups: NewsGroup[] = [
   {
     year: 'current',
     items: [
+      { date: 'Oct 2026', text: 'Presented a poster at <a href="https://www.saneworkshop.org/sane2026/">SANE 2026</a> (Speech and Audio in the Northeast) at MIT: <a href="/assets/poster/Linear%20STFT%20Multi-Pitch%20Estimation%20and%20Role-Agnostic%20Voice%20Attribution%20for%20Vocal%20Ensembles%20Poster.pdf">Linear STFT Multi-Pitch Estimation and Role-Agnostic Voice Attribution for Vocal Ensembles</a> 🎤' },
       { date: 'Oct 2026', text: 'New preprint on arXiv: <a href="https://arxiv.org/abs/2610.03656">Revisiting Input Time-frequency Representations in Multi-pitch Estimation for Vocal Ensembles</a> 🎼' },
       { date: 'May 2026', text: 'Got my US student visa for the upcoming visit to the University of Michigan! ✈️' },
       { date: 'May 2026', text: '🏆 1 paper accepted to the ICME 2026 ATTM Grand Challenge — won <strong>1st place in the Performance Track</strong> AND <strong>#1 overall in MOS evaluation</strong>! 🎵' },

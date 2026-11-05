@@ -22,6 +22,15 @@ export interface Publication {
 // list — distinguished only by an optional `status` badge after the venue.
 export const allPapers: Publication[] = [
   {
+    title: 'Linear STFT Multi-Pitch Estimation and Role-Agnostic Voice Attribution for Vocal Ensembles',
+    authors: '<strong>Junyoung Koh</strong> and Hao-Wen Dong',
+    venue: 'SANE 2026 Workshop <a href="https://www.saneworkshop.org/sane2026/">Speech and Audio in the Northeast</a> (Poster)',
+    links: [
+      { label: 'Poster', href: '/assets/poster/Linear%20STFT%20Multi-Pitch%20Estimation%20and%20Role-Agnostic%20Voice%20Attribution%20for%20Vocal%20Ensembles%20Poster.pdf' },
+    ],
+    tags: ['music'],
+  },
+  {
     title: 'Instrumental Text-to-Music Generation with Auxiliary Conditioning Branches',
     authors: '<strong>Junyoung Koh</strong>',
     venue: 'ICME 2026 <a href="https://ntu-musicailab.github.io/ICME26-ATTM-Grand-Challenge/">Audio-Text-to-Music (ATTM) Grand Challenge</a>',
