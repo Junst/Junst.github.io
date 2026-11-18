@@ -4,6 +4,7 @@ export interface Award {
 }
 
 export const awards: Award[] = [
+  { title: 'ISMIR 2026 Best Reviewers — Honorable Mention', year: '2026' },
   {
     title: 'ICME 2026 ATTM Grand Challenge — <strong>1st Place, Performance Track</strong> & <strong>#1 Overall MOS</strong>',
     year: '2026',
