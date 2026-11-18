@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://junst.github.io/sitemap.xml

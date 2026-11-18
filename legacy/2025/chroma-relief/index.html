@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChromaRelief — 3D Tile Media Art</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="container"></div>
+
+  <div id="status-bar" class="hidden"></div>
+
+  <div id="upload-ui">
+    <h1>ChromaRelief</h1>
+    <p>Upload a video to transform it into a 10-color palette tile relief</p>
+    <label id="upload-label" for="video-input">Choose Video</label>
+    <input type="file" id="video-input" accept="video/*">
+  </div>
+
+  <div id="controls" class="hidden">
+    <div class="control-group">
+      <label>Tiles (H): <span id="cols-value">60</span></label>
+      <input type="range" id="cols-slider" min="10" max="120" value="60">
+    </div>
+    <div class="control-group">
+      <label>Depth: <span id="depth-value">3.0</span></label>
+      <input type="range" id="depth-slider" min="0.5" max="10" value="3" step="0.1">
+    </div>
+    <div class="control-group">
+      <button id="depth-mode-btn" title="Toggle brightness / AI depth">Depth: Brightness</button>
+    </div>
+    <div class="control-group">
+      <button id="play-btn">&#9654;</button>
+      <button id="pause-btn">&#9646;&#9646;</button>
+    </div>
+  </div>
+
+  <video id="hidden-video" style="display:none" loop></video>
+  <canvas id="hidden-canvas" style="display:none"></canvas>
+  <canvas id="depth-canvas" style="display:none"></canvas>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

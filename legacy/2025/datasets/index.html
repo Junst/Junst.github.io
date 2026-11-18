@@ -1,0 +1,768 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.22.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ko" class="no-js">
+  <head>
+    <meta charset="utf-8">
+<!-- begin _includes/seo.html --><title>Datasets - JUNYOUNG KOH</title>
+<meta name="description" content="">
+
+
+  <meta name="author" content="고준영 (Junyoung Koh)">
+  
+
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content="JUNYOUNG KOH">
+<meta property="og:title" content="Datasets">
+<meta property="og:url" content="https://junst.github.io/datasets/">
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="index.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Junyoung Koh",
+      "url": "https://junst.github.io/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<!-- 초기 theme: 저장값 없으면 'light' -->
+<script>
+(function () {
+  var KEY='theme';
+  var saved=localStorage.getItem(KEY);
+  var initial=saved || 'light';
+  var root=document.documentElement;
+  root.setAttribute('data-theme', initial);
+  // 초기 변수도 즉시 주입(다른 CSS가 있어도 눈으로 바로 확인 가능)
+  var vars = (initial==='light')
+    ? {'--bg':'#ffffff','--text':'#111111','--accent':'#1a73e8','--card':'#ffffff'}
+    : {'--bg':'#000000','--text':'#e5e5e5','--accent':'#8ab4ff','--card':'#0f0f0f'};
+  for (var k in vars) root.style.setProperty(k, vars[k]);
+  root.style.colorScheme = initial; // 스크롤바/폼 위젯 색상 일치
+})();
+</script>
+
+<!-- 캐시 버스터 포함해서 메인 CSS -->
+<link rel="stylesheet" href="../assets/css/main.css">
+
+<!-- Font Awesome (좌측 아이콘 복구) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css">
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+<link rel="apple-touch-icon" sizes="180x180" href="https://junst.github.io/assets/favicon.ico/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://junst.github.io/assets/favicon.ico/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://junst.github.io/assets/favicon.ico/favicon-16x16.png">
+<link rel="manifest" href="https://junst.github.io/site.webmanifest">
+<!-- Theme Toggle FAB -->
+<button id="theme-toggle" class="theme-fab" aria-label="Toggle theme">🌙</button>
+
+<script>
+(function () {
+  const LS_KEY = 'theme';
+  const root = document.documentElement;
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+  // 초기 테마: 저장값 > 시스템 선호
+  const saved = localStorage.getItem(LS_KEY);
+  const initial = saved || (prefersDark ? 'dark' : 'light');
+  root.setAttribute('data-theme', initial);
+
+  const btn = document.getElementById('theme-toggle');
+  const syncIcon = () => { btn.textContent = root.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙'; };
+  syncIcon();
+
+  btn.addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    localStorage.setItem(LS_KEY, next);
+    syncIcon();
+  });
+})();
+</script>
+<!-- end custom head snippets -->
+
+
+    
+  </head>
+
+  <body class="layout--single wide">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="index.html#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="index.html#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="index.html#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="../index.html">
+          JUNYOUNG KOH
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="index.html">Datasets</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://blog.naver.com/solbon1212">Blog</a>
+            </li><li class="masthead__menu-item">
+              <a href="../gallery/index.html">Gallery</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://junst.github.io/contact/">Contact</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">토글 메뉴</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="../assets/images/202601_bio.jpg" alt="고준영 (Junyoung Koh)" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">고준영 (Junyoung Koh)</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>Regress of Progress</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">팔로우</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Seoul</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://blog.naver.com/solbon1212" rel="nofollow noopener noreferrer"><i class="far fa-link" aria-hidden="true"></i><span class="label">Website</span></a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/Junst" rel="nofollow noopener noreferrer"><i class="fab fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+            <li><a href="../assets/CV.pdf" rel="nofollow noopener noreferrer"><i class="fas fa-download" aria-hidden="true"></i><span class="label">CV</span></a></li>
+          
+        
+          
+            <li><a href="mailto:arsol970812@gmail.com" rel="nofollow noopener noreferrer"><i class="fas fa-envelope" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+            <li><a href="https://www.linkedin.com/in/junyoung-k-b54639169/" rel="nofollow noopener noreferrer"><i class="fab fa-linkedin" aria-hidden="true"></i><span class="label">LinkedIn</span></a></li>
+          
+        
+          
+            <li><a href="https://www.instagram.com/_jun_style_/" rel="nofollow noopener noreferrer"><i class="fab fa-instagram fa-fw" aria-hidden="true"></i><span class="label">Instagram</span></a></li>
+          
+        
+          
+            <li><a href="https://scholar.google.com/citations?user=-zUwo6kAAAAJ&hl=ko" rel="nofollow noopener noreferrer"><i class="fab fa-google fa-fw" aria-hidden="true"></i><span class="label">Google Scholar</span></a></li>
+          
+        
+          
+            <li><a href="https://www.semanticscholar.org/author/Jun-Young-Koh/2295987662" rel="nofollow noopener noreferrer"><i class="fas fa-graduation-cap" aria-hidden="true"></i><span class="label">Semantic Scholar</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Datasets">
+    
+    
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Datasets
+</h1>
+          
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <h2 id="jamendo-qa">Jamendo-QA</h2>
+<ul>
+  <li><strong>Task</strong>: Music Question Answering (Audio)</li>
+  <li><strong>Scale</strong>: Large-scale QA pairs with captions/tags from Jamendo tracks</li>
+  <li><strong>Status</strong>: Submitted to ICASSP 2026</li>
+  <li><strong>Usage</strong>: For research purposes (please cite our paper when using)</li>
+  <li><strong>Links</strong>: <a href="https://huggingface.co/datasets/m-a-a-p/Jamendo-QA">HuggingFace</a> · <a href="https://arxiv.org/abs/2509.15662">arXiv</a> · <a href="https://arxiv.org/pdf/2509.15662">PDF</a></li>
+</ul>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+        
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">공유하기</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Datasets%20https%3A%2F%2Fjunst.github.io%2Fdatasets%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fjunst.github.io%2Fdatasets%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fjunst.github.io%2Fdatasets%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+    </div>
+
+    
+  </article>
+
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- Dynamic Island Music Player (independent from theme toggle) -->
+<style>
+  /* Stack vertically: this music island sits above the theme-toggle FAB.
+     The real theme-fab spec (right:18, bottom:18) lives in _sass/custom/_custom.scss
+     — match those exact offsets so the two FABs share the same vertical centerline. */
+  #dynamic-island {
+    position: fixed;
+    right: 18px;
+    bottom: 76px; /* 18 (theme bottom) + 48 (theme height) + 10 (gap) */
+    width: 48px;
+    height: 48px;
+    border-radius: 999px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0,0,0,.35);
+    transition: width .45s cubic-bezier(.32,.72,.16,1),
+                height .45s cubic-bezier(.32,.72,.16,1),
+                border-radius .45s cubic-bezier(.32,.72,.16,1);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    background: #000;
+    color: #fff;
+    user-select: none;
+  }
+  [data-theme="light"] #dynamic-island { background: #000 !important; color: #fff !important; }
+  [data-theme="dark"]  #dynamic-island { background: #fff !important; color: #000 !important; }
+
+  #dynamic-island.di-expanded {
+    width: 340px;
+    height: 72px;
+    border-radius: 24px;
+  }
+
+  /* Always-visible collapsed trigger (the ▶ button users click to start music). */
+  .di-trigger {
+    width: 48px;
+    height: 48px;
+    background: transparent;
+    color: inherit;
+    border: 0;
+    border-radius: 999px;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0;
+    flex-shrink: 0;
+  }
+  .di-trigger:hover { background: rgba(128,128,128,.2); }
+  #dynamic-island.di-expanded .di-trigger { display: none; }
+
+  .di-player {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 10px;
+    opacity: 0;
+    transform: translateX(8px);
+    transition: opacity .25s .15s ease, transform .25s .15s ease;
+    pointer-events: none;
+  }
+  #dynamic-island.di-expanded .di-player {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+
+  .di-title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 12.5px;
+    font-weight: 500;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    line-height: 1.2;
+  }
+
+  .di-controls {
+    display: flex;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+  .di-controls button {
+    width: 30px; height: 30px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .di-controls button:hover { background: rgba(128,128,128,.25); }
+
+  .di-progress {
+    position: absolute;
+    bottom: 6px;
+    left: 12px;
+    right: 12px;
+    height: 2px;
+    background: rgba(128,128,128,.35);
+    border-radius: 2px;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity .25s .15s ease;
+  }
+  #dynamic-island.di-expanded .di-progress { opacity: 1; }
+  .di-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: currentColor;
+  }
+
+  /* On-screen but visually hidden — YouTube blocks audio in 0-size/off-screen iframes */
+  #di-yt-wrap {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    opacity: 0.01;
+    pointer-events: none;
+    z-index: 0;
+  }
+</style>
+
+<div id="di-yt-wrap"><div id="di-yt-player"></div></div>
+
+<script>
+(function(){
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  var island, triggerBtn, playPauseBtn, nextBtn, titleEl, progressBar;
+  var player = null;
+  var ytLoaded = false;
+  var progressTimer = null;
+  var titleTimer = null;
+
+  function init(){
+    if (document.getElementById('dynamic-island')) return;
+
+    island = document.createElement('div');
+    island.id = 'dynamic-island';
+    island.className = 'di-collapsed';
+
+    triggerBtn = document.createElement('button');
+    triggerBtn.type = 'button';
+    triggerBtn.className = 'di-trigger';
+    triggerBtn.setAttribute('aria-label', 'Play music');
+    triggerBtn.textContent = '▶';
+    island.appendChild(triggerBtn);
+
+    var playerEl = document.createElement('div');
+    playerEl.className = 'di-player';
+    playerEl.innerHTML =
+      '<div class="di-title"><span id="di-title-text">Tap to play ♫</span></div>' +
+      '<div class="di-controls">' +
+        '<button class="di-play-pause" type="button" aria-label="Play/Pause">▶</button>' +
+        '<button class="di-next" type="button" aria-label="Next">⏭</button>' +
+      '</div>';
+    island.appendChild(playerEl);
+
+    var progress = document.createElement('div');
+    progress.className = 'di-progress';
+    progress.innerHTML = '<div class="di-progress-bar"></div>';
+    island.appendChild(progress);
+
+    document.body.appendChild(island);
+
+    titleEl = document.getElementById('di-title-text');
+    playPauseBtn = playerEl.querySelector('.di-play-pause');
+    nextBtn = playerEl.querySelector('.di-next');
+    progressBar = progress.querySelector('.di-progress-bar');
+
+    // Only the dedicated trigger expands & starts music.
+    triggerBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      expand();
+    });
+
+    playPauseBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      if (!player) return;
+      try {
+        var s = player.getPlayerState();
+        if (s === 1) player.pauseVideo();
+        else player.playVideo();
+      } catch(err){}
+    });
+
+    nextBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      if (!player || !player.nextVideo) return;
+      try {
+        player.nextVideo();
+        clearTimeout(titleTimer);
+        titleTimer = setTimeout(updateTitle, 700);
+      } catch(err){}
+    });
+
+    // Click outside the island while expanded => collapse.
+    document.addEventListener('click', function(e){
+      if (island.classList.contains('di-expanded') && !island.contains(e.target)) {
+        collapse();
+      }
+    });
+  }
+
+  function expand(){
+    island.classList.remove('di-collapsed');
+    island.classList.add('di-expanded');
+    if (!ytLoaded) loadYT();
+  }
+
+  function collapse(){
+    island.classList.remove('di-expanded');
+    island.classList.add('di-collapsed');
+  }
+
+  function loadYT(){
+    ytLoaded = true;
+    if (window.YT && window.YT.Player) { createPlayer(); return; }
+    var prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = function(){
+      if (typeof prev === 'function') { try { prev(); } catch(e){} }
+      createPlayer();
+    };
+    var tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    document.head.appendChild(tag);
+  }
+
+  function createPlayer(){
+    player = new YT.Player('di-yt-player', {
+      height: '180',
+      width: '320',
+      videoId: 'mlq32JT4IP4',
+      playerVars: {
+        autoplay: 1,
+        start: 7,
+        list: 'RDmlq32JT4IP4',
+        listType: 'playlist',
+        controls: 0,
+        modestbranding: 1,
+        playsinline: 1,
+        rel: 0
+      },
+      events: {
+        onReady: function(){
+          try { player.playVideo(); } catch(e){}
+          startProgressLoop();
+          updateTitle();
+        },
+        onStateChange: function(e){
+          if (e.data === 1) {
+            playPauseBtn.textContent = '⏸';
+            updateTitle();
+          } else if (e.data === 2 || e.data === 0) {
+            playPauseBtn.textContent = '▶';
+          }
+        }
+      }
+    });
+  }
+
+  function updateTitle(){
+    if (!player || !player.getVideoData) return;
+    try {
+      var d = player.getVideoData();
+      if (d && d.title) titleEl.textContent = d.title;
+    } catch(e){}
+  }
+
+  function startProgressLoop(){
+    if (progressTimer) return;
+    progressTimer = setInterval(function(){
+      if (!player || !player.getCurrentTime) return;
+      try {
+        var cur = player.getCurrentTime();
+        var dur = player.getDuration();
+        if (dur > 0) {
+          progressBar.style.width = Math.min(100, (cur/dur*100)).toFixed(1) + '%';
+        }
+      } catch(e){}
+    }, 250);
+  }
+})();
+</script>
+
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>팔로우:</strong></li>
+    
+
+    
+      
+        
+          <li><a href="https://scholar.google.com/citations?user=-zUwo6kAAAAJ&hl=ko" rel="nofollow noopener noreferrer"><i class="fab fa-google fa-fw" aria-hidden="true"></i> Google Scholar</a></li>
+        
+      
+        
+          <li><a href="https://www.semanticscholar.org/author/Jun-Young-Koh/2295987662" rel="nofollow noopener noreferrer"><i class="fas fa-graduation-cap" aria-hidden="true"></i> Semantic Scholar</a></li>
+        
+      
+        
+          <li><a href="https://github.com/Junst" rel="nofollow noopener noreferrer"><i class="fab fa-github fa-fw" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+          <li><a href="https://www.linkedin.com/in/junyoung-k-b54639169/" rel="nofollow noopener noreferrer"><i class="fab fa-linkedin" aria-hidden="true"></i> LinkedIn</a></li>
+        
+      
+        
+          <li><a href="https://www.instagram.com/_jun_style_/" rel="nofollow noopener noreferrer"><i class="fab fa-instagram fa-fw" aria-hidden="true"></i> Instagram</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    
+      <li><a href="../feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> 피드</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Junyoung Koh. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  
+    <script src="../assets/js/theme-toggle.js"></script>
+  
+
+
+
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-171536639-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-171536639-1', { 'anonymize_ip': false});
+</script>
+
+
+
+
+
+
+
+
+
+  </body>
+</html>
